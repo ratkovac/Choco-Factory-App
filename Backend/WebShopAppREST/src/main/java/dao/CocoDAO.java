@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -49,6 +50,7 @@ public class CocoDAO {
 			c.setPicture(coco.getPicture());
 			c.setStock(coco.getStock());
 			c.setDeleted(coco.isDeleted());
+			c.setFactoryId(coco.getFactoryId());
 		}
 		
 		return c;
@@ -85,7 +87,7 @@ public class CocoDAO {
 		try {
 			File file = new File(contextPath + "/cocolates.txt");
 			in = new BufferedReader(new FileReader(file));
-			String line, id = "", name = "", cost = "", category = "", type = "", status = "", mass = "", details = "", picture = "", stock = "", isDeleted = "";
+			String line, id = "", name = "", cost = "", category = "", type = "", status = "", mass = "", details = "", picture = "", stock = "", isDeleted = "", factoryId = "";
 			StringTokenizer st;
 			while ((line = in.readLine()) != null) {
 				line = line.trim();
@@ -104,8 +106,9 @@ public class CocoDAO {
 					picture = st.nextToken().trim();
 					stock = st.nextToken().trim();
 					isDeleted = st.nextToken().trim();
+					factoryId = st.nextToken().trim();
 				}
-				cocos.put(id, new Coco(id, name, Double.parseDouble(cost), category, type, status, Double.parseDouble(mass), details, picture, Integer.parseInt(stock), Boolean.parseBoolean(isDeleted)));
+				cocos.put(id, new Coco(id, name, Double.parseDouble(cost), category, type, status, Double.parseDouble(mass), details, picture, Integer.parseInt(stock), Boolean.parseBoolean(isDeleted), factoryId));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -140,6 +143,18 @@ public class CocoDAO {
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
+	}
+
+	public ArrayList<Coco> getCocolatesByFactory(String factoryId) {
+		ArrayList<Coco> cocolates = new ArrayList<Coco>();
+        for(Coco coco : cocos.values()) {
+        	if(coco.getFactoryId().equals(factoryId)) {
+        		if(coco.isDeleted()==false) {
+        			cocolates.add(coco);
+        		}
+        	}
+        }
+        return cocolates;
 	}
 
 }

@@ -13,6 +13,7 @@ public class Coco {
     private String picture;
     private int stock;
     private boolean isDeleted;
+    private String factoryId;
 
 	
 	public Coco() {
@@ -20,7 +21,7 @@ public class Coco {
 	}
 
 	public Coco(String id, String name, double cost, String category, String type, String status, double mass,
-			String details, String picture, int stock, boolean isDeleted) {
+			String details, String picture, int stock, boolean isDeleted, String factoryId) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -33,6 +34,7 @@ public class Coco {
 		this.picture = picture;
 		this.stock = stock;
 		this.isDeleted = isDeleted;
+		this.factoryId = factoryId;
 	}
 
 	public String getId() {
@@ -121,6 +123,14 @@ public class Coco {
 
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+
+	public String getFactoryId() {
+		return factoryId;
+	}
+
+	public void setFactoryId(String factoryId) {
+		this.factoryId = factoryId;
 	}
 	
 	
