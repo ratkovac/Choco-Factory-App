@@ -46,7 +46,7 @@
                   <input type="text" id="image" v-model="coco.picture" :class="{ 'error': !validation.imageValid }" class="form-control custom-input">
                 </div>
                 <div class="form-group">
-                  <img class="card-img-top mb-5 mb-md-0" :src="coco.image" alt="url">
+                  <img class="card-img-top mb-5 mb-md-0" :src="coco.picture" alt="url">
                 </div>
                 <div class="form-group">
                     <button class="btn btn-outline-dark flex-shrink-0 custom-button" type="submit">Save Chocolate</button>
@@ -203,8 +203,8 @@
 }
 
 img {
-  max-width: 150px;
-  max-height: 150px;
+  max-width: 80x;
+  max-height: 50px;
 }
 
 .error {
