@@ -8,8 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import beans.Factory;
@@ -30,9 +34,34 @@ public class FactoryDAO {
 	}
 
 	public Collection<Factory> findAll() {
-		System.out.println(factories.size());
-		return factories.values();
+	    System.out.println("OLEEE");
+	    	
+	    // Ažuriranje statusa svake fabrike
+	    for (Factory factory : factories.values()) {
+	        factory.setStatus(checkStatus(factory.getWorkingTime()));
+	    }
+
+	    // Sortiranje fabrika po statusu (Work > Do not work)
+	    List<Factory> factoryList = new ArrayList<>(factories.values());
+	    Collections.sort(factoryList, new Comparator<Factory>() {
+	        @Override
+	        public int compare(Factory f1, Factory f2) {
+	            String status1 = f1.getStatus();
+	            String status2 = f2.getStatus();
+
+	            if (status1.equals("Work") && !status2.equals("Work")) {
+	                return -1; 
+	            } else if (!status1.equals("Work") && status2.equals("Work")) {
+	                return 1; 
+	            } else {
+	                return 0;
+	            }
+	        }
+	    });
+
+	    return factoryList;
 	}
+
 
 	public Factory findFactory(String id) {
 	    Factory factory = factories.get(id);
