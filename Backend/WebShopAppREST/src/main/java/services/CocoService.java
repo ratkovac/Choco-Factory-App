@@ -34,7 +34,7 @@ public class CocoService {
     @Path("/factory/{factoryId}")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Coco> getCocolatesByFactory(@PathParam("factoryId") String factoryId) {
-        CocoDAO cocoDAO = (CocoDAO) ctx.getAttribute("cocoDAO");
+		CocoDAO cocoDAO = (CocoDAO) ctx.getAttribute("cocoDAO");
         return cocoDAO.getCocolatesByFactory(factoryId);
     }
 	

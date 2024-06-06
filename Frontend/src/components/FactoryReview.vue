@@ -13,7 +13,7 @@
                     <h2><strong>Naziv:</strong> {{ factory.name }}</h2>
                     <p><strong>Radno vreme:</strong> {{ factory.workingTime }}</p>
                     <p><strong>Lokacija:</strong> {{ factory.location }}</p>
-                    <p v-if="factory.rating"><strong>Ocena:</strong> {{ factory.rate }}</p>
+                    <p v-if="factory.rate"><strong>Ocena:</strong> {{ factory.rate }}</p>
                     <p v-if="factory.status"><strong>Status:</strong> {{ factory.status }}</p>
                     <p><strong>Komentari:</strong>
                       <ul v-if="comments && comments.length > 0">
