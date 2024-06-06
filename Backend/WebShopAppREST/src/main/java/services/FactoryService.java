@@ -19,8 +19,10 @@ public class FactoryService {
 
     @PostConstruct
     public void init() {
+    	System.out.println("Pre");
         factoryDAO = (FactoryDAO) ctx.getAttribute("factoryDAO");
         if (factoryDAO == null) {
+        	System.out.println("posle");
             factoryDAO = new FactoryDAO(ctx.getRealPath("/"));
             ctx.setAttribute("factoryDAO", factoryDAO);
         }
@@ -30,6 +32,7 @@ public class FactoryService {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Factory> getFactories() {
+        System.out.println("Pozvana je metoda getFactories()"); // Dodajte ovu liniju za ispisivanje poruke u konzolu
         return new ArrayList<>(factoryDAO.findAll());
     }
 
@@ -45,8 +48,14 @@ public class FactoryService {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Factory getFactory(@PathParam("id") String id) {
-        return factoryDAO.findFactory(id);
+        Factory factory = factoryDAO.findFactory(id);
+        if (factory != null) {
+            String status = factoryDAO.checkStatus(factory.getWorkingTime());
+            factory.setStatus(status);
+        }
+        return factory;
     }
+
 
     @DELETE
     @Path("/{id}")

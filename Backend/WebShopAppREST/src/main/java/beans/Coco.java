@@ -7,34 +7,35 @@ public class Coco {
     private double cost;
     private String category;
     private String type;
-    private String status;
     private double mass;
     private String details;
     private String picture;
     private int stock;
     private boolean isDeleted;
     private String factoryId;
+    private String status;
+
 
 	
 	public Coco() {
 		this.stock = 0;
 	}
 
-	public Coco(String id, String name, double cost, String category, String type, String status, double mass,
-			String details, String picture, int stock, boolean isDeleted, String factoryId) {
+	public Coco(String id, String name, double cost, String category, String type, double mass,
+			String details, String picture, int stock, boolean isDeleted, String factoryId, String status) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.cost = cost;
 		this.category = category;
 		this.type = type;
-		this.status = status;
 		this.mass = mass;
 		this.details = details;
 		this.picture = picture;
 		this.stock = stock;
 		this.isDeleted = isDeleted;
 		this.factoryId = factoryId;
+		this.status = status;
 	}
 
 	public String getId() {
@@ -131,6 +132,13 @@ public class Coco {
 
 	public void setFactoryId(String factoryId) {
 		this.factoryId = factoryId;
+	}
+
+	@Override
+	public String toString() {
+		return "Coco [id=" + id + ", name=" + name + ", cost=" + cost + ", category=" + category + ", type=" + type
+				+ ", mass=" + mass + ", details=" + details + ", picture=" + picture + ", stock=" + stock
+				+ ", isDeleted=" + isDeleted + ", factoryId=" + factoryId + ", status=" + status + "]";
 	}
 	
 	

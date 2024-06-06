@@ -23,8 +23,9 @@ public class CocoDAO {
 	}
 	
 	public CocoDAO(String contextPath) {
-		FileLocation = contextPath + "/cocolates.csv";
-		LoadCocos(contextPath);
+		FileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv";
+		LoadCocos(FileLocation);
+		System.out.println(cocos.size() + "eeeee");
 	}
 
 	public Collection<Coco> FindAll() {
@@ -83,9 +84,10 @@ public class CocoDAO {
 
 
 	private void LoadCocos(String contextPath) {
+		System.out.println("OVde u laod je ucitano");
 		BufferedReader in = null;
 		try {
-			File file = new File(contextPath + "/cocolates.txt");
+			File file = new File("C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv");
 			in = new BufferedReader(new FileReader(file));
 			String line, id = "", name = "", cost = "", category = "", type = "", status = "", mass = "", details = "", picture = "", stock = "", isDeleted = "", factoryId = "";
 			StringTokenizer st;
@@ -94,21 +96,22 @@ public class CocoDAO {
 				if (line.equals("") || line.indexOf('#') == 0)
 					continue;
 				st = new StringTokenizer(line, ";");
+			    System.out.println("Ukupno pročitano linija iz CSV datoteke: ");
 				while (st.hasMoreTokens()) {
 					id = st.nextToken().trim();
 					name = st.nextToken().trim();
 					cost = st.nextToken().trim();
 					category = st.nextToken().trim();
 					type = st.nextToken().trim();
-					status = st.nextToken().trim();
 					mass = st.nextToken().trim();
 					details = st.nextToken().trim();
 					picture = st.nextToken().trim();
 					stock = st.nextToken().trim();
 					isDeleted = st.nextToken().trim();
 					factoryId = st.nextToken().trim();
+					status = st.nextToken().trim();
 				}
-				cocos.put(id, new Coco(id, name, Double.parseDouble(cost), category, type, status, Double.parseDouble(mass), details, picture, Integer.parseInt(stock), Boolean.parseBoolean(isDeleted), factoryId));
+				cocos.put(id, new Coco(id, name, Double.parseDouble(cost), category, type, Double.parseDouble(mass), details, picture, Integer.parseInt(stock), Boolean.parseBoolean(isDeleted), factoryId, status));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -124,18 +127,23 @@ public class CocoDAO {
 	}
 	
 	private void SaveChocolatesToFile() {
-	    try (BufferedWriter out = new BufferedWriter(new FileWriter(FileLocation))) {
+		System.out.println(FileLocation);
+	    try (BufferedWriter out = new BufferedWriter(new FileWriter("C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv"))) {
 	        for (Coco cocolates : cocos.values()) {
+	        	System.out.println(cocolates.getName());
 	            String line = String.join(";",
 	                    cocolates.getId(),
 	                    cocolates.getName(),
 	                    String.valueOf(cocolates.getCost()),
-	                    cocolates.getType(),
 	                    cocolates.getCategory(),
+	                    cocolates.getType(),
 	                    String.valueOf(cocolates.getMass()),
 	                    cocolates.getDetails(),
 	                    cocolates.getPicture(),
-	                    String.valueOf(cocolates.isDeleted())
+	                    String.valueOf(cocolates.getStock()),
+	                    String.valueOf(cocolates.isDeleted()),
+	                    cocolates.getFactoryId(),
+	                    cocolates.getStatus()
 	            );
 	            out.write(line);
 	            out.newLine();
@@ -154,6 +162,8 @@ public class CocoDAO {
         		}
         	}
         }
+		System.out.println(cocos.size() + "ovo je cocos");
+		System.out.println(cocolates.size());
         return cocolates;
 	}
 

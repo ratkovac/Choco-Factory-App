@@ -20,20 +20,28 @@ public class FactoryDAO {
 	private String fileLocation;
 	
 	public FactoryDAO() {
+		factories.put("1", new Factory("1", "Blabla", "strpce", "http:", 2.3, false, "2.5"));
 	}
 	
 	public FactoryDAO(String contextPath) {
-		fileLocation = contextPath + "/factories.csv";
-		loadFactories(contextPath);
+		System.out.println("!");
+		this.fileLocation = "C:/Users/janic/FAX/SEMESTAR 6/Veb programiranje/CocoFactory/veb-projekat/Backend/WebShopAppREST/src/main/webapp/factories.csv";
+		loadFactories(fileLocation);
 	}
 
 	public Collection<Factory> findAll() {
+		System.out.println(factories.size());
 		return factories.values();
 	}
 
 	public Factory findFactory(String id) {
-		return factories.containsKey(id) ? factories.get(id) : null;
+	    Factory factory = factories.get(id);
+	    if (factory != null) {
+	        factory.setStatus(checkStatus(factory.getWorkingTime()));
+	    }
+	    return factory;
 	}
+
 	
 	public Factory updateFactory(String id, Factory factory) {
 		Factory f = factories.containsKey(id) ? factories.get(id) : null;
@@ -81,11 +89,14 @@ public class FactoryDAO {
 	private void loadFactories(String contextPath) {
 		BufferedReader in = null;
 		try {
-			File file = new File(contextPath + "/factories.txt");
+			File file = new File(contextPath);
+			System.out.println("!");
 			in = new BufferedReader(new FileReader(file));
-			String line, id = "", name = "", status = "", location = "", pathToLogo = "", rate = "", isDeleted = "", workingTime = "";
+			String line, id = "", name = "", workingTime = "" , location = "", pathToLogo = "", rate = "", isDeleted = "";
 			StringTokenizer st;
+			System.out.println(contextPath);
 			while ((line = in.readLine()) != null) {
+				System.out.println("Petlja 1");
 				line = line.trim();
 				if (line.equals("") || line.indexOf('#') == 0)
 					continue;
@@ -93,14 +104,14 @@ public class FactoryDAO {
 				while (st.hasMoreTokens()) {
 					id = st.nextToken().trim();
 					name = st.nextToken().trim();
-					status = st.nextToken().trim();
+					workingTime = st.nextToken().trim();
 					location = st.nextToken().trim();
 					pathToLogo = st.nextToken().trim();
 					rate = st.nextToken().trim();
 					isDeleted = st.nextToken().trim();
-					workingTime = st.nextToken().trim();
+					//status = st.nextToken().trim();
 				}
-				factories.put(id, new Factory(id, name, status, location, pathToLogo, Double.parseDouble(rate), Boolean.parseBoolean(isDeleted), Double.parseDouble(workingTime)));
+				factories.put(id, new Factory(id, name, location, pathToLogo, Double.parseDouble(rate), Boolean.parseBoolean(isDeleted), workingTime));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

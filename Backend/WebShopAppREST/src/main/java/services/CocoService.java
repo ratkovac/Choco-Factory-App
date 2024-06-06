@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 import beans.Coco;
 import dao.CocoDAO;
 
-@Path("/cocolates")
+@Path("/chocolates")
 public class CocoService {
 	@Context
 	ServletContext ctx;
@@ -52,9 +52,10 @@ public class CocoService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Coco addCoco(Coco coco) {
 		CocoDAO cocoDAO = (CocoDAO) ctx.getAttribute(("cocoDAO"));
+		System.out.println(coco.getId());
 		return cocoDAO.Save(coco);
 	}
-	
+		
 	@DELETE
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)

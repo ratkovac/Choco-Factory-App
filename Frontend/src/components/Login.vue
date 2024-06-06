@@ -32,7 +32,7 @@ const errorMessage = ref('');
 const success = ref('');
 
 const login = () => {
-    axios.post('http://localhost:8080/WebShopAppREST/rest/login', { username: username.value, password: password.value })
+    axios.post('http://localhost:8081/WebShopAppREST/rest/login', { username: username.value, password: password.value })
         .then(response => {
             success.value = 'Korisnik je uspesno prijavljen.';
             errorMessage.value = '';
