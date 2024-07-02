@@ -49,7 +49,7 @@ public class CommentService {
 	    System.out.println("USLO Je facory id " + factoryId);
 	    CommentDAO commentDAO = (CommentDAO) ctx.getAttribute("commentDAO");
 	    System.out.println("Bravo sava");
-	    ArrayList<Comment> comments = commentDAO.GetCommentsByFactory("1");
+	    ArrayList<Comment> comments = commentDAO.GetCommentsByFactory(factoryId);
 	    System.out.println("Broj komentara: " + comments.size());
 	    return comments;
 	}

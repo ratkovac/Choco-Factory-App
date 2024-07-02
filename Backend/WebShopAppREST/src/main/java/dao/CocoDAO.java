@@ -24,7 +24,7 @@ public class CocoDAO {
 	}
 	
 	public CocoDAO(String contextPath) {
-		this.fileLocation = new File(contextPath, "chocolates.csv").getAbsolutePath();
+        fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\WebShopAppREST\\chocolates.csv";
 		loadCocos(fileLocation);
 		//System.out.println(cocos.size() + "eeeee");
 	}

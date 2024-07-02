@@ -1,111 +1,128 @@
 <template>
-  <section class="py-5">
-    <div class="container px-4 px-lg-5 my-5">
-      <!-- Factories Table -->
-      <div class="row gx-5 gx-lg-1 align-items-center mb-4">
-        <div class="col-md-12">
-          <h1 class="display-5 fw-bold mb-4">{{ title }}</h1>
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead class="table-dark">
-                <tr>
-                  <th scope="col">Logo firme</th>
-                  <th scope="col">Naziv</th>
-                  <th scope="col">Lokacija</th>
-                  <th scope="col">Prosečna ocena</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="factory in sortedFactories" :key="factory.id">
-                  <td>
-                    <img :src="factory.pathToLogo" alt="Factory Logo" class="img-thumbnail" style="max-width: 80px;">
-                  </td>
-                  <td>{{ factory.name }}</td>
-                  <td>{{ factory.location }}</td>
-                  <td style="text-align: center;">{{ factory.rate }}</td>
-                  <td>
-                    <button @click="pregledajFabriku(factory)" class="btn btn-outline-primary btn-sm">
-                      Pregledaj fabriku
-                    </button>
-                  </td>
-                </tr>
-                <tr v-if="sortedFactories.length === 0">
-                  <td colspan="5" class="text-center">Nema rezultata pretrage</td>
-                </tr>
-              </tbody>
-            </table>
+  <!-- Search Bars -->
+  <h1 class="display-5 fw-bold mb-4" style="text-align: center">{{ title }}</h1>
+  <div class="row gx-5 gx-lg-1 align-items-center mb-2">
+    <div class="col-md-2 mb-2">
+      <input v-model="searchParams.factoryName" type="text" class="form-control" placeholder="Naziv fabrike" @input="filterFactories">
+    </div>
+    <div class="col-md-2 mb-2">
+      <input v-model="searchParams.chocolateName" type="text" class="form-control" placeholder="Ime čokolade" @input="filterFactories">
+    </div>
+    <div class="col-md-2 mb-2">
+      <input v-model="searchParams.location" type="text" class="form-control" placeholder="Lokacija" @input="filterFactories">
+    </div>
+    <div class="col-md-2 mb-2">
+      <input v-model="searchParams.averageRating" type="number" class="form-control" placeholder="Prosečna ocena" @input="filterFactories">
+    </div>
+    <div class="col-md-2 mb-2">
+      <select v-model="sortParams.criterion" class="form-select" aria-label="Default select example">
+        <option value="">Sortiraj po...</option>
+        <option value="name">Naziv</option>
+        <option value="location">Lokacija</option>
+        <option value="rate">Prosečna ocena</option>
+      </select>
+    </div>
+    <div class="col-md-2 mb-2">
+      <select v-model="sortParams.ascending" class="form-select" aria-label="Default select example">
+        <option value="true">Rastuće</option>
+        <option value="false">Opadajuće</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="row gx-1 gx-lg-1 align-items-center mb-3">
+    <div class="d-inline-flex gap-2">
+      <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" style="font-size: x-large; width: 150px;">
+        Filter
+      </button>
+      <button @click="searchFactories" class="btn btn-primary" style="font-size: x-large; width: 150px;">
+        Pretraži
+      </button>
+    </div>
+    <div class="collapse mt-3" id="collapseExample">
+      <div class="row gx-5 gx-lg-1 align-items-center">
+        <div class="col-md-3">
+          <div>
+            <h6 class="fw-bold">Category:</h6>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" v-model="chocolateCategoryFilters.regular" @change="updateChocolateCategoryFilters">
+              <label class="form-check-label">
+                Regular
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" v-model="chocolateCategoryFilters.cooking" @change="updateChocolateCategoryFilters">
+              <label class="form-check-label">
+                Cooking
+              </label>
+            </div>
           </div>
         </div>
-      </div>
-
-      <!-- Search Bars -->
-      <div class="row gx-5 gx-lg-1 align-items-center">
-        <div class="col-md-3 mb-2">
-          <input v-model="searchParams.factoryName" type="text" class="form-control" placeholder="Naziv fabrike" @input="filterFactories">
+        <div class="col-md-3">
+          <div>
+            <h6 class="fw-bold">Type:</h6>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" v-model="chocolateTypeFilters.milk" @change="updateChocolateTypeFilters">
+              <label class="form-check-label">
+                Milk
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" v-model="chocolateTypeFilters.dark" @change="updateChocolateTypeFilters">
+              <label class="form-check-label">
+                Dark
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" v-model="chocolateTypeFilters.white" @change="updateChocolateTypeFilters">
+              <label class="form-check-label">
+                White
+              </label>
+            </div>
+          </div>
         </div>
-        <div class="col-md-3 mb-2">
-          <input v-model="searchParams.chocolateName" type="text" class="form-control" placeholder="Ime čokolade" @input="filterFactories">
-        </div>
-        <div class="col-md-3 mb-2">
-          <input v-model="searchParams.location" type="text" class="form-control" placeholder="Lokacija" @input="filterFactories">
-        </div>
-        <div class="col-md-2 mb-2">
-          <input v-model="searchParams.averageRating" type="number" class="form-control" placeholder="Prosečna ocena" @input="filterFactories">
-        </div>
-      </div>
-
-      <div class="row gx-5 gx-lg-1 align-items-center mt-3">
-        <div class="col-md-3 mb-2">
-          <label>
-            <input type="checkbox" v-model="chocolateCategoryFilters.regular" @change="updateChocolateCategoryFilters"> Regular
-          </label>
-          <label>
-            <input type="checkbox" v-model="chocolateCategoryFilters.cooking" @change="updateChocolateCategoryFilters"> Cooking
-          </label>
-        </div>
-        <div class="col-md-3 mb-2">
-          <label>
-            <input type="checkbox" v-model="chocolateTypeFilters.milk" @change="updateChocolateTypeFilters"> Milk
-          </label>
-          <label>
-            <input type="checkbox" v-model="chocolateTypeFilters.dark" @change="updateChocolateTypeFilters"> Dark
-          </label>
-          <label>
-            <input type="checkbox" v-model="chocolateTypeFilters.white" @change="updateChocolateTypeFilters"> White
-          </label>
-        </div>
-        <div class="col-md-3 mb-2">
-          <label>
+        <div class="col-md-4 mb-2 gx-5">
+          <label class="fw-bold">
             <input type="checkbox" v-model="searchParams.isOpen" @change="filterFactories"> Prikaži samo otvorene
           </label>
         </div>
-        <div class="col-md-6 mb-2">
-          <button @click="searchFactories" class="btn btn-primary w-100">
-            Pretraži
-          </button>
-        </div>
-      </div>
-
-      <!-- Sort Options -->
-      <div class="row gx-5 gx-lg-1 align-items-center mt-3">
-        <div class="col-md-4 mb-2">
-          <select v-model="sortParams.criterion" class="form-control">
-            <option value="">Sortiraj po...</option>
-            <option value="name">Naziv</option>
-            <option value="location">Lokacija</option>
-            <option value="rate">Prosečna ocena</option>
-          </select>
-        </div>
-        <div class="col-md-4 mb-2">
-          <select v-model="sortParams.ascending" class="form-control">
-            <option value="true">Rastuće</option>
-            <option value="false">Opadajuće</option>
-          </select>
-        </div>
       </div>
     </div>
-  </section>
+  </div>
+
+  <!-- Factories Table -->
+  <div class="table-responsive" style="min-height: 500px">
+    <table class="table table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Logo firme</th>
+          <th scope="col">Naziv</th>
+          <th scope="col">Lokacija</th>
+          <th scope="col">Prosečna ocena</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="factory in sortedFactories" :key="factory.id">
+          <td>
+            <img :src="factory.pathToLogo" alt="Factory Logo" class="img-thumbnail" style="max-width: 80px;">
+          </td>
+          <td>{{ factory.name }}</td>
+          <td>{{ factory.location }}</td>
+          <td style="padding-left: 50px;">{{ factory.rate }}</td>
+          <td>
+            <button @click="pregledajFabriku(factory)" class="btn btn-outline-primary btn-sm">
+              Pregledaj fabriku
+            </button>
+          </td>
+        </tr>
+        <tr v-if="sortedFactories.length === 0">
+          <td colspan="5" class="text-center">Nema rezultata pretrage</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script setup>
@@ -242,89 +259,18 @@ const sortedFactories = computed(() => {
 });
 
 const updateChocolateTypeFilters = () => {
-  const selectedTypes = [];
-  if (chocolateTypeFilters.milk) selectedTypes.push('Milk');
-  if (chocolateTypeFilters.dark) selectedTypes.push('Dark');
-  if (chocolateTypeFilters.white) selectedTypes.push('White');
-  searchParams.chocolateType = selectedTypes.join(',');
+  searchParams.chocolateType = Object.keys(chocolateTypeFilters).filter(key => chocolateTypeFilters[key]).join(',');
   filterFactories();
 };
 
 const updateChocolateCategoryFilters = () => {
-  const selectedCategories = [];
-  if (chocolateCategoryFilters.regular) selectedCategories.push('Regular');
-  if (chocolateCategoryFilters.cooking) selectedCategories.push('Cooking');
-  searchParams.chocolateCategory = selectedCategories.join(',');
+  searchParams.chocolateCategory = Object.keys(chocolateCategoryFilters).filter(key => chocolateCategoryFilters[key]).join(',');
   filterFactories();
 };
 </script>
 
-<style scoped>
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th, .table td {
-  padding: 0.75rem;
-  vertical-align: top;
-  border-top: 1px solid #dee2e6;
-}
-
-.table thead th {
-  vertical-align: bottom;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.btn {
-  font-size: 14px;
-  padding: 0.4rem 1rem;
-}
-
-.btn-outline-primary {
-  color: #007bff;
-  border-color: #007bff;
-}
-
-.btn-outline-primary:hover {
-  background-color: #007bff;
-  color: #fff;
-}
-
-.img-thumbnail {
-  max-width: 100%;
-  height: auto;
-  border: 0;
-}
-
-.text-center {
-  text-align: center;
-  width: 100%;
-}
-
-.display-5 {
-  font-size: 2rem;
-  font-weight: 500;
-}
-
-.form-control {
-  height: calc(1.5em + 0.75rem + 2px);
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  border-radius: 0.25rem;
-  border: 1px solid #ced4da;
-}
-
-.form-control:focus {
-  color: #495057;
-  background-color: #fff;
-  border-color: #80bdff;
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
-}
-
-.mb-2 {
-  margin-bottom: 0.5rem;
+<style>
+.table td {
+    vertical-align: middle;
 }
 </style>
