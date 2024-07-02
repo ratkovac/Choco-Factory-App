@@ -2,12 +2,14 @@ package dao;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 import beans.Comment;
 
@@ -21,8 +23,9 @@ public class CommentDAO {
     }
     
     public CommentDAO(String fileLocation) {
-        fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\CocoFactory-main\\CocoFactory-main\\Backend\\WebShopAppREST\\src\\main\\webapp\\comments.csv";
-        loadCommentsFromFile();
+        fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\WebShopAppREST\\comments.csv";
+        System.out.println("Ovo je file loc comments: " + fileLocation);
+        loadCommentsFromFile(fileLocation);
     }
     
     public void addComment(Comment comment) {
@@ -38,22 +41,48 @@ public class CommentDAO {
         return comments.values();
     }
     
-    private void loadCommentsFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileLocation))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(";");
-                if (parts.length >= 3) {
-                    String id = parts[0];
-                    String text = parts[1];
-                    String factoryId = parts[2];
+    private void loadCommentsFromFile(String filePath) {
+        BufferedReader in = null;
+        comments.clear();
+        try {
+            File file = new File(filePath);
+            System.out.println(filePath + " je");
+            in = new BufferedReader(new FileReader(file));
+            String line, id = "", text = "", factoryId = "";
+            StringTokenizer st;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line + " linija");
+                line = line.trim();
+                System.out.println(line + " linija2");
+                if (line.equals("") || line.indexOf('#') == 0)
+                    continue;
+                st = new StringTokenizer(line, ";");
+                while (st.hasMoreTokens()) {
+                    System.out.println("Uslo u token");
+                    id = st.nextToken().trim();
+                    System.out.println("ID je: " + id);
+                    text = st.nextToken().trim();
+                    System.out.println("Text je: " + text);
+                    factoryId = st.nextToken().trim();
+                    System.out.println("Factory ID je: " + factoryId);
+
                     comments.put(id, new Comment(id, text, factoryId));
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    System.out.println("Velcina " + comments.size());
+                    in.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
+
     
     private void saveCommentsToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileLocation))) {

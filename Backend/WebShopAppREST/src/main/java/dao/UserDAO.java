@@ -26,7 +26,7 @@ public class UserDAO {
 	}
 	
 	public UserDAO(String contextPath) {
-		FileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\CocoFactory-main\\CocoFactory-main\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
+		FileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
 		factoryDAO = new FactoryDAO(contextPath);
 		loadUsers(FileLocation);
 		System.out.println("Svi korisnici: " + users.size());

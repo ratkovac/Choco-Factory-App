@@ -1,0 +1,2 @@
+INDEX VERSION 1.4+C:\Users\janic\FAX\SEMESTAR 6\Veb programiranje\CocoFactory\CocoFactory-main\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+2137199689.index

@@ -32,7 +32,7 @@ public class FactoryDAO {
 		System.out.println("OVO je context " + contextPath);
 		this.fileLocation = new File(contextPath, "factories.csv").getAbsolutePath();
 		System.out.println("Ovo je putanja" + fileLocation);
-		this.cocoDAO = new CocoDAO(new File(contextPath, "chocolates.csv").getAbsolutePath());
+		this.cocoDAO = new CocoDAO(contextPath);
 		System.out.println("EE");
 		loadFactories(fileLocation);
 	}
@@ -155,6 +155,7 @@ public class FactoryDAO {
 			        String workinTime = st.nextToken().trim(); // Dodato čitanje chocolateIds
 			        System.out.println("workinTime:" + workinTime);
 			        String chocolateIdsStr = st.nextToken().trim(); // Dodato čitanje chocolateIds
+			        System.out.println(chocolateIdsStr);
 			        ArrayList<Integer> chocolateIds = new ArrayList<>();
 			        String[] chocolateIdsArray = chocolateIdsStr.split(",");
 			        for (String chocolateId : chocolateIdsArray) {
