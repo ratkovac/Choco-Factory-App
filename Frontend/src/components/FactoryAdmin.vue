@@ -4,7 +4,9 @@
       <!-- Factories Table -->
       <div class="row gx-5 gx-lg-1 align-items-center mb-4">
         <div class="col-md-12">
-          <h1 class="display-5 fw-bold mb-4">{{ title }}</h1>
+          <h1 class="display-5 fw-bold mb-4">{{ title }}
+            <button @click="dodajFabriku()" class="btn btn-outline-primary btn-sm" style="margin-bottom: 10px; margin-left: 20px"> Dodaj fabriku </button>
+          </h1>
           <div class="table-responsive">
             <table class="table table-hover">
               <thead class="table-dark">
@@ -206,6 +208,10 @@ const factoryContainsChocolateWithCategory = (factory, chocolateCategory) => {
 const pregledajFabriku = (factory) => {
   router.push({ path: `/factories/${factory.id}` });
 };
+
+const dodajFabriku = () => {
+  router.push({ path: `/factories/create` })
+}
 
 const searchFactories = async () => {
   try {

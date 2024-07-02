@@ -1,6 +1,8 @@
 package services;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.*;
@@ -32,7 +34,9 @@ public class FactoryService {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Factory> getFactories() {
-        System.out.println("Pozvana je metoda getFactories()"); // Dodajte ovu liniju za ispisivanje poruke u konzolu
+        System.out.println("Pozvana je metoda getFactories()");
+        ArrayList<Factory> fabrike = new ArrayList<>(factoryDAO.findAll());
+        System.out.println(fabrike.size() + "velicina");
         return new ArrayList<>(factoryDAO.findAll());
     }
 
@@ -41,7 +45,10 @@ public class FactoryService {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Factory addFactory(Factory factory) {
-        return factoryDAO.save(factory);
+    	System.out.println("FAbrika");
+    	System.out.println(factory);
+    	System.out.println(factoryDAO.findAll().size() + " weq");
+        return factoryDAO.addFactory(factory);
     }
 
     @GET
@@ -71,4 +78,40 @@ public class FactoryService {
     public Factory updateFactory(@PathParam("id") String id, Factory updatedFactory) {
         return factoryDAO.updateFactory(id, updatedFactory);
     }
+    
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Factory> searchFactories(@QueryParam("factoryName") String factoryName,
+                                         @QueryParam("location") String location,
+                                         @QueryParam("averageRating") Double averageRating,
+                                         @QueryParam("chocolateName") String chocolateName,
+                                         @QueryParam("chocolateType") String chocolateType,
+                                         @QueryParam("chocolateCategory") String chocolateCategory,
+                                         @QueryParam("isOpen") boolean isOpen) {
+        List<Factory> result = new ArrayList<>();
+
+        for (Factory factory : factoryDAO.findAll()) {
+            if ((factoryName == null || factoryName.trim().isEmpty() || factory.getName().toLowerCase().contains(factoryName.toLowerCase())) &&
+                (location == null || location.trim().isEmpty() || factory.getLocation().equalsIgnoreCase(location)) &&
+                (chocolateName == null || chocolateName.trim().isEmpty() || factoryDAO.factoryContainsChocolate(factory, chocolateName)) &&
+                (chocolateType == null || chocolateType.trim().isEmpty() || factoryDAO.factoryContainsChocolateWithType(factory, chocolateType)) &&
+                (chocolateCategory == null || chocolateCategory.trim().isEmpty() || factoryDAO.factoryContainsChocolateWithCategory(factory, chocolateCategory)) &&
+                (averageRating == null || factory.getRate() >= averageRating) &&
+                (!isOpen || factoryDAO.checkStatus(factory.getWorkingTime()).equals("Work"))) {
+            	
+            	result.add(factory);
+            }
+        }
+
+        return result;
+    }
+
+    @GET
+    @Path("/sort")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Factory> sortFactories(@QueryParam("criterion") String criterion, @QueryParam("ascending") boolean ascending) {
+        return factoryDAO.sortFactories(criterion, ascending);
+    }
+
 }

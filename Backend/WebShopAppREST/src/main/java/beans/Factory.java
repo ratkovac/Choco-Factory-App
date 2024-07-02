@@ -15,10 +15,11 @@ public class Factory {
     private ArrayList<Integer> chocolateIds;
     
     public Factory() {
+        this.id = "0";
     }
     
     public Factory(String id, String name, String location, String pathToLogo, double rate,
-            boolean isDeleted, String workingTime) {
+            boolean isDeleted, String workingTime, ArrayList<Integer> chocolateIds) {
         super();
         this.id = id;
         this.name = name;
@@ -29,9 +30,9 @@ public class Factory {
         this.workingTime = workingTime;
         this.comments = new ArrayList<String>();
         this.status = "Ne radi"; // Postavljeno podrazumevano stanje na "Ne radi"
-        this.setChocolateIds(new ArrayList<Integer>());
+        this.chocolateIds = chocolateIds;
     }
-
+    
     public String getId() {
         return id;
     }
@@ -117,5 +118,12 @@ public class Factory {
 	}
 	public void addChocolateById(Integer id) {
 		this.chocolateIds.add(id);
+	}
+
+	@Override
+	public String toString() {
+		return "Factory [id=" + id + ", name=" + name + ", status=" + status + ", location=" + location
+				+ ", pathToLogo=" + pathToLogo + ", rate=" + rate + ", isDeleted=" + isDeleted + ", workingTime="
+				+ workingTime + ", comments=" + comments + ", chocolateIds=" + chocolateIds + "]";
 	}
 }

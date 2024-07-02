@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Login from '@/views/Login.vue'
-import WebShop from '@/views/WebShop.vue'
+import Register from '@/views/RegisterView.vue'
 import Coco from '@/views/CocoView.vue'
 import Factory from '@/views/FactoryView.vue'
+import FactoryAdmin from '@/views/FactoryAdminView.vue'
 import FactoryReview from '@/views/FactoryReviewView.vue'
+import CreateFactory from '@/views/CreateFactoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,9 +22,9 @@ const router = createRouter({
       component: Login
     },
     {
-      path: '/webshop',
-      name: 'webshop',
-      component: WebShop
+      path: '/register',
+      name: 'register',
+      component: Register
     },
     {
       path: '/chocolates/:cocoId/:name', // Dodan ":" prije cocoId
@@ -54,6 +56,16 @@ const router = createRouter({
       path: '/factories',
       name: 'factory',
       component: Factory
+    },
+    {
+      path: '/factories/admin',
+      name: 'factoryAdmin',
+      component: FactoryAdmin
+    },
+    {
+      path: '/factories/admin/create',
+      name: 'createFactory',
+      component: CreateFactory
     },
     {
       path: '/about',
