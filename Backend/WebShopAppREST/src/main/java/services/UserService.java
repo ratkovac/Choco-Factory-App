@@ -1,6 +1,8 @@
 package services;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -92,22 +94,34 @@ public class UserService {
     }
 
 	@POST
-    @Path("/login")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response authenticateUser(UserCredentials credentials) {
-        String username = credentials.getUsername();
-        String password = credentials.getPassword();
+	@Path("/login")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response authenticateUser(UserCredentials credentials) {
+	    String username = credentials.getUsername();
+	    String password = credentials.getPassword();
 
-        // Use userDAO directly
-        User user = userDAO.getRegisteringUser(username, password);
+	    // Use userDAO directly
+	    User user = userDAO.getRegisteringUser(username, password);
 
-        if (user != null) {
-            return Response.ok().entity(user).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("User does not exist with username: " + username).build();
-        }
-    }
+	    if (user != null) {
+	        if ("Manager".equals(user.getRole())) {
+	            // Assuming the User object has a getFactory() method that returns a Factory object
+	            String factoryId = user.getFactory() != null ? user.getFactory().getId() : null;
+	            // Create a response object with the user and factoryId
+	            Map<String, Object> responseMap = new HashMap<>();
+	            responseMap.put("user", user);
+	            responseMap.put("factoryId", factoryId);
+	            System.out.println(factoryId + "Ovo je id:");
+	            return Response.ok().entity(responseMap).build();
+	        } else {
+	            return Response.ok().entity(user).build();
+	        }
+	    } else {
+	        return Response.status(Response.Status.NOT_FOUND).entity("User does not exist with username: " + username).build();
+	    }
+	}
+
 	
 	@GET
     @Path("/{id}")

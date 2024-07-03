@@ -24,7 +24,7 @@ public class CocoDAO {
 	}
 	
 	public CocoDAO(String contextPath) {
-        fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\WebShopAppREST\\chocolates.csv";
+        fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv";
 		loadCocos(fileLocation);
 		//System.out.println(cocos.size() + "eeeee");
 	}
@@ -93,11 +93,13 @@ public class CocoDAO {
 			c.setMass(coco.getMass());
 			c.setDetails(coco.getDetails());
 			c.setPicture(coco.getPicture());
+			System.out.println(c.getStock() + "PRe");
 			c.setStock(coco.getStock());
+			System.out.println(c.getStock() + "Posle");
 			c.setDeleted(coco.isDeleted());
 			c.setFactoryId(coco.getFactoryId());
 		}
-		
+		saveChocolatesToFile();
 		return c;
 	}
 	

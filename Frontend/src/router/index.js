@@ -3,8 +3,12 @@ import HomeView from '../views/HomeView.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/RegisterView.vue'
 import Coco from '@/views/CocoView.vue'
+import CocoUpdate from '@/views/CocoUpdateView.vue'
+import FactoryWorker from '@/views/FactoryWorkerView.vue'
 import Factory from '@/views/FactoryView.vue'
 import FactoryAdmin from '@/views/FactoryAdminView.vue'
+import FactoryManager from '@/views/FactoryManagerView.vue'
+import FactoryCustomer from '@/views/FactoryCustomerView.vue'
 import FactoryReview from '@/views/FactoryReviewView.vue'
 import CreateFactory from '@/views/CreateFactoryView.vue'
 
@@ -30,6 +34,11 @@ const router = createRouter({
       path: '/chocolates/:cocoId/:name', // Dodan ":" prije cocoId
       name: 'cocoUpdate',
       component: Coco
+    },
+    {
+      path: '/chocolates/update/:cocoId/:name', // Dodan ":" prije cocoId
+      name: 'cocoUpdateWorker',
+      component: CocoUpdate
     },
     {
       path: '/chocolates',
@@ -63,9 +72,26 @@ const router = createRouter({
       component: FactoryAdmin
     },
     {
+      path: '/factories/customer/:id',
+      name: 'factoryCustomer',
+      component: FactoryCustomer
+    },
+    {
+      path: '/factories/worker/:id',
+      name: 'factoryWorker',
+      props: true,
+      component: FactoryWorker
+    },
+    {
       path: '/factories/admin/create',
       name: 'createFactory',
       component: CreateFactory
+    },
+    {
+      path: '/factories/manager/:id',
+      name: 'factoryManager',
+      props: true,
+      component: FactoryManager
     },
     {
       path: '/about',

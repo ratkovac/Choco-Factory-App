@@ -33,16 +33,8 @@ import router from '@/router';
 export default {
   data() {
     return {
-      user: {
-        id: ' ',
-        username: null,
-        password: null,
-        name: null,
-        surname: null,
-        gender: null,
-        birthDate: null,
-        role: null,
-      },
+      user: null,
+      factoryId: null,
       userCredentials: {
         username: null,
         password: null
@@ -76,23 +68,53 @@ export default {
       if (this.isUsernameValid && this.isPasswordValid) {
         axios.post('http://localhost:8080/WebShopAppREST/rest/user/login/', this.userCredentials)
           .then(response => {
-            this.user = response.data;
-            if (this.user.userStatus === 'Deactivated') {
-              this.errortext = 'Your account has been deactivated.';
-              return;
-            }
-            console.log('Uloga korisnika:');
-            console.log("Uloga korisnika:" + this.user.role);
-            if (this.user.role === 'Administrator') {
-              router.push({ path: `/loggedInAdmin/${this.user.id}` });
-            } else if (this.user.role === 'Customer') {
-                this.$router.push('/factories');
-            } else if (this.user.role === 'Manager') {
-                this.$router.push('/factories');
-            } else {
-              this.errortext = 'Invalid user role';
-            }
+            if (response.data) {
+              const responseData = response.data;
+              this.user = responseData.user || responseData;
+              this.factoryId = responseData.factoryId || (this.user.factory ? this.user.factory.id : null);
 
+              if (this.user.userStatus === 'Deactivated') {
+                this.errortext = 'Your account has been deactivated.';
+                return;
+              }
+
+              if (this.user.role === 'Administrator') {
+                router.push({ path: `/loggedInAdmin/${this.user.id}` });
+              } else if (this.user.role === 'Customer') {
+                router.push('/factories');
+              } else if (this.user.role === 'Manager') {
+                if (this.factoryId) {
+                  console.log("Ime:");
+                  console.log(responseData.firstName);
+                  router.push({ 
+                  path: `/factories/manager/${this.factoryId}`, 
+                  query: {
+                    firstName: responseData.firstName,
+                    lastName: responseData.lastName,
+                    username: responseData.username
+                  }
+                });
+                } else {
+                  this.errortext = 'Factory ID not found';
+                }
+              } else if (this.user.role == 'Worker') {
+                console.log("Ime:");
+                  console.log(responseData.firstName);
+                  router.push({ 
+                  path: `/factories/worker/${this.factoryId}`, 
+                  query: {
+                    firstName: responseData.firstName,
+                    lastName: responseData.lastName,
+                    username: responseData.username
+                  }
+                });
+              }
+               else {
+                this.errortext = 'Invalid user role';
+              }
+            } else {
+              this.errortext = `User does not exist with username: "${this.userCredentials.username}"`;
+            }
           })
           .catch(error => {
             console.error('An error occurred:', error);

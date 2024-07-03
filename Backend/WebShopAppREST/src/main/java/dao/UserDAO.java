@@ -116,7 +116,12 @@ public class UserDAO {
 				System.out.println("Registruje kupca");
 				user.setRole(UserRole.Customer);
 			}
+			else if(type.equals("w")) {
+				System.out.println("Registruje radnika");
+				user.setRole(UserRole.Worker);
+			}
 		    users.add(user);
+		    System.out.println(users.size());
 		    System.out.println("Korisnik registrovan");
 		    SaveUserToFile();
 		    return user;
@@ -245,7 +250,7 @@ public class UserDAO {
 	
 	private void SaveUserToFile() {
 		System.out.println(FileLocation);
-	    try (BufferedWriter out = new BufferedWriter(new FileWriter("C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\CocoFactory-main\\CocoFactory-main\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv"))) {
+	    try (BufferedWriter out = new BufferedWriter(new FileWriter(FileLocation))) {
 	        for (User user : users) {
 	        	System.out.println(user.getFirstName());
 	            String line = String.join(";",
