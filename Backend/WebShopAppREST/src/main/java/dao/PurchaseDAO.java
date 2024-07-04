@@ -37,6 +37,16 @@ public class PurchaseDAO {
     public List<Purchase> findAll() {
         return new ArrayList<>(purchases.values());
     }
+    
+    public List<Purchase> findAllByUser(String id) {
+        List<Purchase> userPurchases = new ArrayList<>();     
+        for (Purchase purchase : purchases.values()) {
+            if (purchase.getUser().getId().equals(id)) {
+                userPurchases.add(purchase); // Dodaj kupovinu u listu korisnikovih kupovina
+            }
+        }        
+        return userPurchases; // Vrati listu kupovina koje pripadaju korisniku sa datim id
+    }
 
     public Purchase findPurchase(String id) {
         return purchases.get(id);

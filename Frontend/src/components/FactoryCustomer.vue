@@ -12,7 +12,7 @@
         <li><a href="#">Logout</a></li>
       </ul>
     </div>
-  <div>
+  <div v-if="shopping">
     <!-- Progress Bar -->
     <div class="progress-container">
       <div class="progress-step active">Odabir fabrike</div>
@@ -105,6 +105,9 @@
     </div>
   </div>
 
+  <div v-if="purchases">
+
+  </div>
   </div>
 </template>
 
@@ -127,6 +130,7 @@ const chocolates = ref([]);
 const chocolatesList = ref([]);
 const comments = ref([]);
 const isFactorySelected = ref(false);
+const shopping = ref(true);
 
 onMounted(async () => {
   await loadFactories();
@@ -185,29 +189,6 @@ const loadFactoryDetails = async (factoryId) => {
   }
 };
 
-const addChocolate = (factory) => {
-  router.push({ path: `/chocolates/factories/${factory.id}/${factory.name}` });
-};
-
-const updateChocolate = async (chocolateId, factory) => {
-  try {
-    const response = await axios.get(`http://localhost:8080/WebShopAppREST/rest/chocolates/${chocolateId}`);
-    const chocolateData = response.data;
-    router.push({ path: `/chocolates/${chocolateId}/${factory.name}` });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const deleteChocolate = async (chocolateId, factory) => {
-  try {
-    const response = await axios.delete(`http://localhost:8080/WebShopAppREST/rest/chocolates/${chocolateId}`);
-    chocolates.value = await getChocolatesByFactory(factory.id);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 const buy = async () => {
   try {
     const response = await axios.post(`http://localhost:8080/WebShopAppREST/rest/carts/`, cart.value);
@@ -254,6 +235,10 @@ const addToCart = (chocolate) => {
   console.log("Cart:", cart.value.userId);
   console.log("Cart choco:", cart.value.chocolates);
 };
+
+  // PREGLED SVIH KUPOVINA //
+
+
 </script>
 
 <style scoped>
