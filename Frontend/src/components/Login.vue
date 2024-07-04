@@ -74,7 +74,7 @@ export default {
               this.factoryId = responseData.factoryId || (this.user.factory ? this.user.factory.id : null);
               const userId = responseData.id;
               console.log(this.user.role);
-              if (this.user.userStatus === 'Deactivated') {
+              if (this.user.status === 'DEACTIVATED') {
                 this.errortext = 'Your account has been deactivated.';
                 return;
               }

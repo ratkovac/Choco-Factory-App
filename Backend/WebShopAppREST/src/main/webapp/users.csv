@@ -1,7 +1,7 @@
-1;Pera;Peric;pera;pera1;Male;2002-02-12;Customer;Active;0
-2;Jovana;Jovanovic;jovana;jj123;Female;2003-03-13;Manager;Deactivated;0
-3;Stojanka;Novakovic;st.nov;100ja;Female;2004-04-14;Customer;Active;0
-4;Nikola;Ratkovac;nikolar;1234;Male;2002-02-12;Customer;Active;0
-5;IvanN;Janicevic;Ivan;ivan123;male;2024-07-02;Worker;Active;1
-6;Igor;Janicevic;igorMendazer;igot;male;2024-07-03;Manager;Active;5
-7;Luka;Lukic;lukax;123;male;2024-07-11;Worker;Active;0
+1;Pera;Peric;pera;pera1;Male;2002-02-12;Customer;false;DEACTIVATED;0
+2;Jovana;Jovanovic;jovana;jj123;Female;2003-03-13;Manager;false;DEACTIVATED;0
+3;Stojanka;Novakovic;st.nov;100ja;Female;2004-04-14;Customer;true;ACTIVATED;0
+4;Nikola;Ratkovac;nikolar;1234;Male;2002-02-12;Customer;true;ACTIVATED;0
+5;IvanN;Janicevic;Ivan;ivan123;male;2024-07-02;Worker;false;DEACTIVATED;1
+6;Igor;Janicevic;igorMendazer;igot;male;2024-07-03;Manager;true;ACTIVATED;5
+7;Luka;Lukic;lukax;123;male;2024-07-11;Worker;true;ACTIVATED;0
