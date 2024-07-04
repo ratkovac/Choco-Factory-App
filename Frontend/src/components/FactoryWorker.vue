@@ -250,7 +250,7 @@ const updateChocolate = async (chocolateId, factory) => {
 }
 
 .btn-view-factory {
-  background-color: cadetblue;
+  background-color: rgb(150, 29, 37);
   height: 50px;
   width: auto;
   font-size: 15px;
@@ -258,7 +258,8 @@ const updateChocolate = async (chocolateId, factory) => {
   color: white;
 }
 .btn-update {
-  background-color: cadetblue;
+  background-color: rgb(150, 29, 37);
+  border-color: rgb(150, 29, 37);
   height: 25px;
   width: auto;
   font-size: 12px;
@@ -270,7 +271,7 @@ const updateChocolate = async (chocolateId, factory) => {
   align-items: center;
   min-height: auto;
   background-color: #f0f0f0; /* Light gray background */
-  border: 10px solid #6d44b8; /* Border with increased thickness */
+  border: 10px solid rgb(150, 29, 37); /* Border with increased thickness */
   border-radius: 15px; /* Adjust border radius for rounded corners */
 }
 
@@ -325,7 +326,7 @@ select {
 
 .create-factory-button {
   padding: 10px;
-  background-color: #573b8a; /* Purple background */
+  background-color: rgb(150, 29, 37); /* Purple background */
   color: #fff; /* White text */
   border: none;
   border-radius: 4px;
@@ -334,7 +335,7 @@ select {
 }
 
 .create-factory-button:hover {
-  background-color: #6d44b8; /* Darker purple on hover */
+  background-color: rgb(150, 29, 37); /* Darker purple on hover */
 }
 
 .add-manager-button {
@@ -343,15 +344,15 @@ select {
   margin-left: 40px;
   padding: 10px;
   background-color: white; /* White background */
-  color: #6d44b8; /* Purple text color */
-  border: 3.5px solid #6d44b8;
+  color: rgb(150, 29, 37); /* Purple text color */
+  border: 3.5px solid rgb(150, 29, 37);
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .add-manager-button:hover {
-  background-color: #6d44b8; /* Darker purple on hover */
+  background-color: rgb(150, 29, 37); /* Darker purple on hover */
   color: white; /* White text color */
 }
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,700);
@@ -482,7 +483,7 @@ html, body, template{
   padding: 0;
   width: 110px;
   height: 110px;
-  background-color: #573b8a;
+  background-color: rgb(150, 29, 37);
   border-bottom-right-radius: 100%;
   box-shadow: 0 2px 5px rgba(0,0,0,0.26);
   animation: not-checked-anim .2s both;

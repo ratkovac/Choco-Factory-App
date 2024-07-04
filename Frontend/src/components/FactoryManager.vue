@@ -202,6 +202,8 @@ onMounted(async () => {
     chocolates.value = await getChocolatesByFactory(factoryId);
     comments.value = await getCommentsByFactory(factoryId);
     firstName = route.query.firstName;
+    lastName = route.query.lastName;
+    username = route.query.username;
   } catch (error) {
     console.error(error);
   }
@@ -277,7 +279,8 @@ const addChcolate = (factory) => {
   }
 
   .btn-view-factory {
-    background-color: cadetblue;
+    background-color: #573b8a;
+    border-color: #411594;
     height: 50px;
     width: auto;
     font-size: 15px;
@@ -285,7 +288,8 @@ const addChcolate = (factory) => {
     color: white;
   }
   .btn-update {
-    background-color: cadetblue;
+    background-color: #573b8a;
+    border-color: #3e1786;
     height: 25px;
     width: auto;
     font-size: 12px;
