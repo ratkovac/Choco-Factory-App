@@ -11,6 +11,8 @@ import FactoryManager from '@/views/FactoryManagerView.vue'
 import FactoryCustomer from '@/views/FactoryCustomerView.vue'
 import FactoryReview from '@/views/FactoryReviewView.vue'
 import CreateFactory from '@/views/CreateFactoryView.vue'
+import UserProfile from '@/views/UserProfileView.vue'
+import Users from '@/views/UsersView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -92,6 +94,16 @@ const router = createRouter({
       name: 'factoryManager',
       props: true,
       component: FactoryManager
+    },
+    {
+      path: '/current',
+      name: 'current',
+      component: UserProfile
+    },
+    {
+      path: '/users',
+      name: 'users',
+      component: Users
     },
     {
       path: '/about',

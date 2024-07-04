@@ -7,6 +7,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import beans.Factory;
@@ -19,14 +22,13 @@ public class UserDAO {
 	
 	private ArrayList<User> users = new ArrayList<>();
 	private String FileLocation;
-	private String fileLocation;
 	private FactoryDAO factoryDAO;
 	public UserDAO() {
 		
 	}
 	
 	public UserDAO(String contextPath) {
-		FileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
+		FileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
 		factoryDAO = new FactoryDAO(contextPath);
 		loadUsers(FileLocation);
 		System.out.println("Svi korisnici: " + users.size());
@@ -67,7 +69,7 @@ public class UserDAO {
 	        System.out.println("Provera korisnika: " + user.getUsername() + ", " + user.getPassword());
 	        if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
 	            System.out.println("nasao usera");
-	            if(user.getUserStatus().equals(UserStatus.Active)) {
+	            if(user.isActive()) {
 	                return user;
 	            } else {
 	                System.out.println("nalog deaktiviran");
@@ -106,7 +108,7 @@ public class UserDAO {
 			user.setPassword(userReg.getPassword());
 			user.setUsername(userReg.getUsername());
 			user.setLastName(userReg.getSurname());
-			user.setUserStatus(UserStatus.Active);
+			//user.setUserStatus(UserStatus.Active);
 			user.setFactory(new Factory());
 			if(type.equals("m")) {
 				System.out.println("Registruje menadzera");
@@ -116,12 +118,7 @@ public class UserDAO {
 				System.out.println("Registruje kupca");
 				user.setRole(UserRole.Customer);
 			}
-			else if(type.equals("w")) {
-				System.out.println("Registruje radnika");
-				user.setRole(UserRole.Worker);
-			}
 		    users.add(user);
-		    System.out.println(users.size());
 		    System.out.println("Korisnik registrovan");
 		    SaveUserToFile();
 		    return user;
@@ -138,16 +135,18 @@ public class UserDAO {
 	    return new UserRegistration(user.getUsername(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getGender(), user.getBirthDate());
 	}
 	
-	public Boolean updateUserForm(String id, UserRegistration updatedUser) {
+	public Boolean updateUserForm(String id, User updatedUser) {
 		User user = getUserById(id);
         if (user != null) {
         	System.out.println("Korisnik naden koji  se updejtuje");
             user.setUsername(updatedUser.getUsername());
             user.setPassword(updatedUser.getPassword());
-            user.setFirstName(updatedUser.getName());
-            user.setLastName(updatedUser.getSurname());
+            user.setFirstName(updatedUser.getFirstName());
+            user.setLastName(updatedUser.getLastName());
             user.setGender(updatedUser.getGender());
             user.setBirthDate(updatedUser.getBirthDate());
+            user.setActive(updatedUser.isActive());
+            user.setStatus(updatedUser.getStatus());
             SaveUserToFile();
             return true;
         }
@@ -170,28 +169,6 @@ public class UserDAO {
         return false;
 		
 	}
-    
-    public ArrayList<User> searchUsers(String name, String surname, String username, ArrayList<User> usersToSearch){
-    	ArrayList<User> searchedUsers = new ArrayList<User>();
-    	
-    	for(User u : usersToSearch) {
-    		boolean nameTrue = u.getFirstName().toLowerCase().contains(name.toLowerCase()) || name.equals("null");
-    		boolean surnameTrue = u.getLastName().toLowerCase().contains(surname.toLowerCase()) || surname.equals("null");
-    		boolean usernameTrue = u.getUsername().toLowerCase().contains(username.toLowerCase()) || username.equals("null");
-    		
-    		System.out.println("nameTrue: " +nameTrue);
-    		System.out.println("surnameTrue: "+surnameTrue);
-    		System.out.println("usernameTrue: "+usernameTrue);
-    		boolean isTrue = nameTrue && surnameTrue && usernameTrue;
-    		
-    		if(isTrue) {
-    			searchedUsers.add(u);
-    			System.out.println("Pretrazeni user: "+u);
-    		}
-    	}
-    	
-    	return searchedUsers;
-    }
 
 	private void loadUsers(String contextPath) {
 		BufferedReader in = null;
@@ -199,7 +176,7 @@ public class UserDAO {
 		try {
 			File file = new File(contextPath);
 			in = new BufferedReader(new FileReader(file));
-			String line, id="", firstName="", lastName="", username="", password="", gender="", birthDate="", roleStr="", statusStr="", factoryId="";
+			String line, id="", firstName="", lastName="", username="", password="", gender="", birthDate="", roleStr="", isActive="", statusStr="", factoryId="";
 			StringTokenizer st;
 			while ((line = in.readLine()) != null) {
 				line = line.trim();
@@ -216,10 +193,11 @@ public class UserDAO {
 					gender = st.nextToken().trim();
 					birthDate = st.nextToken().trim();
 					roleStr = st.nextToken().trim();
+					isActive = st.nextToken().trim();
 					statusStr = st.nextToken().trim();
-					System.out.println(statusStr);
+					//System.out.println(statusStr);
 					factoryId = st.nextToken().trim();
-					System.out.println(factoryId);
+					//System.out.println(factoryId);
 				}
 				UserStatus status = UserStatus.valueOf(statusStr);
 	            UserRole role = UserRole.valueOf(roleStr);
@@ -231,7 +209,7 @@ public class UserDAO {
 		            factory = factoryDAO.findFactory(factoryId);
 	            }
 
-	            User user = new User(id, firstName, lastName, username, password, gender, birthDate, role, status, factory);
+	            User user = new User(id, firstName, lastName, username, password, gender, birthDate, role, Boolean.parseBoolean(isActive), status, factory);
 	            users.add(user);
 	            System.out.println("Loaded user: " + user);
 				
@@ -250,7 +228,7 @@ public class UserDAO {
 	
 	private void SaveUserToFile() {
 		System.out.println(FileLocation);
-	    try (BufferedWriter out = new BufferedWriter(new FileWriter(FileLocation))) {
+	    try (BufferedWriter out = new BufferedWriter(new FileWriter("C:\\Users\\HP\\OneDrive\\Radna površina\\web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv"))) {
 	        for (User user : users) {
 	        	System.out.println(user.getFirstName());
 	            String line = String.join(";",
@@ -262,7 +240,8 @@ public class UserDAO {
 	            	user.getGender(),
 	            	user.getBirthDate(),
 	            	String.valueOf(user.getRole()),
-	            	String.valueOf(user.getUserStatus()),
+	            	String.valueOf(user.isActive()),
+	            	String.valueOf(user.getStatus()),
 	            	user.getFactory().getId()
 	            );
 	            out.write(line);
@@ -272,4 +251,62 @@ public class UserDAO {
 	        e.printStackTrace();
 	    }
 	}
+	
+	public List<User> searchUsers(String firstName, String lastName, String username, UserRole role) {
+	    List<User> result = new ArrayList<>();
+
+	    for (User user : users) {
+	        boolean matches = true;
+
+	        if (firstName != null && !user.getFirstName().toLowerCase().contains(firstName.toLowerCase())) {
+	            matches = false;
+	        }
+	        
+	        if (lastName != null && !user.getLastName().equalsIgnoreCase(lastName)) {
+	            matches = false;
+	        }
+	        
+	        if (username != null && !user.getUsername().equalsIgnoreCase(username)) {
+	            matches = false;
+	        }
+
+	        if (role != null && user.getRole() != role) {
+	            matches = false;
+	        }
+
+	        if (matches) {
+	            result.add(user);
+	        }
+	    }
+
+	    return result;
+	}
+
+	
+	public List<User> sortUsers(String criterion, boolean ascending) {
+        List<User> sortedUsers = new ArrayList<>(users);
+
+        Comparator<User> comparator;
+
+        switch (criterion.toLowerCase()) {
+            case "firstname":
+                comparator = Comparator.comparing(User::getFirstName);
+                break;
+            case "lastname":
+                comparator = Comparator.comparing(User::getLastName);
+                break;
+            case "username":
+                comparator = Comparator.comparing(User::getUsername);
+                break;
+            default:
+                throw new IllegalArgumentException("Nepoznat kriterijum za sortiranje: " + criterion);
+        }
+
+        if (!ascending) {
+            comparator = comparator.reversed();
+        }
+
+        Collections.sort(sortedUsers, comparator);
+        return sortedUsers;
+    }
 }

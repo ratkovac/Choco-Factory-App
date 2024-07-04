@@ -12,14 +12,15 @@ public class User {
 	private String gender;
 	private String birthDate;
 	private UserRole role;
-	private UserStatus userStatus;
+	private boolean isActive;
+	private UserStatus status;
 	
 	private Factory factory;
 	
 	public User() {
 	}
 
-	public User(String id, String firstName, String lastName, String username, String password, String gender, String birthDate, UserRole role, UserStatus userStatus) {
+	public User(String id, String firstName, String lastName, String username, String password, String gender, String birthDate, UserRole role, boolean isActive, UserStatus status) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -29,14 +30,15 @@ public class User {
 		this.gender = gender;
 		this.birthDate = birthDate;
 		this.role = role;
-		this.userStatus = userStatus;
+		this.isActive = isActive;
+		this.status = status;
 		factory = new Factory();
 	}
 
 
 	
 	public User(String id2, String firstName2, String lastName2, String username2, String password2, String gender2,
-			String birthDate2, UserRole role2, UserStatus status, Factory factory) {
+			String birthDate2, UserRole role2, boolean isActive, UserStatus status, Factory factory) {
 		super();
 		this.id = id2;
 		this.firstName = firstName2;
@@ -46,7 +48,8 @@ public class User {
 		this.gender = gender2;
 		this.birthDate = birthDate2;
 		this.role = role2;
-		this.userStatus = status;
+		this.isActive = isActive;
+		this.status = status;
 		this.factory = factory;
 	}
 
@@ -122,62 +125,19 @@ public class User {
 		this.id = id;
 	}
 
-	public UserStatus getUserStatus() {
-		return userStatus;
+	public boolean isActive() {
+		return isActive;
 	}
 
-	public void setUserStatus(UserStatus userStatus) {
-		this.userStatus = userStatus;
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
-	/*@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
-		return result;
+	public UserStatus getStatus() {
+		return status;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		if (firstName == null) {
-			if (other.firstName != null)
-				return false;
-		} else if (!firstName.equals(other.firstName))
-			return false;
-		if (lastName == null) {
-			if (other.lastName != null)
-				return false;
-		} else if (!lastName.equals(other.lastName))
-			return false;
-		if (password == null) {
-			if (other.password != null)
-				return false;
-		} else if (!password.equals(other.password))
-			return false;
-		if (username == null) {
-			if (other.username != null)
-				return false;
-		} else if (!username.equals(other.username))
-			return false;
-		return true;
+	public void setStatus(UserStatus status) {
+		this.status = status;
 	}
-
-	@Override
-	public String toString() {
-		return "User [firstName=" + firstName + ", lastName=" + lastName + ", username=" + username
-				+ ", password=" + password + "]";
-	}
-
-	private static final long serialVersionUID = 6640936480584723344L;*/
 }

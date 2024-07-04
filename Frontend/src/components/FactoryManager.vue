@@ -138,9 +138,9 @@
   const showFactory = ref(true);
   const showNewWorkerForm = ref(false);
 
-  const firstName = route.query.firstName;
-const lastName = route.query.lastName;
-const username = route.query.username;
+  const firstName = ref(route.query.firstName);
+const lastName = ref(route.query.lastName);
+const username = ref(route.query.username);
 
   const factoryShowClick = () => {
     showFactory.value = true;
@@ -194,16 +194,16 @@ const username = route.query.username;
   };
 
   
-onMounted(async () => {
+  onMounted(async () => {
   try {
     const factoryId = route.params.id; 
     const response = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factories/${factoryId}`);
     factory.value = response.data;
     chocolates.value = await getChocolatesByFactory(factoryId);
     comments.value = await getCommentsByFactory(factoryId);
-    firstName = route.query.firstName;
-    lastName = route.query.lastName;
-    username = route.query.username;
+    firstName.value = route.query.firstName;
+    lastName.value = route.query.lastName;
+    username.value = route.query.username;
   } catch (error) {
     console.error(error);
   }
