@@ -44,6 +44,8 @@ public class CartService {
     @Produces(MediaType.APPLICATION_JSON)
     public Cart newCart(Cart cart) {
         CartDAO dao = (CartDAO) ctx.getAttribute("cartDAO");
+        System.out.println("EEEE");
+        System.out.println(cart.getUserId() + "OOO");
         return dao.saveCart(cart);
     }
 }

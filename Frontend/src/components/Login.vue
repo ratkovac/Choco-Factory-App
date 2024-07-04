@@ -72,7 +72,8 @@ export default {
               const responseData = response.data;
               this.user = responseData.user || responseData;
               this.factoryId = responseData.factoryId || (this.user.factory ? this.user.factory.id : null);
-
+              const userId = responseData.id;
+              console.log(this.user.role);
               if (this.user.userStatus === 'Deactivated') {
                 this.errortext = 'Your account has been deactivated.';
                 return;
@@ -80,12 +81,11 @@ export default {
 
               if (this.user.role === 'Administrator') {
                 router.push({ path: `/loggedInAdmin/${this.user.id}` });
-              } else if (this.user.role === 'Customer') {
-                router.push('/factories');
               } else if (this.user.role === 'Manager') {
                 if (this.factoryId) {
-                  console.log("Ime:");
-                  console.log(responseData.firstName);
+                  console.log("username:");
+                  console.log(responseData.username);
+                  console.log("ID");
                   router.push({ 
                   path: `/factories/manager/${this.factoryId}`, 
                   query: {
@@ -103,6 +103,18 @@ export default {
                   router.push({ 
                   path: `/factories/worker/${this.factoryId}`, 
                   query: {
+                    firstName: responseData.firstName,
+                    lastName: responseData.lastName,
+                    username: responseData.username
+                  }
+                });
+              } else if (this.user.role == "Customer") {
+                console.log("Prijava customer"); 
+                console.log("ID:", userId);              
+                router.push({ 
+                  path: `/factories/customer/${userId}`, 
+                  query: {
+                    id: userId,
                     firstName: responseData.firstName,
                     lastName: responseData.lastName,
                     username: responseData.username

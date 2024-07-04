@@ -4,7 +4,7 @@
     <div class="progress-container">
       <div class="progress-step active">Odabir fabrike</div>
       <div class="progress-step" :class="{ active: isFactorySelected }">Odabir čokolade</div>
-      <div class="progress-step">Pregled i potvrda</div>
+      <div class="progress-step" :class="{ active: cartShow }">Pregled i potvrda</div>
     </div>
     
     <!-- Conditional Rendering -->
@@ -24,7 +24,7 @@
       </div>
     </div>
     
-    <div v-else>
+    <div v-if="chocolatesShow">
       <!-- Selected Factory Details and Chocolates -->
       <section class="py-5" style="width: 1200px;">
         <div class="row">
@@ -33,10 +33,13 @@
             <div>
               <h2 style="font-weight: bold;"> {{ selectedFactory.name }}</h2>
             </div>
+            <button @click="pregledajKorpu()" class="btn btn-primary btn-add-to-cart" style="margin-left: 800px; background-color: white; font-weight: bold; border-color: rgb(64, 151, 249); color: rgb(64, 151, 249);">
+              Pregled Korpe
+            </button>
           </div>
 
           <div class="col-md-30">
-              <span v-if="!(chocolates && chocolates.length > 0)"> Nema dostupnih čokolada</span>
+            <span v-if="!(chocolates && chocolates.length > 0)"> Nema dostupnih čokolada</span>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" v-if="chocolates && chocolates.length > 0">
               <div class="col" v-for="chocolate in chocolates" :key="chocolate.id">
                 <div class="card h-100">
@@ -58,27 +61,61 @@
         </div>
       </section>
     </div>
+    
+    <div v-if="cartShow" class="cart-section">
+    <!-- Pregled Korpe -->
+    <h2>Pregled Korpe</h2>
+    <div v-if="cart.chocolates.length > 0" class="cart-table-container">
+      <button @click="buy()" style="margin-left: 950px; width: 160px;" class="btn btn-primary btn-add-to-cart">Poruci</button>
+      <p style="font-weight: bold; margin-left: 950px">Ukupna cena: {{ totalPrice }} RSD</p>
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Čokolada</th>
+            <th>Količina</th>
+            <th>Cena</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="chocolate in cart.chocolates" :key="chocolate.id">
+            <td>{{ getChocolateName(chocolate.id) }}</td>
+            <td>{{ chocolate.quantity }}</td>
+            <td>{{ getChocolateCost(chocolate.id) * chocolate.quantity }} RSD</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div v-else>
+      <p>Korpa je prazna.</p>
+    </div>
+  </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
+const route = useRoute();
 const router = useRouter();
 
 const title = ref("Fabrike čokolade");
 
+const cartShow = ref(false);
+const chocolatesShow = ref(false);
 const factories = ref([]);
 const filteredFactories = ref([]);
 const selectedFactory = ref(null);
 const chocolates = ref([]);
+const chocolatesList = ref([]);
 const comments = ref([]);
 const isFactorySelected = ref(false);
 
 onMounted(async () => {
   await loadFactories();
+  this.userId = route.query.userId;
 });
 
 const loadFactories = async () => {
@@ -99,16 +136,33 @@ const filterFactories = () => {
   });
 };
 
+const pregledajKorpu = () => {
+  cartShow.value = true;
+  chocolatesShow.value = false;
+};
+
 const selectFactory = async (factory) => {
   selectedFactory.value = factory;
   isFactorySelected.value = true;
+  chocolatesShow.value = true;
   await loadFactoryDetails(factory.id);
+};
+
+const getChocolateName = (id) => {
+  const chocolate = chocolates.value.find(choco => choco.id === id);
+  return chocolate ? chocolate.name : 'Nepoznata čokolada';
+};
+
+const getChocolateCost = (id) => {
+  const chocolate = chocolates.value.find(choco => choco.id === id);
+  return chocolate ? chocolate.cost : 0;
 };
 
 const loadFactoryDetails = async (factoryId) => {
   try {
     const chocolatesResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/chocolates/factory/${factoryId}`);
     chocolates.value = chocolatesResponse.data.map(chocolate => ({ ...chocolate, quantity: 1 }));
+    chocolatesList.value = chocolatesResponse.data;
     const commentsResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/comments/factory/${factoryId}`);
     comments.value = commentsResponse.data;
   } catch (error) {
@@ -139,6 +193,13 @@ const deleteChocolate = async (chocolateId, factory) => {
   }
 };
 
+const buy = async () => {
+  try {
+    const response = await axios.post(`http://localhost:8080/WebShopAppREST/rest/carts/`, cart.value);
+  } catch(error) {
+    console.error(error);
+  }
+};
 const sortedFactories = computed(() => {
   return filteredFactories.value;
 });
@@ -152,13 +213,31 @@ const validateQuantity = (chocolate) => {
   }
 };
 
-const addToCart = async (chocolate) => {
-  try {
-    const response = await axios.delete(`http://localhost:8080/WebShopAppREST/rest/carts/`);
-    chocolates.value = await getChocolatesByFactory(factory.id);
-  } catch (error) {
-    console.error(error);
+const userId = ref(""); // Postaviti odgovarajući userId
+const cart = ref({
+  id: "",
+  userId: route.query.id,
+  price: "",
+  chocolates: []
+});
+const totalPrice = ref(0); // Implementacija prema potrebi
+
+const addToCart = (chocolate) => {
+  const priceToAdd = chocolate.cost * chocolate.quantity;
+  totalPrice.value += priceToAdd;
+  cart.value.price = totalPrice.value;
+
+  // Provera da li čokolada već postoji u korpi
+  const existingChocolate = cart.value.chocolates.find(item => item.id === chocolate.id);
+  if (existingChocolate) {
+    existingChocolate.quantity += chocolate.quantity;
+  } else {
+    cart.value.chocolates.push({ id: chocolate.id, quantity: chocolate.quantity });
   }
+  console.log("Cart userID:", cart.value.userId);
+  console.log("Cart price:", cart.value.price);
+  console.log("Cart:", cart.value.userId);
+  console.log("Cart choco:", cart.value.chocolates);
 };
 </script>
 
@@ -256,4 +335,17 @@ const addToCart = async (chocolate) => {
 .quantity-input input {
   width: 60px;
 }
+
+.cart-section {
+  width: 1200px; /* Isto kao i kod drugih sekcija */
+  margin-top: 20px; /* Dodaj margine po potrebi */
+}
+
+.cart-table-container {
+  background-color: #f8f9fa; /* Boja pozadine, možeš promijeniti po želji */
+  padding: 20px; /* Dodaj padding za bolji izgled */
+  border-radius: 10px; /* Dodaj obrubljenje za bolji izgled */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Dodaj sjenu za bolji izgled */
+}
+
 </style>

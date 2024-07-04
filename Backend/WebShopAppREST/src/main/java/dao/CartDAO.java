@@ -57,6 +57,11 @@ public class CartDAO {
     public Cart saveCart(Cart cart) {
         cart.setId(generateNewId());
         carts.put(cart.getId(), cart);
+        ArrayList<CocoInCart> chocolates = new ArrayList<CocoInCart>();
+        for(CocoInCart coco : cart.getChocolates()) {
+        	chocolates.add(cocoInCartDAO.saveCocoInCart(coco));
+        }
+        cart.setChocolates(chocolates);
         saveCartsToFile();
         return cart;
     }
@@ -121,9 +126,16 @@ public class CartDAO {
     private void saveCartsToFile() {
         try (BufferedWriter out = new BufferedWriter(new FileWriter(fileLocation))) {
             for (Cart cart : carts.values()) {
-                out.write(cart.getId() + ";" + cart.getUserId() + ";" + cart.getTotalPrice());
-                for (CocoInCart chocolate : cart.getChocolates()) {
-                    out.write(";" + chocolate.getId());
+                out.write(cart.getId() + ";" + cart.getUserId() + ";" + cart.getTotalPrice() + ";");
+
+                // Prolazak kroz čokolade
+                List<CocoInCart> chocolates = cart.getChocolates();
+                for (int i = 0; i < chocolates.size(); i++) {
+                    CocoInCart chocolate = chocolates.get(i);
+                    out.write(chocolate.getId());
+                    if (i < chocolates.size() - 1) {
+                        out.write(","); // Dodaj zarez osim nakon poslednjeg elementa
+                    }
                 }
                 out.newLine();
             }
@@ -131,4 +143,5 @@ public class CartDAO {
             e.printStackTrace();
         }
     }
+
 }

@@ -8,7 +8,12 @@ public class Cart {
     private List<CocoInCart> chocolates;
     private double totalPrice;
     
-    public Cart(String id, List<CocoInCart> chocolates, double totalPrice, String userId) {
+    
+    public Cart() {
+		super();
+	}
+
+	public Cart(String id, List<CocoInCart> chocolates, double totalPrice, String userId) {
         this.id = id;
         this.chocolates = chocolates;
         this.totalPrice = totalPrice;

@@ -97,10 +97,8 @@ public class CocoService {
 	    System.out.println("OVO JE STOCK------------- " + stock);
 	    try {
 	        coco.setStock(stock);
-	        System.out.println(stock + " E ovo je stock:----------------------------------------------");
 	    } catch (NumberFormatException e) {
 	        // Handle parsing exception if necessary
-	    	System.out.println("GRESKA-----------------------------------------------------------------");
 	        System.out.println("Error parsing stock: " + e.getMessage());
 	    }
 

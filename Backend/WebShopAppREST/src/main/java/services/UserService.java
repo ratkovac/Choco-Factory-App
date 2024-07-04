@@ -114,7 +114,17 @@ public class UserService {
 	            responseMap.put("factoryId", factoryId);
 	            System.out.println(factoryId + "Ovo je id:");
 	            return Response.ok().entity(responseMap).build();
-	        } else {
+	        }
+	        else if ("Worker".equals(user.getRole())) {
+	        	String factoryId = user.getFactory() != null ? user.getFactory().getId() : null;
+	            // Create a response object with the user and factoryId
+	            Map<String, Object> responseMap = new HashMap<>();
+	            responseMap.put("user", user);
+	            responseMap.put("factoryId", factoryId);
+	            System.out.println(factoryId + "Ovo je id:");
+	            return Response.ok().entity(responseMap).build();
+	        }
+	        else {
 	            return Response.ok().entity(user).build();
 	        }
 	    } else {

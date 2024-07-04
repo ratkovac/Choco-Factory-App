@@ -5,6 +5,11 @@ public class CocoInCart {
     private String idChocolate;
     private int quantity;
        
+    
+	public CocoInCart() {
+		super();
+	}
+
 	public CocoInCart(String id, String idChocolate, int quantity) {
 		super();
 		this.id = id;
