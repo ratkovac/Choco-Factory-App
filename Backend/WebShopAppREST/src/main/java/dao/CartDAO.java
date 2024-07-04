@@ -12,13 +12,19 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import beans.Cart;
+import beans.Coco;
 import beans.CocoInCart;
+import beans.Purchase;
 
 public class CartDAO {
 
     private HashMap<String, Cart> carts = new HashMap<>();
     private String fileLocation;
     private CocoInCartDAO cocoInCartDAO;
+    private PurchaseDAO purchaseDAO;
+    private CocoDAO cocoDAO;
+    private FactoryDAO factoryDAO;
+    private UserDAO userDAO;
     
     public CartDAO() {
         // Initialize with some dummy data for testing
@@ -28,6 +34,10 @@ public class CartDAO {
         this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\carts.csv";
         System.out.println(fileLocation);
         cocoInCartDAO = new CocoInCartDAO(contextPath);
+        purchaseDAO = new PurchaseDAO(contextPath);
+        cocoDAO = new CocoDAO(contextPath);
+        factoryDAO = new FactoryDAO(contextPath);
+        userDAO = new UserDAO(contextPath);
         loadCarts(fileLocation);
     }
 
@@ -58,11 +68,28 @@ public class CartDAO {
         cart.setId(generateNewId());
         carts.put(cart.getId(), cart);
         ArrayList<CocoInCart> chocolates = new ArrayList<CocoInCart>();
+        ArrayList<Coco> cocos = new ArrayList<Coco>();
+        System.out.println("VELICINA: " + cart.getChocolates().size());
         for(CocoInCart coco : cart.getChocolates()) {
         	chocolates.add(cocoInCartDAO.saveCocoInCart(coco));
+        	cocos.add(cocoDAO.findCoco(coco.getIdChocolate()));
         }
         cart.setChocolates(chocolates);
         saveCartsToFile();
+        Coco firstCoco = cocos.get(0);
+        String factoryId = firstCoco.getFactoryId();
+        Purchase purchase = new Purchase();
+        purchase.setPrice(cart.getTotalPrice());
+        purchase.setStatus("Obrada");
+        purchase.setChocolates(cocos);
+        purchase.setChocolates(cocos);
+        purchase.setFactory(factoryDAO.findFactory(factoryId));
+        System.out.println("OVO JE Factory:" + purchase.getFactory().getId());
+        System.out.println("OVO JE USER ID:" + cart.getUserId());
+        purchase.setUser(userDAO.getUserById(cart.getUserId()));
+        System.out.println("OVO JE USER:" + purchase.getUser().getId());
+        System.out.println("************************************************************************");
+        purchaseDAO.savePurchase(purchase);
         return cart;
     }
 

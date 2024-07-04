@@ -23,7 +23,7 @@ public class CommentDAO {
     }
     
     public CommentDAO(String fileLocation) {
-        fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\WebShopAppREST\\comments.csv";
+        fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\comments.csv";
         System.out.println("Ovo je file loc comments: " + fileLocation);
         loadCommentsFromFile(fileLocation);
     }
