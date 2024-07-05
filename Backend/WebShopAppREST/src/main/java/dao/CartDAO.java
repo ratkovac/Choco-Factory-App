@@ -32,7 +32,7 @@ public class CartDAO {
     }
 
     public CartDAO(String contextPath) {
-        this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\carts.csv";
+        this.fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\carts.csv";
         System.out.println(fileLocation);
         cocoInCartDAO = new CocoInCartDAO(contextPath);
         purchaseDAO = new PurchaseDAO(contextPath);

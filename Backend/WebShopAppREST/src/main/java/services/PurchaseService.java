@@ -1,6 +1,7 @@
 package services;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -11,13 +12,16 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import beans.Coco;
 import beans.Purchase;
 import dao.CocoDAO;
+import beans.User;
 import dao.PurchaseDAO;
+import enums.UserRole;
 
 @Path("/purchases")
 public class PurchaseService {
@@ -45,14 +49,6 @@ public class PurchaseService {
         PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
         return dao.findAll();
     }
-
-    @POST
-    @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Purchase newPurchase(Purchase purchase) {
-        PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
-        return dao.savePurchase(purchase);
-    }
     
     @GET
     @Path("/{id}")
@@ -60,6 +56,14 @@ public class PurchaseService {
     public Collection<Purchase> getPurchasesByUser(@PathParam("id") String id) {
         PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
         return dao.findAllByUser(id);
+    }
+
+    @POST
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Purchase newPurchase(Purchase purchase) {
+        PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+        return dao.savePurchase(purchase);
     }
     
     @PUT
@@ -87,6 +91,21 @@ public class PurchaseService {
         return dao.updatePurchase(id, pur);
     }
     
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Purchase> searchPurchases(@QueryParam("factoryName") String factoryName,
+    									  @QueryParam("minPrice") Double minPrice, @QueryParam("maxPrice") Double maxPrice,
+    									  @QueryParam("startDate") String startDate, @QueryParam("endDate") String endDate) {
+    	PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+    	return dao.searchPurchases(factoryName, minPrice, maxPrice, startDate, endDate);
+    }
     
-
+    @GET
+    @Path("/sort")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Purchase> sortPurchases(@QueryParam("criterion") String criterion, @QueryParam("ascending") boolean ascending) {
+    	PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+        return dao.sortPurchases(criterion, ascending);
+    }
+    
 }
