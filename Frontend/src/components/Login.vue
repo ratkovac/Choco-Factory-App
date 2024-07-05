@@ -74,11 +74,13 @@ export default {
               this.factoryId = responseData.factoryId || (this.user.factory ? this.user.factory.id : null);
               const userId = responseData.id;
               console.log(this.user.role);
+              console.log("EEEEE");
               if (this.user.status === 'DEACTIVATED') {
                 this.errortext = 'Your account has been deactivated.';
                 return;
               }
-
+              console.log("EEEEE2");
+              console.log(this.user.role);
               if (this.user.role === 'Administrator') {
                 router.push({ path: `/loggedInAdmin/${this.user.id}` });
               } else if (this.user.role === 'Manager') {
@@ -86,9 +88,11 @@ export default {
                   console.log("username:");
                   console.log(responseData.username);
                   console.log("ID");
+                  console.log(userId);
                   router.push({ 
                   path: `/factories/manager/${this.factoryId}`, 
                   query: {
+                    id: userId,
                     firstName: responseData.firstName,
                     lastName: responseData.lastName,
                     username: responseData.username
@@ -103,6 +107,7 @@ export default {
                   router.push({ 
                   path: `/factories/worker/${this.factoryId}`, 
                   query: {
+                    id: userId,
                     firstName: responseData.firstName,
                     lastName: responseData.lastName,
                     username: responseData.username

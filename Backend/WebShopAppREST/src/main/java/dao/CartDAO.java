@@ -15,6 +15,7 @@ import beans.Cart;
 import beans.Coco;
 import beans.CocoInCart;
 import beans.Purchase;
+import beans.User;
 
 public class CartDAO {
 
@@ -86,11 +87,28 @@ public class CartDAO {
         purchase.setFactory(factoryDAO.findFactory(factoryId));
         System.out.println("OVO JE Factory:" + purchase.getFactory().getId());
         System.out.println("OVO JE USER ID:" + cart.getUserId());
-        purchase.setUser(userDAO.getUserById(cart.getUserId()));
+        User user = userDAO.getUserById(cart.getUserId());
+        double points = user.getPoints() + (cart.getTotalPrice()/1000) * 133;
+        user.setPoints(points);
+        CheckType(user);
+        user = userDAO.getUserById(cart.getUserId());
+        purchase.setUser(user);
         System.out.println("OVO JE USER:" + purchase.getUser().getId());
         System.out.println("************************************************************************");
         purchaseDAO.savePurchase(purchase);
         return cart;
+    }
+    
+    private void CheckType(User user) {
+    	double points = user.getPoints();
+    	if(points > 3000 && points < 6000) {
+    		user.setType("Silver");
+    	} else if (points >= 6000) {
+    		user.setType("Golden");
+    	} else if (points <= 3000) {
+    		user.setType("Bronze");
+    	}
+        userDAO.updateUserForm(user.getId(), user);
     }
 
     public boolean deleteCart(String id) {

@@ -46,6 +46,7 @@ public class CartService {
         CartDAO dao = (CartDAO) ctx.getAttribute("cartDAO");
         System.out.println("EEEE");
         System.out.println(cart.getUserId() + "OOO");
+        System.out.println(cart.getTotalPrice() + "CENa");
         return dao.saveCart(cart);
     }
 }

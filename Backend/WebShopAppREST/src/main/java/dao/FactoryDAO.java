@@ -32,7 +32,7 @@ public class FactoryDAO {
 		System.out.println("OVO je context " + contextPath);
 		this.fileLocation = new File(contextPath, "factories.csv").getAbsolutePath();
 		System.out.println("Ovo je putanja" + fileLocation);
-		this.cocoDAO = new CocoDAO("C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv");
+		this.cocoDAO = new CocoDAO(contextPath);
 		System.out.println("EE");
 		loadFactories(fileLocation);
 	}

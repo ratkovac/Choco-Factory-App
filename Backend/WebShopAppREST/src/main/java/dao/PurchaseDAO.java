@@ -13,7 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import beans.Cart;
 import beans.Coco;
+import beans.CocoInCart;
 import beans.Factory;
 import beans.Purchase;
 import beans.User;
@@ -32,9 +34,12 @@ public class PurchaseDAO {
         userDAO = new UserDAO(contextPath); // Inicijalizacija DAO za korisnike (kupce)
         cocoDAO = new CocoDAO(contextPath);
         loadPurchases(fileLocation); // Učitavanje postojećih kupovina prilikom inicijalizacije
+        countCancelled();
     }
+    
 
-    public List<Purchase> findAll() {
+
+	public List<Purchase> findAll() {
         return new ArrayList<>(purchases.values());
     }
     
@@ -49,10 +54,18 @@ public class PurchaseDAO {
     }
 
     public Purchase findPurchase(String id) {
+    	System.out.println("EEEE");
+    	System.out.println(purchases.size());
         return purchases.get(id);
     }
 
     public Purchase updatePurchase(String id, Purchase purchase) {
+    	System.out.println("USLOOO------------------------------------------------------------USLO");
+    	Purchase pur = findPurchase(id);
+    	System.out.println(pur.getStatus());
+    	if(pur.getStatus().equals("Odobreno")) {
+    		updateFactory(pur);
+    	}
         Purchase existingPurchase = purchases.containsKey(id) ? purchases.get(id) : null;
         if (existingPurchase == null) {
             return savePurchase(purchase);
@@ -65,9 +78,58 @@ public class PurchaseDAO {
             existingPurchase.setUser(purchase.getUser());
             existingPurchase.setStatus(purchase.getStatus());
         }
-
         savePurchasesToFile();
+        int canceled = findCancelledPurchasesInLastMonth(purchase.getUser().getId());
+        purchase.getUser().setCanceled(canceled);
+        userDAO.updateUserForm(purchase.getUser().getId(), purchase.getUser());
         return existingPurchase;
+    }
+    
+    public int findCancelledPurchasesInLastMonth(String userId) {
+        // Datum pre mesec dana od danasnjeg datuma
+        LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
+
+        // Pronađi sve purchase za korisnika sa datim ID
+        List<Purchase> purchases = findAllByUser(userId);
+
+        // Brojač za otkazane purchases u prethodnih mesec dana
+        int counter = 0;
+
+        // Iteriraj kroz sve purchase
+        for (Purchase purchase : purchases) {
+            // Konvertuj purchaseDateTime string u LocalDateTime
+            LocalDateTime purchaseDateTime = LocalDateTime.parse(purchase.getPurchaseDateTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+            // Proveri da li je purchase u prethodnih mesec dana i da li je status "Otkazana"
+            if (purchaseDateTime.isAfter(oneMonthAgo) && purchase.getStatus().equals("Otkazano")) {
+                counter++;
+            }
+        }
+
+        return counter;
+    }
+    
+    public void countCancelled() {
+    	System.out.println("********************************************************************************************************************");
+    	System.out.println("********************************************************************************************************************");
+    	for(User user : userDAO.findAll()) {
+    		int canceled = findCancelledPurchasesInLastMonth(user.getId());
+    		user.setCanceled(canceled);
+            userDAO.updateUserForm(user.getId(), user);  		
+    	}
+    }
+    
+    public void updateFactory(Purchase purchase) {
+    	System.out.println("ODOBRAVANJE");
+    	for(CocoInCart coco : purchase.getCartId()) {
+    		Coco chocolateCoco = cocoDAO.findCoco(coco.getIdChocolate());
+    		int current = chocolateCoco.getStock();
+    		System.out.println("TRENUGNO: " + current);
+    		System.out.println("SKIDA SE: " + coco.getQuantity());
+    		chocolateCoco.setStock(current - coco.getQuantity());
+    		System.out.println("Posle skidanja: " + chocolateCoco.getStock());
+    		cocoDAO.updateCoco(chocolateCoco.getId(), chocolateCoco);
+    	}
     }
 
     public Purchase savePurchase(Purchase purchase) {
@@ -144,8 +206,16 @@ public class PurchaseDAO {
                 }
 
                 String status = st.nextToken().trim();
+                String idsString = st.nextToken().trim(); // Ovde dobijate ceo string sa ID-ovima, recimo "ID,ID,Id,Id,Id..."
+                String[] idsArray = idsString.split(","); // Razdvajanje stringa na niz ID-ova
+                List<CocoInCart> chocolatess = new ArrayList<>();
+                for (String ids : idsArray) {
+                    // Sada možete raditi sa svakim ID-jem posebno
+                    CocoInCart cart = cocoInCartDAO.findCocoInCart(ids); // Koristite trim() da biste uklonili moguće praznine oko ID-ova
+                    chocolatess.add(cart);
+                }
 
-                Purchase purchase = new Purchase(id, chocolates, factory, purchaseDateTime, price, buyer, status);
+                Purchase purchase = new Purchase(id, chocolates, factory, purchaseDateTime, price, buyer, status, chocolatess);
                 purchases.put(id, purchase);
             }
         } catch (Exception e) {
@@ -190,7 +260,17 @@ public class PurchaseDAO {
                 out.write(purchase.getUser().getId() + ";");
 
                 // Status
-                out.write(purchase.getStatus());
+                out.write(purchase.getStatus() + ";");
+                
+                List<CocoInCart> chocolatess = purchase.getCartId();
+                for (int i = 0; i < chocolatess.size(); i++) {
+                    CocoInCart chocolate = chocolatess.get(i);
+                    out.write(chocolate.getId());
+                    if (i < chocolatess.size() - 1) {
+                        out.write(","); // Dodaj zarez osim nakon poslednjeg elementa
+                    }
+                }
+;
 
                 out.newLine();
             }

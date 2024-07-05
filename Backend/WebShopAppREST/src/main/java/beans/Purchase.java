@@ -10,7 +10,7 @@ public class Purchase {
     private double price; // Cena
     private User buyer; // Kupac (ime i prezime)
     private String status; // Status (Obrada, Odobreno, Odbijeno, Otkazano)
-    
+    private List<CocoInCart> chocolteInCarts;
     
     public Purchase() {
 		super();
@@ -18,7 +18,7 @@ public class Purchase {
 
 	// Constructor
     public Purchase(String id, List<Coco> chocolates, Factory factory, String purchaseDateTime,
-                    double price, User buyerName, String status) {
+                    double price, User buyerName, String status, List<CocoInCart> cartId) {
         this.id = id;
         this.chocolates = chocolates;
         this.factory = factory;
@@ -26,9 +26,27 @@ public class Purchase {
         this.price = price;
         this.buyer = buyerName;
         this.status = status;
+        this.chocolteInCarts = cartId;
     }
+    
+    
+    public User getBuyer() {
+		return buyer;
+	}
 
-    // Getters and setters
+	public void setBuyer(User buyer) {
+		this.buyer = buyer;
+	}
+
+	public List<CocoInCart> getCartId() {
+		return chocolteInCarts;
+	}
+
+	public void setCartId(List<CocoInCart> cartId) {
+		this.chocolteInCarts = cartId;
+	}
+
+	// Getters and setters
     public String getId() {
         return id;
     }

@@ -9,7 +9,7 @@
       <ul id="menu">
         <li><a href="#" @click="factoryShowClick">Your Factory</a></li>
         <li><a href="#" @click="addWorker">New Worker</a></li>
-        <li><a href="#">Your Profile</a></li>
+        <li><a href="#" @click="yourProfile">Your Profile</a></li>
         <li><a href="#">Logout</a></li>
       </ul>
     </div>
@@ -124,6 +124,76 @@
     </div> 
     </div>
     </div>
+
+    <!-- USER PROFILE -->
+    <div v-if="profile">
+    <div>
+    <div>
+      <div class="container rounded bg-white mt-5 mb-5">
+        <div class="row justify-content-center">
+          <div class="col-md-4 border-right">
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+              <img
+                class="rounded-circle mt-5"
+                width="150px"
+                :src="user.profileImageUrl ? user.profileImageUrl : 'https://static.vecteezy.com/system/resources/previews/036/280/650/original/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg'"
+                alt="User Profile Image"
+              />
+              <span class="font-weight-bold">{{ user.username }}</span>
+            </div>
+          </div>
+          <div class="col-md-5 border-right">
+            <div class="p-3 py-5">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="text-right">Profile Settings</h4>
+              </div>
+              <div class="row mt-2">
+                <div class="col-md-6">
+                  <label class="labels">Name</label>
+                  <input type="text" class="form-control" v-model="user.firstName" />
+                </div>
+                <div class="col-md-6">
+                  <label class="labels">Surname</label>
+                  <input type="text" class="form-control" v-model="user.lastName" />
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-md-12">
+                  <label class="labels">Username</label>
+                  <input type="text" class="form-control" v-model="user.username" />
+                </div>
+                <div class="col-md-12">
+                  <label class="labels">Gender</label>
+                  <input type="text" class="form-control" v-model="user.gender" />
+                </div>
+                <div class="col-md-12">
+                  <label class="labels">Birth date</label>
+                  <input type="text" class="form-control" v-model="user.birthDate" />
+                </div>
+                <div class="col-md-12">
+                  <label class="labels">Role</label>
+                  <input type="text" class="form-control" v-model="user.role" />
+                </div>
+              </div>
+              <div class="row mt-4">
+                <div class="col-md-6">
+                  <button class="btn btn-primary profile-button" type="button" style="background-color: #573b8a;
+    border-color: #3e1786;" @click="saveProfile">
+                    Save Profile
+                  </button>
+                </div>
+                <div class="col-md-6">
+                  <button class="btn btn-primary profile-button" type="button" style="background-color: #573b8a;
+    border-color: #3e1786;" @click="logout">Logout</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
   </template>
   
   <script setup>
@@ -137,6 +207,7 @@
   const show = ref(true);
   const showFactory = ref(true);
   const showNewWorkerForm = ref(false);
+  const profile = ref(false);
 
   const firstName = ref(route.query.firstName);
 const lastName = ref(route.query.lastName);
@@ -145,6 +216,7 @@ const username = ref(route.query.username);
   const factoryShowClick = () => {
     showFactory.value = true;
     showNewWorkerForm.value = false;
+    profile.value = false;
   }
 
   const factory = ref({
@@ -169,6 +241,7 @@ const username = ref(route.query.username);
   const addWorker = () => {
     showFactory.value = false;
     showNewWorkerForm.value = true;
+    profile.value = false;
   };
   
   const getCommentsByFactory = async (factoryId) => {
@@ -247,6 +320,60 @@ const addChcolate = (factory) => {
     console.error(error);
     console.error("Manager wasn't able to be created! Error");
   }
+};
+
+// PROFIL //
+
+const yourProfile = () => {
+  profile.value = true;
+  showFactory.value = false;
+  showNewWorkerForm.value = false;
+  fetchUser();
+};
+
+const user = ref({
+  id: "",
+  firstName: "",
+  lastName: "",
+  username: "",
+  password: "",
+  gender: "",
+  birthDate: "",
+  role: "",
+  isActive: "",
+  status: "",
+  profileImageUrl: ""
+}); // Definicija na globalnoj razini
+
+const fetchUser = () => {
+  const userId = route.query.id; // Pretpostavlja se da se koristi ID iz rute
+  console.log(userId);
+  axios
+    .get(`http://localhost:8080/WebShopAppREST/rest/user/profile/${userId}`)
+    .then(response => {
+      user.value = response.data; // Postavljanje vrijednosti korisnika
+      console.log('Pronađen korisnik:', user);
+    })
+    .catch(error => {
+      console.error('Greška prilikom dohvaćanja korisnika:', error);
+    });
+};
+
+
+const saveProfile = async () => {
+  console.log('Ažuriranje korisnika...');
+  try {
+    const response = await axios.put(`http://localhost:8080/WebShopAppREST/rest/user/update/${user.value.id}`, user.value);
+    console.log('Korisnik uspješno ažuriran');
+    localStorage.setItem('user', JSON.stringify(user.value)); // Ažurirajte lokalno skladište s novim podacima korisnika
+  } catch (error) {
+    console.error('Došlo je do greške:', error);
+  }
+};
+
+const logout = () => {
+  localStorage.removeItem('user');
+  router.push('/login');
 };
   </script>
   
