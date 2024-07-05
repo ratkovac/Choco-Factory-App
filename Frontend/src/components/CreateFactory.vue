@@ -10,11 +10,16 @@
                     <input id="factoryName" type="text" v-model="factoryForm.name" required>
                 </div>
                 
-                <!-- Location -->
+                 <!-- Location with Map Component 
+                 <div class="form-group">
+                    <label for="location">Location</label>
+                    <MapComponent @update-location="updateLocation" :location="factoryForm.location"></MapComponent>
+                </div> -->
                 <div class="form-group">
                     <label for="location">Location</label>
                     <input id="location" type="text" v-model="factoryForm.location" required>
                 </div>
+
                 
                 <!-- Working Hours -->
                 <div class="form-group">
@@ -120,6 +125,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import MapComponent from './MapComponent.vue';
 
 const router = useRouter();
 

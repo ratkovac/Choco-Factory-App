@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import beans.Factory;
+import beans.Purchase;
 import beans.User;
 import beans.UserRegistration;
 import enums.UserRole;
@@ -23,13 +26,15 @@ public class UserDAO {
 	private ArrayList<User> users = new ArrayList<>();
 	private String FileLocation;
 	private FactoryDAO factoryDAO;
+	private PurchaseDAO purchaseDAO;
 	public UserDAO() {
 		
 	}
 	
 	public UserDAO(String contextPath) {
-		FileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
+		FileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
 		factoryDAO = new FactoryDAO(contextPath);
+		
 		loadUsers(FileLocation);
 		System.out.println("Svi korisnici: " + users.size());
 	}
@@ -108,6 +113,10 @@ public class UserDAO {
 			user.setPassword(userReg.getPassword());
 			user.setUsername(userReg.getUsername());
 			user.setLastName(userReg.getSurname());
+			user.setPoints(0);
+			user.setType("Silver");
+			user.setStatus(UserStatus.ACTIVATED);
+			user.setCanceled(0);
 			//user.setUserStatus(UserStatus.Active);
 			user.setFactory(new Factory());
 			if(type.equals("m")) {
@@ -127,6 +136,8 @@ public class UserDAO {
 	}
 	
 	public UserRegistration getUserRegistrationById(String id) {
+		System.out.println("JES USLO");
+		System.out.println("getUserRegistraionByID" + id);
 	    User user = getUserById(id);
 	    if (user == null) {
 	        System.out.println("Korisnik sa ID-om " + id + " nije pronađen");
@@ -147,6 +158,9 @@ public class UserDAO {
             user.setBirthDate(updatedUser.getBirthDate());
             user.setActive(updatedUser.isActive());
             user.setStatus(updatedUser.getStatus());
+            user.setPoints(updatedUser.getPoints());
+            user.setType(updatedUser.getType());
+            user.setCanceled(updatedUser.getCanceled());
             SaveUserToFile();
             return true;
         }
@@ -176,7 +190,7 @@ public class UserDAO {
 		try {
 			File file = new File(contextPath);
 			in = new BufferedReader(new FileReader(file));
-			String line, id="", firstName="", lastName="", username="", password="", gender="", birthDate="", roleStr="", isActive="", statusStr="", factoryId="";
+			String line, id="", firstName="", lastName="", username="", password="", gender="", birthDate="", roleStr="", isActive="", statusStr="", factoryId="", points="", type="", canceled="";
 			StringTokenizer st;
 			while ((line = in.readLine()) != null) {
 				line = line.trim();
@@ -197,7 +211,11 @@ public class UserDAO {
 					statusStr = st.nextToken().trim();
 					//System.out.println(statusStr);
 					factoryId = st.nextToken().trim();
-					//System.out.println(factoryId);
+					points = st.nextToken().trim();
+					type = st.nextToken().trim();
+					canceled = st.nextToken().trim();
+					
+					System.out.println(canceled + "-------------------------------------------broj otkazanih");
 				}
 				UserStatus status = UserStatus.valueOf(statusStr);
 	            UserRole role = UserRole.valueOf(roleStr);
@@ -208,10 +226,11 @@ public class UserDAO {
 	            	System.out.println("Razlicito je: " + factoryId);
 		            factory = factoryDAO.findFactory(factoryId);
 	            }
-
-	            User user = new User(id, firstName, lastName, username, password, gender, birthDate, role, Boolean.parseBoolean(isActive), status, factory);
+	            type = CheckType(Double.parseDouble(points));
+	            User user = new User(id, firstName, lastName, username, password, gender, birthDate, role, Boolean.parseBoolean(isActive), status, factory, Double.parseDouble(points), type, Integer.parseInt(canceled));
 	            users.add(user);
 	            System.out.println("Loaded user: " + user);
+	            SaveUserToFile();
 				
 			}
 		} catch (Exception ex) {
@@ -226,9 +245,23 @@ public class UserDAO {
 		}
 	}
 	
+	private String CheckType(Double points) {
+		String type = "Bronze";
+		System.out.println("POENI: " + points);
+    	if(points > 3000 && points < 6000) {
+    		type = "Silver";
+    	} else if (points >= 6000) {
+    		type = "Golden";
+    	} else if (points <= 3000) {
+    		type = "Bronze";
+    	}
+    	System.out.println("TIP: " + type);
+    	return type;
+    }
+	
 	private void SaveUserToFile() {
 		System.out.println(FileLocation);
-	    try (BufferedWriter out = new BufferedWriter(new FileWriter("C:\\Users\\HP\\OneDrive\\Radna površina\\web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv"))) {
+	    try (BufferedWriter out = new BufferedWriter(new FileWriter(FileLocation))) {
 	        for (User user : users) {
 	        	System.out.println(user.getFirstName());
 	            String line = String.join(";",
@@ -242,7 +275,10 @@ public class UserDAO {
 	            	String.valueOf(user.getRole()),
 	            	String.valueOf(user.isActive()),
 	            	String.valueOf(user.getStatus()),
-	            	user.getFactory().getId()
+	            	user.getFactory().getId(),
+	            	String.valueOf(user.getPoints()),
+	            	user.getType(),
+	            	String.valueOf(user.getCanceled())
 	            );
 	            out.write(line);
 	            out.newLine();

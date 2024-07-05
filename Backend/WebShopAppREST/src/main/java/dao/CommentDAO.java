@@ -23,14 +23,30 @@ public class CommentDAO {
     }
     
     public CommentDAO(String fileLocation) {
-        fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\comments.csv";
+        //fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\comments.csv";
+        this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\comments.csv";
         System.out.println("Ovo je file loc comments: " + fileLocation);
-        loadCommentsFromFile(fileLocation);
+        loadCommentsFromFile(this.fileLocation);
     }
     
-    public void addComment(Comment comment) {
+    public Comment addComment(Comment comment) {
+    	comment.setId(generateNewId());
+		System.out.println("DODAVANJE KOMENTARA --------------------------------------------------------3-");
         comments.put(comment.getId(), comment);
+    	System.out.println(comments.size());
+    	for (Comment commentt : comments.values()) {
+	    }
         saveCommentsToFile();
+        return comment;
+    }
+    
+    private String generateNewId() {
+    	System.out.println(comments.size());
+        int newId = comments.keySet().stream()
+                .mapToInt(id -> Integer.parseInt(id))
+                .max()
+                .orElse(0) + 1;
+        return String.valueOf(newId);
     }
     
     public Comment getCommentById(String id) {
@@ -48,7 +64,7 @@ public class CommentDAO {
             File file = new File(filePath);
             System.out.println(filePath + " je");
             in = new BufferedReader(new FileReader(file));
-            String line, id = "", text = "", factoryId = "";
+            String line, id = "", text = "", factoryId = "", isValid ="";
             StringTokenizer st;
             while ((line = in.readLine()) != null) {
                 System.out.println(line + " linija");
@@ -64,9 +80,10 @@ public class CommentDAO {
                     text = st.nextToken().trim();
                     System.out.println("Text je: " + text);
                     factoryId = st.nextToken().trim();
+                    isValid = st.nextToken().trim();
                     System.out.println("Factory ID je: " + factoryId);
 
-                    comments.put(id, new Comment(id, text, factoryId));
+                    comments.put(id, new Comment(id, text, factoryId, Boolean.parseBoolean(isValid)));
                 }
             }
         } catch (Exception e) {
@@ -74,7 +91,6 @@ public class CommentDAO {
         } finally {
             if (in != null) {
                 try {
-                    System.out.println("Velcina " + comments.size());
                     in.close();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -87,7 +103,7 @@ public class CommentDAO {
     private void saveCommentsToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileLocation))) {
             for (Comment comment : comments.values()) {
-                writer.write(comment.getId() + ";" + comment.getText() + ";" + comment.getFactoryId());
+                writer.write(comment.getId() + ";" + comment.getText() + ";" + comment.getFactoryId() + ";" + comment.isValid());
                 writer.newLine();
             }
         } catch (IOException e) {
@@ -96,11 +112,19 @@ public class CommentDAO {
     }
     
     public ArrayList<Comment> GetCommentsByFactory(String factoryId) {
-    	System.out.println("OVO JE TO" + comments.size() + "Borj id:" + factoryId);
     	ArrayList<Comment> comms = new ArrayList<Comment>();
         for(Comment coco : comments.values()) {
-            System.out.println("Checking comment with factoryId: " + coco.getFactoryId() + " against " + factoryId);
         	if(coco.getFactoryId().equals(factoryId)) {
+        		comms.add(coco);
+        	}
+        }
+        return comms;
+    }
+    
+    public ArrayList<Comment> GetValidCommentsByFactory(String factoryId) {
+    	ArrayList<Comment> comms = new ArrayList<Comment>();
+        for(Comment coco : comments.values()) {
+        	if(coco.getFactoryId().equals(factoryId) && coco.isValid()) {
         		comms.add(coco);
         	}
         }

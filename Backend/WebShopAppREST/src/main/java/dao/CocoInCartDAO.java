@@ -20,6 +20,7 @@ public class CocoInCartDAO {
     private String fileLocation;
 
     public CocoInCartDAO(String contextPath) {
+        //this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\cocoInCarts.csv";
         this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\cocoInCarts.csv";
         loadCocoInCartItems(fileLocation);
         System.out.println(cocoInCartItems.size());

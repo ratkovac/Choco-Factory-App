@@ -96,7 +96,7 @@ const router = createRouter({
       component: FactoryManager
     },
     {
-      path: '/current',
+      path: '/profile/:id',
       name: 'current',
       component: UserProfile
     },

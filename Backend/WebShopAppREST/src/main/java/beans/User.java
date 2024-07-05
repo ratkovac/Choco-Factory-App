@@ -14,11 +14,16 @@ public class User {
 	private UserRole role;
 	private boolean isActive;
 	private UserStatus status;
+	private double points;
+	private String type;
+	private int canceled;
 	
 	private Factory factory;
 	
 	public User() {
 	}
+
+	
 
 	public User(String id, String firstName, String lastName, String username, String password, String gender, String birthDate, UserRole role, boolean isActive, UserStatus status) {
 		super();
@@ -51,6 +56,65 @@ public class User {
 		this.isActive = isActive;
 		this.status = status;
 		this.factory = factory;
+	}
+	public User(String id2, String firstName2, String lastName2, String username2, String password2, String gender2,
+			String birthDate2, UserRole role2, boolean isActive, UserStatus status, Factory factory, double points, String type) {
+		super();
+		this.id = id2;
+		this.firstName = firstName2;
+		this.lastName = lastName2;
+		this.username = username2;
+		this.password = password2;
+		this.gender = gender2;
+		this.birthDate = birthDate2;
+		this.role = role2;
+		this.isActive = isActive;
+		this.status = status;
+		this.factory = factory;
+		this.points = points;
+		this.type = type;
+	}
+	public User(String id2, String firstName2, String lastName2, String username2, String password2, String gender2,
+			String birthDate2, UserRole role2, boolean isActive, UserStatus status, Factory factory, double points, String type, int canceled) {
+		super();
+		this.id = id2;
+		this.firstName = firstName2;
+		this.lastName = lastName2;
+		this.username = username2;
+		this.password = password2;
+		this.gender = gender2;
+		this.birthDate = birthDate2;
+		this.role = role2;
+		this.isActive = isActive;
+		this.status = status;
+		this.factory = factory;
+		this.points = points;
+		this.type = type;
+		this.canceled = canceled;
+	}
+	
+	public int getCanceled() {
+		return canceled;
+	}
+
+	public void setCanceled(int canceled) {
+		this.canceled = canceled;
+	}
+	
+	public double getPoints() {
+		return points;
+	}
+
+	public void setPoints(double points) {
+		this.points = points;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public Factory getFactory() {

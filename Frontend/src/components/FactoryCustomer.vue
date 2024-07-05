@@ -6,9 +6,9 @@
       <label id="trigger" for="menu-toggle"></label>
       <label id="burger" for="menu-toggle"></label>
       <ul id="menu">
-        <li><a href="#" @click="factoryShowClick">Purchasing</a></li>
+        <li><a href="#" @click="purchasing">Purchasing</a></li>
         <li><a href="#" @click="addWorker">New Worker</a></li>
-        <li><a href="#">Your Profile</a></li>
+        <li><a href="#" @click="yourProfile">Your Profile</a></li>
         <li><a href="#">Logout</a></li>
       </ul>
     </div>
@@ -82,7 +82,10 @@
         <button @click="buy()" style="width: 160px; margin-bottom: 10px; margin-right: 30px; background-color: rgb(64, 151, 249); border-color: #ccc; font-weight: 800; font-size: 17px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Poruči</button>
       </div>
     <div v-if="cart.chocolates.length > 0" class="cart-table-container" style="border: 3px solid #ccc;">
-      <p style="font-weight: 600; font-size: 19px; margin-left: 930px">Ukupna cena: {{ totalPrice }} RSD</p>
+      <div class="container">
+        <p class="discount">{{ discountString }}</p>
+        <p class="total-price">Ukupna cena: {{ totalPrice * discount }} RSD</p>
+      </div>
       <table class="custom-table">
         <thead>
           <tr>
@@ -95,7 +98,7 @@
           <tr v-for="chocolate in cart.chocolates" :key="chocolate.idChocolate">
             <td>{{ getChocolateName(chocolate.idChocolate) }}</td>
             <td>{{ chocolate.quantity }}</td>
-            <td>{{ getChocolateCost(chocolate.idChocolate) * chocolate.quantity }} RSD</td>
+            <td>{{ getChocolateCost(chocolate.idChocolate) * chocolate.quantity * discount }} RSD</td>
           </tr>
         </tbody>
       </table>
@@ -104,9 +107,71 @@
       <p>Korpa je prazna.</p>
     </div>
   </div>
-
-  <div v-if="purchases">
-
+</div>
+  <div v-if="profile">
+    <div>
+    <div>
+      <div class="container rounded bg-white mt-5 mb-5">
+        <div class="row justify-content-center">
+          <div class="col-md-4 border-right">
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+              <img
+                class="rounded-circle mt-5"
+                width="150px"
+                :src="user.profileImageUrl ? user.profileImageUrl : 'https://static.vecteezy.com/system/resources/previews/036/280/650/original/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg'"
+                alt="User Profile Image"
+              />
+              <span class="font-weight-bold">{{ user.username }}</span>
+            </div>
+          </div>
+          <div class="col-md-5 border-right">
+            <div class="p-3 py-5">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="text-right">Profile Settings</h4>
+              </div>
+              <div class="row mt-2">
+                <div class="col-md-6">
+                  <label class="labels">Name</label>
+                  <input type="text" class="form-control" v-model="user.firstName" />
+                </div>
+                <div class="col-md-6">
+                  <label class="labels">Surname</label>
+                  <input type="text" class="form-control" v-model="user.lastName" />
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-md-12">
+                  <label class="labels">Username</label>
+                  <input type="text" class="form-control" v-model="user.username" />
+                </div>
+                <div class="col-md-12">
+                  <label class="labels">Gender</label>
+                  <input type="text" class="form-control" v-model="user.gender" />
+                </div>
+                <div class="col-md-12">
+                  <label class="labels">Birth date</label>
+                  <input type="text" class="form-control" v-model="user.birthDate" />
+                </div>
+                <div class="col-md-12">
+                  <label class="labels">Role</label>
+                  <input type="text" class="form-control" v-model="user.role" />
+                </div>
+              </div>
+              <div class="row mt-4">
+                <div class="col-md-6">
+                  <button class="btn btn-primary profile-button" type="button" @click="saveProfile">
+                    Save Profile
+                  </button>
+                </div>
+                <div class="col-md-6">
+                  <button class="btn btn-primary profile-button" type="button" @click="logout">Logout</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   </div>
 </template>
@@ -115,11 +180,15 @@
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
+import UserProfile from './UserProfile.vue'; // Prilagodite putanju prema stvarnoj strukturi vašeg projekta
+import Factories from './Factory.vue'; // @ je alias za 'src' direktorij
 
 const route = useRoute();
 const router = useRouter();
 
 const title = ref("Fabrike čokolade");
+
+const currentComponent = ref(Factories); // Početno prikazivanje Factories komponente
 
 const cartShow = ref(false);
 const chocolatesShow = ref(false);
@@ -131,12 +200,26 @@ const chocolatesList = ref([]);
 const comments = ref([]);
 const isFactorySelected = ref(false);
 const shopping = ref(true);
-
+const purchases = ref(false);
+const profile = ref(false);
+const userID = ref();
+const discount = ref(1.0);
+const discountString = ref();
 onMounted(async () => {
   await loadFactories();
   this.userId = route.query.userId;
+  this.userID = route.query.userId;
 });
 
+const yourProfile = () => {
+  profile.value = true;
+  shopping.value = false;
+  fetchUser();
+};
+const purchasing = () => {
+  profile.value = false;
+  shopping.value = true;
+}
 const loadFactories = async () => {
   try {
     const response = await axios.get('http://localhost:8080/WebShopAppREST/rest/factories');
@@ -156,9 +239,22 @@ const filterFactories = () => {
 };
 
 const pregledajKorpu = () => {
-  cartShow.value = true;
-  chocolatesShow.value = false;
-};
+      cartShow.value = true;
+      chocolatesShow.value = false;
+      console.log(user.value.type);
+      console.log(discount.value);
+
+      if (user.value.type === "Silver") {
+        discount.value = 0.95;
+        discountString.value = "Ostvarili ste 5% popusta kao Silver korisnik"
+      } else if (user.value.type === "Golden") {
+        discount.value = 0.9;
+        discountString.value = "Ostvarili ste 10% popusta kao Golden korisnik"
+      } else {
+        discount.value = 1.0;
+      }
+      console.log(discount.value);
+    };
 
 const selectFactory = async (factory) => {
   selectedFactory.value = factory;
@@ -190,6 +286,9 @@ const loadFactoryDetails = async (factoryId) => {
 };
 
 const buy = async () => {
+  console.log("PRE:" + cart.value.totalPrice)
+  cart.value.totalPrice *= discount.value;
+  console.log("POSLE:" + cart.value.totalPrice);
   try {
     const response = await axios.post(`http://localhost:8080/WebShopAppREST/rest/carts/`, cart.value);
   } catch(error) {
@@ -212,7 +311,7 @@ const validateQuantity = (chocolate) => {
 const userId = ref(""); // Postaviti odgovarajući userId
 const cart = ref({
   id: "",
-  userId: route.query.id,
+  userId: route.params.id,
   totalPrice: "",
   chocolates: []
 });
@@ -236,12 +335,74 @@ const addToCart = (chocolate) => {
   console.log("Cart choco:", cart.value.chocolates);
 };
 
-  // PREGLED SVIH KUPOVINA //
+  // PROFIL //
+
+  const user = ref({
+  id: "",
+  firstName: "",
+  lastName: "",
+  username: "",
+  password: "",
+  gender: "",
+  birthDate: "",
+  role: "",
+  isActive: "",
+  status: "",
+  profileImageUrl: "",
+  type: ""
+}); // Definicija na globalnoj razini
+
+const fetchUser = () => {
+  const userId = route.params.id; // Pretpostavlja se da se koristi ID iz rute
+  axios
+    .get(`http://localhost:8080/WebShopAppREST/rest/user/profile/${userId}`)
+    .then(response => {
+      user.value = response.data; // Postavljanje vrijednosti korisnika
+      console.log('Pronađen korisnik:', user);
+    })
+    .catch(error => {
+      console.error('Greška prilikom dohvaćanja korisnika:', error);
+    });
+};
 
 
+const saveProfile = async () => {
+  console.log('Ažuriranje korisnika...');
+  try {
+    const response = await axios.put(`http://localhost:8080/WebShopAppREST/rest/user/update/${user.value.id}`, user.value);
+    console.log('Korisnik uspješno ažuriran');
+    localStorage.setItem('user', JSON.stringify(user.value)); // Ažurirajte lokalno skladište s novim podacima korisnika
+  } catch (error) {
+    console.error('Došlo je do greške:', error);
+  }
+};
+
+const logout = () => {
+  localStorage.removeItem('user');
+  router.push('/login');
+};
+
+// Pozovite fetchUser prilikom montiranja komponente
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Adjust this value if necessary */
+}
+
+.discount {
+  font-weight: 600;
+  font-size: 19px;
+}
+
+.total-price {
+  font-weight: 600;
+  font-size: 19px;
+  margin-left: auto;
+}
 .progress-container {
   display: flex;
   justify-content: space-around;

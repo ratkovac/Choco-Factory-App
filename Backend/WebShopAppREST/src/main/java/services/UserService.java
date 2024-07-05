@@ -87,8 +87,9 @@ public class UserService {
     @Path("/profile/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public User getUserById(@PathParam("id") String id) {
-        UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
-        User user = dao.getUserById(id);
+        System.out.println("JEA");
+        System.out.println(id);
+        User user = userDAO.getUserById(id);
         if (user != null) {
             return user;
         } else {

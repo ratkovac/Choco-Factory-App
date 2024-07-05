@@ -4,18 +4,27 @@ public class Comment {
 	private String id;
 	private String text;
 	private String factoryId;
+	private boolean isValid;
 	
 	public Comment() {
-		
+		super();
 	}
 	
-	public Comment(String id, String text, String factoryId) {
+	public Comment(String id, String text, String factoryId, boolean isValid) {
 		super();
 		this.id = id;
 		this.text = text;
 		this.setFactoryId(factoryId);
+		this.isValid = isValid;
+	}
+	
+	public boolean isValid() {
+		return isValid;
 	}
 
+	public void setValid(boolean isValid) {
+		this.isValid = isValid;
+	}
 
 	public String getId() {
 		return id;
