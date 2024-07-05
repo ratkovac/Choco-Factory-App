@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -17,6 +19,7 @@ import beans.Coco;
 import beans.Factory;
 import beans.Purchase;
 import beans.User;
+import enums.UserRole;
 
 public class PurchaseDAO {
 
@@ -25,12 +28,14 @@ public class PurchaseDAO {
     private CocoInCartDAO cocoInCartDAO; // DAO za čokolade u korpi
     private CocoDAO cocoDAO;
     private UserDAO userDAO; // DAO za korisnike (kupce)
+    private FactoryDAO factoryDAO;
 
     public PurchaseDAO(String contextPath) {
-        this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\purchases.csv"; // Podesite putanju do CSV fajla
+        this.fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\purchases.csv"; // Podesite putanju do CSV fajla
         cocoInCartDAO = new CocoInCartDAO(contextPath); // Inicijalizacija DAO za čokolade u korpi
         userDAO = new UserDAO(contextPath); // Inicijalizacija DAO za korisnike (kupce)
         cocoDAO = new CocoDAO(contextPath);
+        factoryDAO = new FactoryDAO(contextPath);
         loadPurchases(fileLocation); // Učitavanje postojećih kupovina prilikom inicijalizacije
     }
 
@@ -197,5 +202,86 @@ public class PurchaseDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public List<Purchase> searchPurchases(String factoryName, Double minPrice, Double maxPrice, String startDate, String endDate) {
+        List<Purchase> result = new ArrayList<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        LocalDateTime startDateTime = startDate != null ? LocalDateTime.parse(startDate, formatter) : null;
+        LocalDateTime endDateTime = endDate != null ? LocalDateTime.parse(endDate, formatter) : null;
+
+        for (Purchase purchase : purchases.values()) {
+            boolean matches = true;
+            
+            // Search by factory name
+            if (factoryName != null) {
+                Factory f = purchase.getFactory();
+                Factory factory = factoryDAO.findFactory(f.getId());
+                if (factory != null && factory.getName() != null) {
+                    if (!factory.getName().toLowerCase().contains(factoryName.toLowerCase())) {
+                        matches = false;
+                    }
+                } else {
+                    matches = false;
+                }
+            }
+
+            // Search by price range
+            if (matches && (minPrice != null || maxPrice != null)) {
+                Double price = purchase.getPrice();
+                if ((minPrice != null && price < minPrice) || (maxPrice != null && price > maxPrice)) {
+                    matches = false;
+                }
+            }
+
+            // Search by date range
+            if (matches && (startDateTime != null || endDateTime != null)) {
+                LocalDateTime purchaseDateTime = LocalDateTime.parse(purchase.getPurchaseDateTime(), formatter);
+                if ((startDateTime != null && purchaseDateTime.isBefore(startDateTime)) ||
+                    (endDateTime != null && purchaseDateTime.isAfter(endDateTime))) {
+                    matches = false;
+                }
+            }
+
+            if (matches) {
+                result.add(purchase);
+            }
+        }
+
+        return result;
+    }
+	
+    public List<Purchase> sortPurchases(String criterion, boolean ascending) {
+        List<Purchase> sortedPurchases = new ArrayList<>(purchases.values());
+
+        System.out.println("Sortiranje prema kriterijumu: " + criterion);
+
+        Comparator<Purchase> comparator;
+
+        switch (criterion.toLowerCase()) {
+            case "factoryname": // Pazite da je mala slova
+                comparator = Comparator.comparing(purchase -> {
+                    Factory factory = factoryDAO.findFactory(purchase.getFactory().getId());
+                    return factory != null ? factory.getName() : "";
+                });
+                break;
+            case "price":
+                comparator = Comparator.comparingDouble(Purchase::getPrice);
+                break;
+            case "date":
+                comparator = Comparator.comparing(Purchase::getPurchaseDateTime);
+                break;
+            default:
+                throw new IllegalArgumentException("Nepoznat kriterijum za sortiranje: " + criterion);
+        }
+
+        if (!ascending) {
+            comparator = comparator.reversed();
+        }
+
+        Collections.sort(sortedPurchases, comparator);
+        return sortedPurchases;
     }
 }

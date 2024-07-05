@@ -6,8 +6,8 @@
       <label id="trigger" for="menu-toggle"></label>
       <label id="burger" for="menu-toggle"></label>
       <ul id="menu">
-        <li><a href="#" @click="factoryShowClick">Purchasing</a></li>
-        <li><a href="#" @click="addWorker">New Worker</a></li>
+        <li><a href="#" @click="factoryShowClick">Shopping</a></li>
+        <li><a href="#" @click="purchasesDisplayClick">My purchases</a></li>
         <li><a href="#">Your Profile</a></li>
         <li><a href="#">Logout</a></li>
       </ul>
@@ -104,15 +104,69 @@
       <p>Korpa je prazna.</p>
     </div>
   </div>
-
-  <div v-if="purchases">
-
   </div>
+
+  <div v-if="purchasesShow" class="purchases-section">
+    <div class="row gx-5 gx-lg-1 align-items-center mb-2">
+    <div class="col-md-2 mb-2">
+      <input v-model="searchParams.factoryName" type="text" class="form-control" placeholder="Naziv fabrike" @input="filterPurchases">
+    </div>
+    <div class="col-md-2 mb-2">
+            <input v-model.number="searchParams.minPrice" type="number" class="form-control" placeholder="Min cijena" @input="filterPurchases">
+        </div>
+        <div class="col-md-2 mb-2">
+            <input v-model.number="searchParams.maxPrice" type="number" class="form-control" placeholder="Max cijena" @input="filterPurchases">
+        </div>
+        <div class="col-md-2 mb-2">
+            <input v-model="searchParams.startDate" type="text" class="form-control" placeholder="Datum od" @input="filterPurchases">
+        </div>
+        <div class="col-md-2 mb-2">
+            <input v-model="searchParams.endDate" type="text" class="form-control" placeholder="Datum do" @input="filterPurchases">
+        </div>
+    <div class="col-md-2 mb-2">
+      <select v-model="sortParams.criterion" class="form-select" aria-label="Default select example">
+        <option value="">Sortiraj po...</option>
+        <option value="factoryname">Naziv fabrike</option>
+        <option value="price">Cena</option>
+        <option value="date">Datum</option>
+      </select>
+    </div>
+    <div class="col-md-2 mb-2">
+      <select v-model="sortParams.ascending" class="form-select" aria-label="Default select example">
+        <option value="true">Rastuće</option>
+        <option value="false">Opadajuće</option>
+      </select>
+    </div>
   </div>
+      <h2>Vaše kupovine</h2>
+      <div class="table-responsive" style="min-height: 500px">
+    <table class="table table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Naziv fabrike</th>
+          <th scope="col">Cena</th>
+          <th scope="col">Status</th>
+          <th scope="col">Datum</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="purchase in sortedPurchases" :key="purchase.id">
+          <td>{{ purchase.factory.name }}</td>
+          <td>{{ purchase.price }}</td>
+          <td>{{ purchase.status }}</td>
+          <td>{{ purchase.purchaseDateTime }}</td>
+        </tr>
+        <tr v-if="sortedPurchases.length === 0">
+          <td colspan="5" class="text-center">Nema rezultata pretrage</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, reactive } from 'vue';
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -131,11 +185,111 @@ const chocolatesList = ref([]);
 const comments = ref([]);
 const isFactorySelected = ref(false);
 const shopping = ref(true);
+const purchasesShow = ref(false);
+const purchases = ref([]);
+const filteredPurchases = ref([]);
+
+const searchParams = reactive({
+  factoryName: '',
+  minPrice: '',
+  maxPrice: '',
+  startDate: '',
+  endDate: ''
+});
+
+const sortParams = reactive({
+  criterion: '',
+  ascending: 'true'
+});
+
+const filterPurchases = () => {
+  filteredPurchases.value = purchases.value.filter(purchase => {
+    const matchFactoryName = purchase.factory.name.toLowerCase().includes(searchParams.factoryName.toLowerCase());
+    const matchPrice = (!searchParams.minPrice || purchase.price >= searchParams.minPrice) &&
+                      (!searchParams.maxPrice || purchase.price <= searchParams.maxPrice);
+    
+    const matchDate = (!searchParams.startDate || purchase.purchaseDateTime >= searchParams.startDate) &&
+                      (!searchParams.endDate || purchase.purchaseDateTime <= searchParams.endDate);
+
+    return (
+      matchFactoryName &&
+      matchPrice &&
+      matchDate
+    );
+  });
+};
+
+/* const searchPurchases = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/WebShopAppREST/rest/purchases/search', {
+      params: {
+        factoryName: searchParams.factoryName,
+      }
+    });
+    purchases.value = response.data;
+    filterPurchases();
+  } catch (error) {
+    console.error(error);
+    title.value = "Greška u pretrazi";
+  }
+}; */
+
+const sortedPurchases = computed(() => {
+  let sorted = [...filteredPurchases.value];
+  if (sortParams.criterion) {
+    sorted.sort((a, b) => {
+      let modifier = sortParams.ascending === 'true' ? 1 : -1;
+      if (sortParams.criterion === 'factoryname') {
+        // Sortiranje po nazivu fabrike
+        return modifier * (a.factory.name.localeCompare(b.factory.name));
+      } else if (sortParams.criterion === 'price') {
+        // Sortiranje po cijeni
+        return modifier * (a.price - b.price);
+      } else if (sortParams.criterion === 'date') {
+        // Sortiranje po datumu
+        let dateA = new Date(a.purchaseDateTime).getTime();
+        let dateB = new Date(b.purchaseDateTime).getTime();
+        return modifier * (dateA - dateB);
+      }
+      return 0;
+    });
+  }
+  return sorted;
+});
+
+const purchasesDisplayClick = () => {
+  loadPurchases();
+  purchasesShow.value = true;
+  shopping.value = false;
+  console.log("purchasesShow:", purchasesShow.value);
+};
+
+const factoryShowClick = () => {
+  shopping.value = true;
+  purchasesShow.value = false;
+}
 
 onMounted(async () => {
   await loadFactories();
-  this.userId = route.query.userId;
 });
+
+const loadPurchases = async () => {
+  try {
+    const userId = route.query.id;
+    const response = await axios.get(`http://localhost:8080/WebShopAppREST/rest/purchases/${userId}`);
+    purchases.value = response.data;
+
+    // Dohvati nazive fabrika za svaku kupovinu
+    for (let purchase of purchases.value) {
+      const factoryId = purchase.factory.id;
+      const factoryResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factories/${factoryId}`);
+      purchase.factory.name = factoryResponse.data.name; // Dodaj naziv fabrike u objekat kupovine
+    }
+    filterPurchases();
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const loadFactories = async () => {
   try {
@@ -150,7 +304,6 @@ const loadFactories = async () => {
 
 const filterFactories = () => {
   filteredFactories.value = factories.value.filter(factory => {
-    // Implement your filtering logic here
     return true; // Placeholder
   });
 };
@@ -235,10 +388,6 @@ const addToCart = (chocolate) => {
   console.log("Cart:", cart.value.userId);
   console.log("Cart choco:", cart.value.chocolates);
 };
-
-  // PREGLED SVIH KUPOVINA //
-
-
 </script>
 
 <style scoped>
