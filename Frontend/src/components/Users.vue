@@ -58,40 +58,65 @@
           </div>
       </div>
     </div>
+  
+    <!-- Filter -->
+    <div class="row gx-1 gx-lg-1 align-items-center mb-3">
+      <div class="d-inline-flex gap-2">
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" style="font-size: x-large; width: 150px;">
+          Filter
+        </button>
+      </div>
+      <div class="collapse mt-3" id="collapseExample">
+        <div class="row gx-1 gx-lg-1 align-items-center mb-3">
+            <div class="col-md-2 mb-2">
+                <input type="checkbox" id="customer" v-model="selectedRoles.Customer" @change="filterUsers">
+                <label for="customer">Customer</label>
+            </div>
+            <div class="col-md-2 mb-2">
+                <input type="checkbox" id="manager" v-model="selectedRoles.Manager" @change="filterUsers">
+                <label for="manager">Manager</label>
+            </div>
+            <div class="col-md-2 mb-2">
+                <input type="checkbox" id="administrator" v-model="selectedRoles.Administrator" @change="filterUsers">
+                <label for="administrator">Administrator</label>
+            </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- User Table -->
+    <div class="table-responsive" style="min-height: 500px">
+      <table class="table table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Ime</th>
+            <th scope="col">Prezime</th>
+            <th scope="col">Korisničko ime</th>
+            <th scope="col">Uloga</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="user in sortedUsers" :key="user.id">
+            <td>{{ user.firstName }}</td>
+            <td>{{ user.lastName }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+              <button @click="toggleUserStatus(user)" class="btn btn-sm" :class="{'btn-danger': user.status === 'ACTIVATED', 'btn-success': user.status === 'DEACTIVATED'}">
+                {{ user.status === 'ACTIVATED' ? 'Deactivate' : 'Activate' }}
+              </button>
+            </td>
+          </tr>
+          <tr v-if="sortedUsers.length === 0">
+            <td colspan="5" class="text-center">Nema rezultata pretrage</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-
-  <!-- User Table -->
-  <div class="table-responsive" style="min-height: 500px">
-    <table class="table table-hover">
-      <thead class="table-dark">
-        <tr>
-          <th scope="col">Ime</th>
-          <th scope="col">Prezime</th>
-          <th scope="col">Korisničko ime</th>
-          <th scope="col">Uloga</th>
-          <th scope="col">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in sortedUsers" :key="user.id">
-          <td>{{ user.firstName }}</td>
-          <td>{{ user.lastName }}</td>
-          <td>{{ user.username }}</td>
-          <td>{{ user.role }}</td>
-          <td>
-            <button @click="toggleUserStatus(user)" class="btn btn-sm" :class="{'btn-success': user.status === 'ACTIVATED', 'btn-danger': user.status === 'DEACTIVATED'}">
-              {{ user.status === 'ACTIVATED' ? 'Deactivate' : 'Activate' }}
-            </button>
-          </td>
-        </tr>
-        <tr v-if="sortedUsers.length === 0">
-          <td colspan="5" class="text-center">Nema rezultata pretrage</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</template>
-
+  </template>
+  
 <script setup>
 import { ref, onMounted, reactive, computed } from 'vue';
 import axios from 'axios';
