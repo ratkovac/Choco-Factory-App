@@ -7,6 +7,7 @@ import CocoUpdate from '@/views/CocoUpdateView.vue'
 import FactoryWorker from '@/views/FactoryWorkerView.vue'
 import Factory from '@/views/FactoryView.vue'
 import FactoryAdmin from '@/views/FactoryAdminView.vue'
+import FactoryAdminHome from '@/views/FactoryAdminHome.vue'
 import FactoryManager from '@/views/FactoryManagerView.vue'
 import FactoryCustomer from '@/views/FactoryCustomerView.vue'
 import FactoryReview from '@/views/FactoryReviewView.vue'
@@ -69,7 +70,12 @@ const router = createRouter({
       component: Factory
     },
     {
-      path: '/factories/admin',
+      path: '/adminHome/:id',
+      name: 'factoryAdminHome',
+      component: FactoryAdminHome
+    },
+    {
+      path: '/factories/admin/:id',
       name: 'factoryAdmin',
       component: FactoryAdmin
     },

@@ -10,11 +10,11 @@
         <li><a href="#" @click="factoryShowClick">Your Factory</a></li>
         <li><a href="#" @click="addWorker">New Worker</a></li>
         <li><a href="#" @click="yourProfile">Your Profile</a></li>
+        <li><a href="#" @click="commentsClick">Comments</a></li>
         <li><a href="#">Logout</a></li>
       </ul>
     </div>
     <div v-if="showFactory">
-        <h2><label>Username:</label> {{  firstName }}</h2>
         <div class="col-md-3">
         <img :src="factory.pathToLogo" alt="Factory Logo" style="max-width: 100px;">
         </div>
@@ -26,7 +26,7 @@
         <p v-if="factory.status"><strong>Status:</strong> {{ factory.status }}</p>
         <p><strong>Komentari:</strong>
             <ul v-if="comments && comments.length > 0">
-            <li v-for="comment in comments" :key="comment.id">{{ comment.text }}</li>
+            <div v-for="comment in comments" :key="comment.id">{{ comment.text }}</div>
             </ul>
             <span v-else>Nema komentara</span>
         </p>
@@ -36,16 +36,16 @@
         <div class="table-responsive" v-if="chocolates && chocolates.length > 0">
             <table v-if="chocolates && chocolates.length > 0" class="custom-table">
                 <thead>
-                    <tr>
-                        <th class="border" style="width: 80px;">Slika</th>
-                        <th class="border">Naziv</th>
-                        <th class="border">Cena</th>
-                        <th class="border">Kategorija</th>
-                        <th class="border">Tip</th>
-                        <th class="border">Masa</th>
-                        <th class="border">Detalji</th>
-                        <th class="border">Zaliha</th>
-                        <th class="border"></th> <!-- Dodajte praznu ćeliju za dugmad -->
+                    <tr style="background-color: #573b8a; border-color: #ccc; color: white;">
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px;">Slika</th>
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px;">Naziv</th>
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px;">Cena</th>
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px;">Kategorija</th>
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px;">Tip</th>
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px;">Masa</th>
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px;">Detalji</th>
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px;">Zaliha</th>
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px;"></th> <!-- Dodajte praznu ćeliju za dugmad -->
                     </tr>
                 </thead>
                 <tbody>
@@ -61,8 +61,8 @@
                         <td class="border" style="word-wrap: break-word;">{{ chocolate.details }}</td>
                         <td class="border">{{ chocolate.stock }}</td>
                         <td class="border">
-                            <button @click="updateChocolate(chocolate.id, factory)" class="btn btn-primary btn-update">Ažuriraj</button>
-                            <button @click="deleteChocolate(chocolate.id, factory)" class="btn btn-danger btn-update">Obriši</button>
+                            <button @click="updateChocolate(chocolate.id, factory)" style="width: 130px; margin-bottom: 0px; margin-right: 30px; background-color: #573b8a; border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Ažuriraj</button>
+                            <button @click="deleteChocolate(chocolate.id, factory)" style="width: 100px; margin-bottom: 0px; margin-right: 30px; background-color: #573b8a; border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Obriši</button>
                         </td>
                     </tr>
                 </tbody>
@@ -70,11 +70,11 @@
             <span v-else>Nema dostupnih čokolada</span>
         </div>
 
-        <button @click="addChcolate(factory)" class="btn btn-primary btn-view-factory">
+        <button @click="addChcolate(factory)" style="width: 200px; margin-bottom: 0px; margin-right: 30px; background-color: #573b8a; border-color: #ccc; font-weight: 800; font-size: 17px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">
             Dodaj cokoladu
             </button>
 
-        <button @click="addWorker()" class="btn btn-primary btn-view-factory">Add Worker</button>
+        <button @click="addWorker()" style="width: 160px; margin-bottom: 0px; margin-right: 30px; background-color: #573b8a; border-color: #ccc; font-weight: 800; font-size: 17px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Add Worker</button>
         </div>
     </div>
     <div v-else-if="showNewWorkerForm">
@@ -119,8 +119,7 @@
     </div>
     <!-- Back to Manager Selection and Create Manager Buttons -->
     <div class="form-group buttons-inline" style="margin-top: 40px; margin-bottom: 0px">
-        <button type="button" class="create-factory-button" @click="toggleManagerSelection" style="width: 170px; height: 40px;">Back to Selection</button>
-        <button type="button" class="create-factory-button" @click="createWorker" style="width: 170px; height: 40px;">Add Worker</button>
+        <button type="button" style="width: 300px; margin-bottom: 0px; margin-left: 20px; background-color: #573b8a; border-color: #ccc; font-weight: 800; font-size: 16px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart" @click="createWorker" >Add Worker</button>
     </div> 
     </div>
     </div>
@@ -177,14 +176,12 @@
               </div>
               <div class="row mt-4">
                 <div class="col-md-6">
-                  <button class="btn btn-primary profile-button" type="button" style="background-color: #573b8a;
-    border-color: #3e1786;" @click="saveProfile">
+                  <button type="button" style="width: 160px; margin-bottom: 0px; margin-right: 30px; background-color: #573b8a; border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart" @click="saveProfile">
                     Save Profile
                   </button>
                 </div>
                 <div class="col-md-6">
-                  <button class="btn btn-primary profile-button" type="button" style="background-color: #573b8a;
-    border-color: #3e1786;" @click="logout">Logout</button>
+                  <button style="width: 160px; margin-bottom: 0px; margin-right: 30px; background-color: #573b8a; border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart" type="button" @click="logout">Logout</button>
                 </div>
               </div>
             </div>
@@ -193,7 +190,40 @@
       </div>
     </div>
   </div>
-  </div>
+</div>
+
+ <!-- KOMENTARI -->
+  <div v-if="commentView">
+    <!-- Prikaz komentara -->
+    <div class="mt-4">
+        <label style="font-weight: 900; font-size: 24px; margin-left: 10px; letter-spacing: 1px; color: #573b8a;">Komentari</label>
+        <div class="table-responsive" v-if="comments && comments.length > 0">
+            <table class="custom-table">
+                <thead class="table-dark">
+                    <tr style="background-color: #573b8a; border-color: #ccc; color: white;">
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px; color: white;">Tekst komentara</th>
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px; color: white;">Status</th>
+                        <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px; color: white;"></th> <!-- Kolona za dugmad -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="comment in comments" :key="comment.id">
+                        <td>{{ comment.text }}</td>
+                        <td>{{ comment.valid ? 'Validan' : 'Nevalidan' }}</td>
+                        <td v-if="!comment.valid">
+                            <button @click="approveComment(comment.id)" class="btn btn-success btn-sm">Odobri</button>
+                            <button @click="rejectComment(comment.id)" class="btn btn-danger btn-sm">Odbij</button>
+                        </td>
+                        <td v-if="comment.valid">
+                            <button @click="rejectComment(comment.id)" class="btn btn-danger btn-sm">Odbij</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <span v-else>Nema komentara</span>
+    </div>
+    </div>
   </template>
   
   <script setup>
@@ -208,6 +238,7 @@
   const showFactory = ref(true);
   const showNewWorkerForm = ref(false);
   const profile = ref(false);
+  const commentView = ref(false);
 
   const firstName = ref(route.query.firstName);
 const lastName = ref(route.query.lastName);
@@ -217,6 +248,7 @@ const username = ref(route.query.username);
     showFactory.value = true;
     showNewWorkerForm.value = false;
     profile.value = false;
+    commentView.value = false;
   }
 
   const factory = ref({
@@ -244,6 +276,12 @@ const username = ref(route.query.username);
     profile.value = false;
   };
   
+  const commentsClick = () => {
+    showFactory.value = false;
+    showNewWorkerForm.value = false;
+    profile.value = false;
+    commentView.value = true;
+  }
   const getCommentsByFactory = async (factoryId) => {
     console.log("Uslo1");
   try {
@@ -274,6 +312,7 @@ const username = ref(route.query.username);
     factory.value = response.data;
     chocolates.value = await getChocolatesByFactory(factoryId);
     comments.value = await getCommentsByFactory(factoryId);
+    console.log(comments);
     firstName.value = route.query.firstName;
     lastName.value = route.query.lastName;
     username.value = route.query.username;
@@ -297,6 +336,23 @@ const addChcolate = (factory) => {
     }
   };
 
+  const approveComment = async (commentId) => {
+    try {
+        const response = await axios.put(`http://localhost:8080/WebShopAppREST/rest/comments/accept/${commentId}`);
+        console.log(response);
+        comments.value = await getCommentsByFactory(factoryId);
+    } catch (error) {
+        console.log(error);
+    }
+  }
+  const rejectComment = async (commentId) => {
+    try {
+        const response = await axios.put(`http://localhost:8080/WebShopAppREST/rest/comments/reject/${commentId}`);
+        console.log(response);
+    } catch (error) {
+        console.log(error);
+    }
+  }
   const deleteChocolate = async (chocolateId, factory) => {
     try {
       const response = await axios.delete(`http://localhost:8080/WebShopAppREST/rest/chocolates/${chocolateId}`); 

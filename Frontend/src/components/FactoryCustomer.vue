@@ -31,6 +31,14 @@
               <h5 class="card-title">{{ factory.name }}</h5>
               <p class="card-text location">Lokacija: {{ factory.location }}</p>
               <p class="card-text">Prosečna ocena: {{ factory.rate }}</p>
+              <!-- Prikaz komentara za fabriku -->
+              <div v-if="filteredComments(factory.id).length > 0">
+                <h6 class="card-title">Komentari:</h6>
+                  <div v-for="comment in filteredComments(factory.id)" :key="comment.id">
+                    <p class="card-text"> - {{ comment.text }} </p>
+                  </div>
+              </div>
+              <p v-else class="card-text">Nema komentara za ovu fabriku.</p>
             </div>
           </div>
         </div>
@@ -42,11 +50,14 @@
       <section class="py-5" style="width: 1200px;">
         <div class="row">
           <div class="col-md-30 d-flex align-items-center" style="margin-left: 0px; margin-bottom: 30px;">
+            <button @click="factoryBack()" style="width: 160px; margin-bottom: 0px; margin-right: 300px; background-color: rgb(64, 151, 249); border-color: #ccc; font-weight: 800; font-size: 17px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">
+              Izbor fabrike
+            </button>
             <img :src="selectedFactory.pathToLogo" alt="Factory Logo" style="max-width: 100px;">
             <div>
-              <h2 style="font-weight: bold;"> {{ selectedFactory.name }}</h2>
+              <h2 style="margin-bottom: 0px; margin-left: 5px; font-size: 35px; font-weight: bold; color: rgb(64, 151, 249);"> {{ selectedFactory.name }}</h2>
             </div>
-            <button @click="pregledajKorpu()" class="btn btn-primary btn-add-to-cart" style="margin-left: 800px; background-color: white; font-weight: bold; border-color: rgb(64, 151, 249); color: rgb(64, 151, 249);">
+            <button @click="pregledajKorpu()" style="width: 160px; margin-bottom: 0px; margin-left: 300px; background-color: rgb(64, 151, 249); border-color: #ccc; font-weight: 800; font-size: 17px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">
               Pregled Korpe
             </button>
           </div>
@@ -78,6 +89,7 @@
     <div v-if="cartShow" class="cart-section">
     <!-- Pregled Korpe -->
     <div style="display: flex; justify-content: space-between;">
+      <button @click="izborCokolade()" style="width: 160px; margin-bottom: 10px; margin-right: 30px; background-color: rgb(64, 151, 249); border-color: #ccc; font-weight: 800; font-size: 17px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Nazad</button>
         <h2 style="margin-left: 30px">Pregled Korpe</h2>
         <button @click="buy()" style="width: 160px; margin-bottom: 10px; margin-right: 30px; background-color: rgb(64, 151, 249); border-color: #ccc; font-weight: 800; font-size: 17px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Poruči</button>
       </div>
@@ -217,6 +229,7 @@
           <th scope="col">Cena</th>
           <th scope="col">Status</th>
           <th scope="col">Datum</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -225,7 +238,28 @@
           <td>{{ purchase.price }}</td>
           <td>{{ purchase.status }}</td>
           <td>{{ purchase.purchaseDateTime }}</td>
+          <td v-if="purchase.status === 'Obrada'"><button @click="cancelPurchase(purchase)" style="width: 160px; margin-bottom: 0px; margin-right: 30px; background-color: rgb(64, 151, 249); border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Otkazi</button></td>
+          <td v-if="purchase.status === 'Odobreno'"><button @click="commentFactory(purchase)" style="width: 160px; margin-bottom: 0px; margin-right: 30px; background-color: rgb(64, 151, 249); border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Ostavi komentar</button></td>          
+          <td else></td>
         </tr>
+        <div v-if="showCommentModal" class="modal-overlay" @click.self="closeCommentModal">
+            <div class="modal-content">
+              <h3 style="margin-bottom: 15px; margin-left: 45px; font-size: 20px; font-weight: bold; color: rgb(64, 151, 249);">Ostavi komentar</h3>
+              <textarea v-model="newComment" placeholder="Unesite vaš komentar ovde" style="width: 100%; height: 150px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
+              <div>
+              <label style="margin-top: 10px; margin-left: 0px; font-size: 16px; font-weight: bold; color: rgb(64, 151, 249);">Ocena:</label>
+              <select v-model="ocena" style="width: 100px; margin-left: 10px; font-size: 16px; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+              </select>
+              </div>
+              <button @click="submitComment" style="width: 200px; margin-bottom: 10px; margin-top: 10px; margin-left: 30px; background-color: rgb(64, 151, 249); border-color: #ccc; font-weight: 800; font-size: 17px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Submit</button>
+              <button @click="closeCommentModal" style="width: 160px; margin-bottom: 10px; margin-left: 50px; background-color: rgb(64, 151, 249); border-color: #ccc; font-weight: 800; font-size: 17px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Close</button>
+            </div>
+          </div>
         <tr v-if="sortedPurchases.length === 0">
           <td colspan="5" class="text-center">Nema rezultata pretrage</td>
         </tr>
@@ -257,14 +291,18 @@ const selectedFactory = ref(null);
 const chocolates = ref([]);
 const chocolatesList = ref([]);
 const comments = ref([]);
+const newComment = ref();
+const ocena = ref();
 const isFactorySelected = ref(false);
 const shopping = ref(true);
 const profile = ref(false);
+const showCommentModal = ref(false);
 const userID = ref();
 const discount = ref(1.0);
 const discountString = ref();
 onMounted(async () => {
   await loadFactories();
+  await loadComments();
   this.userId = route.query.userId;
   this.userID = route.query.userId;
 });
@@ -276,8 +314,67 @@ const yourProfile = () => {
   fetchUser();
 };
 
+const cancelPurchase = (purchase) => {
+    console.log(`Cancelling purchase with id: ${purchase.id}`);
+    axios.put(`http://localhost:8080/WebShopAppREST/rest/purchases/cancel/${purchase.id}`)
+      .then(response => {
+        purchase.status = 'Otkazano';
+      })
+      .catch(error => {
+        console.error('Error cancelling purchase:', error);
+      });
+  };
+
+  const submitComment = () => {
+  axios.put(
+    `http://localhost:8080/WebShopAppREST/rest/comments/${purchaseComment.value.factory.id}`,
+    newComment.value,
+    {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  )
+  .then(response => {
+    console.log('Komentar uspješno dodan:', response.data);
+    closeCommentModal();
+  })
+  .catch(error => {
+    console.error('Greška pri dodavanju komentara:', error);
+  });
+
+  axios.put(
+    `http://localhost:8080/WebShopAppREST/rest/factories/grade/${purchaseComment.value.factory.id}`,
+    ocena.value,
+    {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  )
+  .then(response => {
+    console.log('Komentar uspješno dodan:', response.data);
+    closeCommentModal();
+  })
+  .catch(error => {
+    console.error('Greška pri dodavanju komentara:', error);
+  });
+};
+
+
+const commentFactory = (purchase) => {
+  showCommentModal.value = true;
+  purchaseComment.value = purchase;
+};
+
+
+  const closeCommentModal = () => {
+    showCommentModal.value = false;
+  }
+
 const purchasesShow = ref(false);
 const purchases = ref([]);
+const purchaseComment = ref(null);
 const filteredPurchases = ref([]);
 
 const searchParams = reactive({
@@ -344,6 +441,20 @@ const purchasesDisplayClick = () => {
 const factoryShowClick = () => {
   shopping.value = true;
   purchasesShow.value = false;
+  profile.value = false;
+}
+
+const factoryBack = () => {
+  chocolatesShow.value = false;
+  shopping.value = true;
+  isFactorySelected.value = false;
+  factoryShowClick();
+}
+
+const izborCokolade = () => {
+  chocolatesShow.value = true;
+  cartShow.value = false;
+  isFactorySelected.value = true;
 }
 
 const loadPurchases = async () => {
@@ -375,10 +486,25 @@ const loadFactories = async () => {
   }
 };
 
+const loadComments = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/WebShopAppREST/rest/comments/valid');
+    comments.value = response.data;
+    console.log(comments);
+  } catch (error) {
+    console.error(error);
+    title.value = "Greška u učitavanju";
+  }
+};
+
 const filterFactories = () => {
   filteredFactories.value = factories.value.filter(factory => {
     return true; // Placeholder
   });
+};
+
+const filteredComments = (factoryId) => {
+  return comments.value.filter(comment => comment.factoryId === factoryId);
 };
 
 const pregledajKorpu = () => {
@@ -524,6 +650,9 @@ const logout = () => {
   localStorage.removeItem('user');
   router.push('/login');
 };
+
+// OTKAZ
+
 </script>
 
 <style scoped>
@@ -649,6 +778,26 @@ const logout = () => {
   border-radius: 10px; /* Dodaj obrubljenje za bolji izgled */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Dodaj sjenu za bolji izgled */
 }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  max-width: 100%;
+}
+
 
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,700);
 
