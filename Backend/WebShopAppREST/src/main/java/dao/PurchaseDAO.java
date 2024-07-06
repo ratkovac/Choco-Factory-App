@@ -50,7 +50,7 @@ public class PurchaseDAO {
     }
     
     public List<Purchase> findAllByUser(String id) {
-    	System.out.println("-((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((" + id);
+    	//System.out.println("-((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((" + id);
         List<Purchase> userPurchases = new ArrayList<>();     
         for (Purchase purchase : purchases.values()) {
             if (purchase.getUser().getId().equals(id)) {
@@ -73,19 +73,19 @@ public class PurchaseDAO {
     }
 
     public Purchase findPurchase(String id) {
-    	System.out.println("EEEE");
+    	//System.out.println("EEEE");
     	System.out.println(purchases.size());
         return purchases.get(id);
     }
 
     public Purchase updatePurchase(String id, Purchase purchase) {
-    	System.out.println("USLOOO------------------------------------------------------------USLO");
+    	//System.out.println("USLOOO------------------------------------------------------------USLO");
     	Purchase pur = findPurchase(id);
     	System.out.println(pur.getStatus());
     	if(pur.getStatus().equals("Odobreno")) {
     		updateFactory(pur);
     	} else if (pur.getStatus().equals("Otkazano")) {
-    		System.out.println("OTKANZANOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo");
+    		//System.out.println("OTKANZANOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo");
     		User user = pur.getUser();
     		double currentPoints = user.getPoints();
     		double minus = purchase.getPrice() / 1000 * 133 * 4;
@@ -130,7 +130,7 @@ public class PurchaseDAO {
         // Iteriraj kroz sve purchase
         for (Purchase purchase : purchases) {
             // Konvertuj purchaseDateTime string u LocalDateTime
-            LocalDateTime purchaseDateTime = LocalDateTime.parse(purchase.getPurchaseDateTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            LocalDateTime purchaseDateTime = LocalDateTime.parse(purchase.getPurchaseDateTime(), DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss"));
 
             // Proveri da li je purchase u prethodnih mesec dana i da li je status "Otkazana"
             if (purchaseDateTime.isAfter(oneMonthAgo) && purchase.getStatus().equals("Otkazano")) {
@@ -142,8 +142,8 @@ public class PurchaseDAO {
     }
     
     public void countCancelled() {
-    	System.out.println("********************************************************************************************************************");
-    	System.out.println("********************************************************************************************************************");
+    	//System.out.println("********************************************************************************************************************");
+    	//System.out.println("********************************************************************************************************************");
     	for(User user : userDAO.findAll()) {
     		int canceled = findCancelledPurchasesInLastMonth(user.getId());
     		user.setCanceled(canceled);
@@ -152,21 +152,21 @@ public class PurchaseDAO {
     }
     
     public void updateFactory(Purchase purchase) {
-    	System.out.println("ODOBRAVANJE");
+    	//System.out.println("ODOBRAVANJE");
     	for(CocoInCart coco : purchase.getCartId()) {
     		Coco chocolateCoco = cocoDAO.findCoco(coco.getIdChocolate());
     		int current = chocolateCoco.getStock();
-    		System.out.println("TRENUGNO: " + current);
-    		System.out.println("SKIDA SE: " + coco.getQuantity());
+    		//System.out.println("TRENUGNO: " + current);
+    		//System.out.println("SKIDA SE: " + coco.getQuantity());
     		chocolateCoco.setStock(current - coco.getQuantity());
-    		System.out.println("Posle skidanja: " + chocolateCoco.getStock());
+    		//System.out.println("Posle skidanja: " + chocolateCoco.getStock());
     		cocoDAO.updateCoco(chocolateCoco.getId(), chocolateCoco);
     	}
     }
 
     public Purchase savePurchase(Purchase purchase) {
         purchase.setId(generateNewId());
-        purchase.setPurchaseDateTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        purchase.setPurchaseDateTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss")));
         purchases.put(purchase.getId(), purchase);
         savePurchasesToFile();
         return purchase;
@@ -314,7 +314,7 @@ public class PurchaseDAO {
     public List<Purchase> searchPurchases(String factoryName, Double minPrice, Double maxPrice, String startDate, String endDate) {
         List<Purchase> result = new ArrayList<>();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
 
         LocalDateTime startDateTime = startDate != null ? LocalDateTime.parse(startDate, formatter) : null;
         LocalDateTime endDateTime = endDate != null ? LocalDateTime.parse(endDate, formatter) : null;

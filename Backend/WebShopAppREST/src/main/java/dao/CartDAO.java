@@ -71,7 +71,7 @@ public class CartDAO {
         carts.put(cart.getId(), cart);
         ArrayList<CocoInCart> chocolates = new ArrayList<CocoInCart>();
         ArrayList<Coco> cocos = new ArrayList<Coco>();
-        System.out.println("VELICINA: " + cart.getChocolates().size());
+        //System.out.println("VELICINA: " + cart.getChocolates().size());
         for(CocoInCart coco : cart.getChocolates()) {
         	chocolates.add(cocoInCartDAO.saveCocoInCart(coco));
         	cocos.add(cocoDAO.findCoco(coco.getIdChocolate()));
@@ -86,16 +86,16 @@ public class CartDAO {
         purchase.setChocolates(cocos);
         purchase.setChocolates(cocos);
         purchase.setFactory(factoryDAO.findFactory(factoryId));
-        System.out.println("OVO JE Factory:" + purchase.getFactory().getId());
-        System.out.println("OVO JE USER ID:" + cart.getUserId());
+        //System.out.println("OVO JE Factory:" + purchase.getFactory().getId());
+        //System.out.println("OVO JE USER ID:" + cart.getUserId());
         User user = userDAO.getUserById(cart.getUserId());
         double points = user.getPoints() + (cart.getTotalPrice()/1000) * 133;
         user.setPoints(points);
         CheckType(user);
         user = userDAO.getUserById(cart.getUserId());
         purchase.setUser(user);
-        System.out.println("OVO JE USER:" + purchase.getUser().getId());
-        System.out.println("************************************************************************");
+        //System.out.println("OVO JE USER:" + purchase.getUser().getId());
+        //System.out.println("************************************************************************");
         purchaseDAO.savePurchase(purchase);
         return cart;
     }

@@ -29,7 +29,7 @@ public class LocationDAO {
     public Location addLocation(Location location) {
         location.setId(generateNewId());
         locations.put(location.getId(), location);
-        saveLocationsToFile();
+        saveLocations();
         return location;
     }
     
@@ -55,7 +55,7 @@ public class LocationDAO {
         try {
             File file = new File(filePath);
             in = new BufferedReader(new FileReader(file));
-            String line, id = "", longitude = "", latitude = "", address = "";
+            String line, id = "", longitudestr = "", latitudestr = "", address = "";
             StringTokenizer st;
             while ((line = in.readLine()) != null) {
                 line = line.trim();
@@ -64,9 +64,12 @@ public class LocationDAO {
                 st = new StringTokenizer(line, ";");
                 while (st.hasMoreTokens()) {
                     id = st.nextToken().trim();
-                    longitude = st.nextToken().trim();
-                    latitude = st.nextToken().trim();
+                    longitudestr = st.nextToken().trim();
+                    latitudestr = st.nextToken().trim();
                     address = st.nextToken().trim();
+                    
+                    double longitude = Double.parseDouble(longitudestr);
+                    double latitude = Double.parseDouble(latitudestr);
                     
                     locations.put(id, new Location(id, longitude, latitude, address));
                 }
@@ -84,14 +87,31 @@ public class LocationDAO {
         }
     }
     
-    private void saveLocationsToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileLocation))) {
-            for (Location location : locations.values()) {
-                writer.write(location.getId() + ";" + location.getLongitude() + ";" + location.getLatitude() + ";" + location.getAddress());
-                writer.newLine();
-            }
-        } catch (IOException e) {
+    private void saveLocations() {
+		BufferedWriter out = null;
+		try {
+			File file = new File(fileLocation);
+			out = new BufferedWriter(new FileWriter(file));
+			for(Location location : locations.values()) {
+				String line = String.join(";", 
+						location.getId(),
+						String.valueOf(location.getLat()),
+						String.valueOf(location.getLng()),
+						location.getAddress()
+				);
+				out.write(line);
+				out.newLine();
+			}
+		}catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
-    }
+	}
 }

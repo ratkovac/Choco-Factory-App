@@ -17,6 +17,7 @@
         <option value="firstName">Ime</option>
         <option value="lastName">Prezime</option>
         <option value="username">Korisničko ime</option>
+        <option value="points">Poeni</option>
       </select>
     </div>
     <div class="col-md-2 mb-2">
@@ -68,6 +69,7 @@
           <th scope="col">Ime</th>
           <th scope="col">Prezime</th>
           <th scope="col">Korisničko ime</th>
+          <th scope="col">Poeni</th>
           <th scope="col">Uloga</th>
           <th scope="col">Status</th>
         </tr>
@@ -77,6 +79,7 @@
           <td>{{ user.firstName }}</td>
           <td>{{ user.lastName }}</td>
           <td>{{ user.username }}</td>
+          <td>{{ user.points }}</td>
           <td>{{ user.role }}</td>
           <td>
             <button @click="toggleUserStatus(user)" class="btn btn-sm" :class="{'btn-success': user.status === 'ACTIVATED', 'btn-danger': user.status === 'DEACTIVATED'}">

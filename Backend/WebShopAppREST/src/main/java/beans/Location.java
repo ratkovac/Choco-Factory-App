@@ -1,50 +1,50 @@
 package beans;
 
 public class Location {
-	public String id;
-	public String longitude;
-	public String latitude;
-	public String address;
-	
-	public Location() {}
-	
-	public Location(String id, String longitude, String latitude, String address) {
-		super();
-		this.id = id;
-		this.longitude = longitude;
-		this.latitude = latitude;
-		this.address = address;
-	}
+    private String id;
+    private double lat;
+    private double lng;
+    private String address; //Street and number, city/place, postal code
 
-	public String getId() {
-		return id;
-	}
+    public Location() {
+        super();
+    }
+    public Location(String id, double lat, double lng, String address) {
+        super();
+        this.id = id;
+        this.lat = lat;
+        this.lng = lng;
+        this.address = address;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public double getLat() {
+        return lat;
+    }
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+    public double getLng() {
+        return lng;
+    }
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String adress) {
+        this.address = adress;
+    }
+    @Override
+    public String toString() {
+        return "Location [id=" + id + ", lat=" + lat + ", lng=" + lng + ", address=" + address + "]";
+    }
 
-	public String getLongitude() {
-		return longitude;
-	}
 
-	public void setLongitude(String longitude) {
-		this.longitude = longitude;
-	}
-
-	public String getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(String latitude) {
-		this.latitude = latitude;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
 }

@@ -58,19 +58,19 @@ public class UserDAO {
         this.factoryDAO = factoryDAO;
 		loadUsers(FileLocation);
         for (User user : users) {
-        	System.out.println(user.getFactory().getId() + "ID JE:");
-        	System.out.println("Role" + user.getRole());
+        	//System.out.println(user.getFactory().getId() + "ID JE:");
+        	//System.out.println("Role" + user.getRole());
             if (user.getRole() == UserRole.Manager && user.getFactory().getId() == "0") {
                 managers.add(user);
                 System.out.println("ime" + user.getFirstName());
             }
         }
-        System.out.println(managers.size());
+        //System.out.println(managers.size());
         return managers;
     }
 	
 	public User getRegisteringUser(String username, String password) {
-	    System.out.println("Trazi usera");
+	    //System.out.println("Trazi usera");
 	    for (User user : users) {
 	        System.out.println("Provera korisnika: " + user.getUsername() + ", " + user.getPassword());
 	        if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
@@ -216,7 +216,7 @@ public class UserDAO {
 					type = st.nextToken().trim();
 					canceled = st.nextToken().trim();
 					
-					System.out.println(canceled + "-------------------------------------------broj otkazanih");
+					//System.out.println(canceled + "-------------------------------------------broj otkazanih");
 				}
 				UserStatus status = UserStatus.valueOf(statusStr);
 	            UserRole role = UserRole.valueOf(roleStr);
@@ -335,6 +335,8 @@ public class UserDAO {
             case "username":
                 comparator = Comparator.comparing(User::getUsername);
                 break;
+            case "points":
+            	comparator = Comparator.comparingDouble(User::getPoints);
             default:
                 throw new IllegalArgumentException("Nepoznat kriterijum za sortiranje: " + criterion);
         }

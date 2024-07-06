@@ -133,7 +133,7 @@
               </div>
               <div class="row mt-4">
                 <div class="col-md-6">
-                  <button  type="button" style="width: 160px; margin-bottom: 0px; margin-right: 30px; background-color: rgb(150, 29, 37); border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart"@click="saveProfile">
+                  <button  type="button" style="width: 160px; margin-bottom: 0px; margin-right: 30px; background-color: rgb(150, 29, 37); border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart" @click="saveProfile">
                     Save Profile
                   </button>
                 </div>
@@ -478,7 +478,7 @@ select {
   background-color: rgb(150, 29, 37); /* Darker purple on hover */
   color: white; /* White text color */
 }
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,700);
+/* @import url(https://fonts.googleapis.com/css?family=Roboto:400,700); */
 
 @keyframes checked-anim {
 50% {
