@@ -169,8 +169,9 @@ public class UserService {
     public List<User> searchUsers(@QueryParam("firstName") String firstName,
                                   @QueryParam("lastName") String lastName,
                                   @QueryParam("username") String username,
-                                  @QueryParam("role") UserRole role) {
-    	return userDAO.searchUsers(firstName, lastName, username, role);
+                                  @QueryParam("role") UserRole role,
+                                  @QueryParam("type") String type) {
+    	return userDAO.searchUsers(firstName, lastName, username, role, type);
     }
 
     

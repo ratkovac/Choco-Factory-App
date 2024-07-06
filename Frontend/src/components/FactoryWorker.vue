@@ -25,7 +25,7 @@
       <p v-if="factory.status"><strong>Status:</strong> {{ factory.status }}</p>
       <p><strong>Komentari:</strong>
           <ul v-if="comments && comments.length > 0">
-          <li v-for="comment in comments" :key="comment.id">{{ comment.text }}</li>
+          <div v-for="comment in comments" :key="comment.id">{{ comment.text }}</div>
           </ul>
           <span v-else>Nema komentara</span>
       </p>

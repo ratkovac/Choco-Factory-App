@@ -50,7 +50,7 @@ public class UserDAO {
     }
 	
 	public ArrayList<User> findAll() {
-		return users;
+	    return users;
 	}
 	
 	public ArrayList<User> getAllManagers(FactoryDAO factoryDAO) {
@@ -289,7 +289,7 @@ public class UserDAO {
 	    }
 	}
 	
-	public List<User> searchUsers(String firstName, String lastName, String username, UserRole role) {
+	public List<User> searchUsers(String firstName, String lastName, String username, UserRole role, String type) {
 	    List<User> result = new ArrayList<>();
 
 	    for (User user : users) {
@@ -308,6 +308,10 @@ public class UserDAO {
 	        }
 
 	        if (role != null && user.getRole() != role) {
+	            matches = false;
+	        }
+	        
+	        if (type != null && !user.getType().equalsIgnoreCase(type)) {
 	            matches = false;
 	        }
 
