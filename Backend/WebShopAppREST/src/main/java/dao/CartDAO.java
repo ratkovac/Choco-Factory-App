@@ -82,7 +82,7 @@ public class CartDAO {
         Purchase purchase = new Purchase();
         purchase.setPrice(cart.getTotalPrice());
         purchase.setStatus("Obrada");
-        purchase.setChocolates(cocos);
+        purchase.setCartId(chocolates);
         purchase.setChocolates(cocos);
         purchase.setFactory(factoryDAO.findFactory(factoryId));
         System.out.println("OVO JE Factory:" + purchase.getFactory().getId());
@@ -95,6 +95,7 @@ public class CartDAO {
         purchase.setUser(user);
         System.out.println("OVO JE USER:" + purchase.getUser().getId());
         System.out.println("************************************************************************");
+        System.out.println(purchase.getChocolates().size());
         purchaseDAO.savePurchase(purchase);
         return cart;
     }
@@ -169,6 +170,7 @@ public class CartDAO {
     }
 
     private void saveCartsToFile() {
+    	System.out.println("7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777");
         try (BufferedWriter out = new BufferedWriter(new FileWriter(fileLocation))) {
             for (Cart cart : carts.values()) {
                 out.write(cart.getId() + ";" + cart.getUserId() + ";" + cart.getTotalPrice() + ";");

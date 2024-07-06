@@ -153,6 +153,24 @@ public class UserService {
         }
     }
     
+    @POST
+    @Path("/register/{type}/{factoryId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public User registerUserWorkerr(@PathParam("type") String type, @PathParam("factoryId") String factoryId, UserRegistration userRegistration) {
+        System.out.println("Registrovanje korisnika u register servisu");
+        System.out.println("TIP:" + type);
+        System.out.println("Name: " + userRegistration.getName() + "LastName: " + userRegistration.getSurname() + "Rod:" + userRegistration.getGender());
+        User user = userDAO.registerUserWorker(userRegistration, "w", factoryId);
+        if (user != null) {
+            System.out.println("Korisnik JESTE registrovan");
+            return user;
+        } else {
+            System.out.println("Korisnik NIJE registrovan");
+            return null;
+        }
+    }
+    
     @GET
     @Path("/allUsers")
     @Produces(MediaType.APPLICATION_JSON)

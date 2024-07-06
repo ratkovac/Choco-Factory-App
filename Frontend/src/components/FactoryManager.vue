@@ -364,7 +364,10 @@ const addChcolate = (factory) => {
 
   const createWorker = async () => {
   try {
-    const response = await axios.post('http://localhost:8080/WebShopAppREST/rest/user/register/w', newManagerForm.value);
+    const factoryId = route.params.id; 
+    console.log("ID: ", factoryId);
+    console.log(newManagerForm);
+    const response = await axios.post(`http://localhost:8080/WebShopAppREST/rest/user/register/w/${factoryId}`, newManagerForm.value);
     if (!response.data) {
       console.error("Manager wasn't able to be created! Error");
     } else {        
@@ -384,6 +387,7 @@ const yourProfile = () => {
   profile.value = true;
   showFactory.value = false;
   showNewWorkerForm.value = false;
+  commentView.value = false;
   fetchUser();
 };
 
