@@ -11,6 +11,7 @@ import FactoryAdminHome from '@/views/FactoryAdminHome.vue'
 import FactoryManager from '@/views/FactoryManagerView.vue'
 import FactoryCustomer from '@/views/FactoryCustomerView.vue'
 import FactoryReview from '@/views/FactoryReviewView.vue'
+import FactoryAllReview from '@/views/FactoryAllReviewView.vue'
 import CreateFactory from '@/views/CreateFactoryView.vue'
 import UserProfile from '@/views/UserProfileView.vue'
 import Users from '@/views/UsersView.vue'
@@ -57,6 +58,12 @@ const router = createRouter({
       path: '/factories/:id', // Dodajte ":id" da biste očekivali parametar ID
       name: 'factoryReview',
       component: FactoryReview,
+      props: true // Proslijedite parametre kao props
+    },
+    {
+      path: '/factoriesAll/:id', // Dodajte ":id" da biste očekivali parametar ID
+      name: 'factoryAllReview',
+      component: FactoryAllReview,
       props: true // Proslijedite parametre kao props
     },
     {

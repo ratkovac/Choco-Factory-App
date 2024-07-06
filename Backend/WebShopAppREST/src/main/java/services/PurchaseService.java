@@ -90,15 +90,29 @@ public class PurchaseService {
     @Path("/accept/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Purchase updatePurchaseAccept(@PathParam("id") String id, Purchase updatedCoco) {
+    public Purchase updatePurchaseAccept(@PathParam("id") String id) {
         PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
-        updatedCoco.setStatus("Odobreno");
         System.out.println("=====================================================================");
         System.out.println(id);
         Purchase pur = dao.findPurchase(id);
         System.out.println("=====================================================================");
         System.out.println(pur.getChocolates().size() + " COKOLADE");
         pur.setStatus("Odobreno");
+        return dao.updatePurchase(id, pur);
+    }
+    
+    @PUT
+    @Path("/reject/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Purchase updatePurchaseReject(@PathParam("id") String id) {
+        PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+        System.out.println("=====================================================================");
+        System.out.println(id);
+        Purchase pur = dao.findPurchase(id);
+        System.out.println("=====================================================================");
+        System.out.println(pur.getChocolates().size() + " COKOLADE");
+        pur.setStatus("Odbijeno");
         return dao.updatePurchase(id, pur);
     }
     

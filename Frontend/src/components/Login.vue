@@ -1,26 +1,26 @@
 <template>
   <div class="center-position">
-    <form class="formStyle" style="margin-top:5%;">
+    <form class="formStyle" style="margin-top:5%;" @submit.prevent="loginUser">
       <fieldset>
-        <legend>Log in</legend>
+        <legend style="color: #FFF;">Log in</legend>
         <div>
-          <label for="username" class="formInputs">Username</label><br>
-          <input type="text" v-model="userCredentials.username" name="username" id="username" class="formInputs">
+          <label for="username" class="formLabel">Username</label><br>
+          <input type="text" v-model="userCredentials.username" name="username" id="username" class="formInput">
         </div>
         <div>
-          <label for="password" class="formInputs">Password</label><br>
-          <input type="password" v-model="userCredentials.password" name="password" id="password" class="formInputs">
+          <label for="password" class="formLabel">Password</label><br>
+          <input type="password" v-model="userCredentials.password" name="password" id="password" class="formInput">
         </div><br>
         <div>
-          <input type="submit" v-on:click="loginUser" value="Login" class="formInputs">
+          <button type="submit" class="formButton">Login</button>
         </div>
-        <p>{{errortext}}</p>
+        <p style="color: red;">{{ errortext }}</p>
       </fieldset><br>
       <div>
-        <input type="submit" v-on:click="registerUser" value="Register" class="formInputs">
+        <button type="button" @click="registerUser" class="formButton">Register</button>
       </div><br>
       <div>
-        <input type="submit" v-on:click="goBack" value="Return" class="formInputs">
+        <button type="button" @click="goBack" class="formButton">Return</button>
       </div>
     </form>
   </div>
@@ -45,8 +45,7 @@ export default {
     };
   },
   methods: {
-    loginUser(event) {
-      event.preventDefault();
+    loginUser() {
       if (!this.userCredentials.username) {
         document.getElementsByName("username")[0].style.background = "red";
         this.isUsernameValid = false;
@@ -73,14 +72,10 @@ export default {
               this.user = responseData.user || responseData;
               this.factoryId = responseData.factoryId || (this.user.factory ? this.user.factory.id : null);
               const userId = responseData.id;
-              console.log(this.user.role);
-              console.log("EEEEE");
               if (this.user.status === 'DEACTIVATED') {
                 this.errortext = 'Your account has been deactivated.';
                 return;
               }
-              console.log("EEEEE2");
-              console.log(this.user.role);
               if (this.user.role === 'Administrator') {
                 router.push({ path: `/factories/admin/${this.user.id}` });
                 router.push({ 
@@ -94,26 +89,20 @@ export default {
                 });
               } else if (this.user.role === 'Manager') {
                 if (this.factoryId) {
-                  console.log("username:");
-                  console.log(responseData.username);
-                  console.log("ID");
-                  console.log(userId);
                   router.push({ 
-                  path: `/factories/manager/${this.factoryId}`, 
-                  query: {
-                    id: userId,
-                    firstName: responseData.firstName,
-                    lastName: responseData.lastName,
-                    username: responseData.username
-                  }
-                });
+                    path: `/factories/manager/${this.factoryId}`, 
+                    query: {
+                      id: userId,
+                      firstName: responseData.firstName,
+                      lastName: responseData.lastName,
+                      username: responseData.username
+                    }
+                  });
                 } else {
                   this.errortext = 'Factory ID not found';
                 }
-              } else if (this.user.role == 'Worker') {
-                console.log("Ime:");
-                  console.log(responseData.firstName);
-                  router.push({ 
+              } else if (this.user.role === 'Worker') {
+                router.push({ 
                   path: `/factories/worker/${this.factoryId}`, 
                   query: {
                     id: userId,
@@ -122,9 +111,7 @@ export default {
                     username: responseData.username
                   }
                 });
-              } else if (this.user.role == "Customer") {
-                console.log("Prijava customer"); 
-                console.log("ID:", userId);              
+              } else if (this.user.role === 'Customer') {
                 router.push({ 
                   path: `/factories/customer/${userId}`, 
                   query: {
@@ -134,8 +121,7 @@ export default {
                     username: responseData.username
                   }
                 });
-              }
-               else {
+              } else {
                 this.errortext = 'Invalid user role';
               }
             } else {
@@ -148,12 +134,10 @@ export default {
           });
       }
     },
-    registerUser(event) {
-      event.preventDefault();
+    registerUser() {
       router.push(`/register`);
     },
-    goBack(event) {
-      event.preventDefault();
+    goBack() {
       router.push(`/`);
     }
   }
@@ -170,19 +154,52 @@ export default {
 
 .formStyle {
   width: 300px;
+  background-color: #333;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.formInputs {
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-fieldset {
-  border: 1px solid #ccc;
-  padding: 10px;
-}
-
-legend {
+.formLabel {
+  color: #FFF;
   font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.formInput {
+  width: calc(100% - 12px);
+  padding: 6px;
+  margin-bottom: 10px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background-color: #444;
+  color: #FFF;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #573b8a;
+  color: #FFF; /* Dodajte boju teksta za fokusirano stanje */
+}
+
+.formButton {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #573b8a;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.formButton:hover {
+  background-color: #6d44b8;
+}
+
+p {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
 }
 </style>

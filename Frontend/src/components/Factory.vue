@@ -221,7 +221,7 @@ const factoryContainsChocolateWithCategory = (factory, chocolateCategory) => {
 };
 
 const pregledajFabriku = (factory) => {
-  router.push({ path: `/factories/${factory.id}` });
+  router.push({ path: `/factoriesAll/${factory.id}` });
 };
 
 const searchFactories = async () => {

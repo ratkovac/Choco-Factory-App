@@ -32,8 +32,8 @@ public class UserDAO {
 	}
 	
 	public UserDAO(String contextPath) {
-		//FileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
-		FileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
+		FileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
+		//FileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
 		factoryDAO = new FactoryDAO(contextPath);
 		
 		loadUsers(FileLocation);
@@ -127,6 +127,64 @@ public class UserDAO {
 			else if(type.equals("c")){
 				System.out.println("Registruje kupca");
 				user.setRole(UserRole.Customer);
+			}
+			else if(type.equals("w")){
+				System.out.println("Registruje kupca");
+				user.setRole(UserRole.Worker);
+				System.out.println("Radnik radi na: " + user.getFactory().getId());
+			}
+		    users.add(user);
+		    System.out.println("Korisnik registrovan");
+		    SaveUserToFile();
+		    return user;
+		}
+
+	}
+	public User registerUserWorker(UserRegistration userReg, String type, String factoryId) {
+		System.out.println("Korisnik treba da se registruje");
+		System.out.println("Tip korisnika: " + type);
+		System.out.println("Pol korisnika: " + userReg.getGender());
+		boolean userExists = users.stream()
+		        .anyMatch(u -> u.getUsername().equals(userReg.getUsername()));
+
+		if (userExists) {
+		    System.out.println("Postoji vec korisnik sa ovim podacima");
+		    return null;
+		} else {
+			User user = new User();
+			Integer maxId = -1;
+			for (User f : users) {
+			    int idNum = Integer.parseInt(f.getId());
+			    if (idNum > maxId) {
+			        maxId = idNum;
+			    }
+			}
+			maxId++;
+			user.setId(maxId.toString());
+			user.setBirthDate(userReg.getBirthDate());
+			user.setGender(userReg.getGender());
+			user.setFirstName(userReg.getName());
+			user.setPassword(userReg.getPassword());
+			user.setUsername(userReg.getUsername());
+			user.setLastName(userReg.getSurname());
+			user.setPoints(0);
+			user.setType("Silver");
+			user.setStatus(UserStatus.ACTIVATED);
+			user.setCanceled(0);
+			//user.setUserStatus(UserStatus.Active);
+			user.setFactory(factoryDAO.findFactory(factoryId));
+			if(type.equals("m")) {
+				System.out.println("Registruje menadzera");
+				user.setRole(UserRole.Manager);
+			}
+			else if(type.equals("c")){
+				System.out.println("Registruje kupca");
+				user.setRole(UserRole.Customer);
+			}
+			else if(type.equals("w")){
+				System.out.println("Registruje kupca");
+				user.setRole(UserRole.Worker);
+				System.out.println("Radnik radi na: " + user.getFactory().getId());
 			}
 		    users.add(user);
 		    System.out.println("Korisnik registrovan");

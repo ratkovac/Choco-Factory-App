@@ -29,7 +29,7 @@
             <img :src="factory.pathToLogo" class="card-img-top img-thumbnail" alt="Factory Logo">
             <div class="card-body">
               <h5 class="card-title">{{ factory.name }}</h5>
-              <p class="card-text location">Lokacija: {{ factory.location }}</p>
+              <p class="card-text location">Lokacija: {{ factory.location.address }}</p>
               <p class="card-text">Prosečna ocena: {{ factory.rate }}</p>
               <!-- Prikaz komentara za fabriku -->
               <div v-if="filteredComments(factory.id).length > 0">
@@ -560,9 +560,14 @@ const buy = async () => {
   console.log("POSLE:" + cart.value.totalPrice);
   try {
     const response = await axios.post(`http://localhost:8080/WebShopAppREST/rest/carts/`, cart.value);
+    console.log(selectedFactory.value);
+    const chocolatesResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/chocolates/factory/${selectedFactory.value.id}`);
+    chocolates.value = chocolatesResponse.data.map(chocolate => ({ ...chocolate, quantity: 1 }));
+    chocolatesList.value = chocolatesResponse.data;
   } catch(error) {
     console.error(error);
   }
+  
 };
 const sortedFactories = computed(() => {
   return filteredFactories.value;

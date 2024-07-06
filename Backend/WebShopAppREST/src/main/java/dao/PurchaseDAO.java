@@ -33,8 +33,8 @@ public class PurchaseDAO {
     private FactoryDAO factoryDAO;
 
     public PurchaseDAO(String contextPath) {
-        //this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\purchases.csv"; // Podesite putanju do CSV fajla
-        this.fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\purchases.csv"; // Podesite putanju do CSV fajla
+        this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\purchases.csv"; // Podesite putanju do CSV fajla
+        //this.fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\purchases.csv"; // Podesite putanju do CSV fajla
         cocoInCartDAO = new CocoInCartDAO(contextPath); // Inicijalizacija DAO za čokolade u korpi
         userDAO = new UserDAO(contextPath); // Inicijalizacija DAO za korisnike (kupce)
         cocoDAO = new CocoDAO(contextPath);
@@ -85,10 +85,11 @@ public class PurchaseDAO {
     	if(pur.getStatus().equals("Odobreno")) {
     		updateFactory(pur);
     	} else if (pur.getStatus().equals("Otkazano")) {
+    		updateFactory(pur);
     		System.out.println("OTKANZANOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo");
     		User user = pur.getUser();
     		double currentPoints = user.getPoints();
-    		double minus = purchase.getPrice() / 1000 * 133 * 4;
+    		double minus = pur.getPrice() / 1000 * 133 * 4;
     		if(minus >= currentPoints) {
     			user.setPoints(0);
     			userDAO.updateUserForm(user.getId(), user);
@@ -96,19 +97,21 @@ public class PurchaseDAO {
     			user.setPoints(currentPoints - minus);
     			userDAO.updateUserForm(user.getId(), user);
     		}
+    	} else {
+    		updateFactory(pur);
     	}
         Purchase existingPurchase = purchases.containsKey(id) ? purchases.get(id) : null;
         if (existingPurchase == null) {
-            return savePurchase(purchase);
+            return savePurchase(pur);
         } else {
-            existingPurchase.setId(purchase.getId());
-            System.out.println("VELICINA COKOLADA" + purchase.getChocolates().size());
-            existingPurchase.setChocolates(purchase.getChocolates());
-            existingPurchase.setFactory(purchase.getFactory());
-            existingPurchase.setPurchaseDateTime(purchase.getPurchaseDateTime());
-            existingPurchase.setPrice(purchase.getPrice());
-            existingPurchase.setUser(purchase.getUser());
-            existingPurchase.setStatus(purchase.getStatus());
+            existingPurchase.setId(pur.getId());
+            System.out.println("VELICINA COKOLADA" + pur.getChocolates().size());
+            existingPurchase.setChocolates(pur.getChocolates());
+            existingPurchase.setFactory(pur.getFactory());
+            existingPurchase.setPurchaseDateTime(pur.getPurchaseDateTime());
+            existingPurchase.setPrice(pur.getPrice());
+            existingPurchase.setUser(pur.getUser());
+            existingPurchase.setStatus(pur.getStatus());
         }
         savePurchasesToFile();
         int canceled = findCancelledPurchasesInLastMonth(purchase.getUser().getId());
@@ -158,7 +161,7 @@ public class PurchaseDAO {
     		int current = chocolateCoco.getStock();
     		System.out.println("TRENUGNO: " + current);
     		System.out.println("SKIDA SE: " + coco.getQuantity());
-    		chocolateCoco.setStock(current - coco.getQuantity());
+    		chocolateCoco.setStock(current + coco.getQuantity());
     		System.out.println("Posle skidanja: " + chocolateCoco.getStock());
     		cocoDAO.updateCoco(chocolateCoco.getId(), chocolateCoco);
     	}
@@ -166,8 +169,11 @@ public class PurchaseDAO {
 
     public Purchase savePurchase(Purchase purchase) {
         purchase.setId(generateNewId());
+        System.out.println(purchase.getId());
         purchase.setPurchaseDateTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        System.out.println(purchase.getPurchaseDateTime());
         purchases.put(purchase.getId(), purchase);
+        System.out.println(purchase.getStatus());
         savePurchasesToFile();
         return purchase;
     }
@@ -250,6 +256,7 @@ public class PurchaseDAO {
                 Purchase purchase = new Purchase(id, chocolates, factory, purchaseDateTime, price, buyer, status, chocolatess);
                 purchases.put(id, purchase);
             }
+            savePurchasesToFile();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -264,10 +271,15 @@ public class PurchaseDAO {
     }
 
     private void savePurchasesToFile() {
+    	System.out.println("USLO");
+    	System.out.println(purchases.size());
+    	int count = 0;
         try (BufferedWriter out = new BufferedWriter(new FileWriter(fileLocation))) {
             for (Purchase purchase : purchases.values()) {
+            	System.out.println(count++);
                 out.write(purchase.getId() + ";");
-
+            	System.out.println(purchase.getId());
+            	System.out.println("COKO:ADE" + purchase.getChocolates().size());
                 // Prolazak kroz čokolade
                 List<Coco> chocolates = purchase.getChocolates();
                 for (int i = 0; i < chocolates.size(); i++) {
@@ -294,6 +306,7 @@ public class PurchaseDAO {
                 // Status
                 out.write(purchase.getStatus() + ";");
                 
+            	System.out.println("CocoInCArt" + purchase.getCartId().size());
                 List<CocoInCart> chocolatess = purchase.getCartId();
                 for (int i = 0; i < chocolatess.size(); i++) {
                     CocoInCart chocolate = chocolatess.get(i);

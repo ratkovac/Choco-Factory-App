@@ -31,10 +31,10 @@ public class FactoryDAO {
 	
 	public FactoryDAO(String contextPath) {
 		System.out.println("OVO je context " + contextPath);
-		this.fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\factories.csv";
+		this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\factories.csv";
 		System.out.println("Ovo je putanja" + fileLocation);
-		this.cocoDAO = new CocoDAO("C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv");
-		this.locationDAO = new LocationDAO("C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\locations.csv");
+		this.cocoDAO = new CocoDAO("C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv");
+		this.locationDAO = new LocationDAO("C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\locations.csv");
 		System.out.println("EE");
 		loadFactories(fileLocation);
 	}
