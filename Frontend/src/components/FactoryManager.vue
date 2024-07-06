@@ -229,11 +229,15 @@
     <h2>Kupovine u vašoj fabrici:</h2>
     <div class="card-container">
       <div v-for="purchase in purchases" :key="purchase.id" class="card">
-        <div class="card-body">
+        <div class="card-body" style="background-color: #573b8a; border-color: gray;">
           <h5 class="card-title">{{ purchase.factory.name }}</h5>
           <p class="card-text"><strong>Cena:</strong> {{ purchase.price }} RSD</p>
           <p class="card-text"><strong>Status:</strong> {{ purchase.status }}</p>
           <p class="card-text"><strong>Datum:</strong> {{ purchase.purchaseDateTime }}</p>
+          <div v-if="purchase.status === 'Obrada'">
+            <button @click="acceptPurchase(purchase.id)" class="btn btn-success">Prihvati Kupovinu</button>
+            <button @click="rejectPurchase(purchase.id)" class="btn btn-danger">Odbij Kupovinu</button>
+            </div>
         </div>
       </div>
       <div v-if="purchases.length === 0" class="no-results">
@@ -346,6 +350,27 @@ const username = ref(route.query.username);
   }
 };
 
+const acceptPurchase = async (purchaseId) => {
+        try {
+            const response = await axios.put(`http://localhost:8080/WebShopAppREST/rest/purchases/accept/${purchaseId}`);
+            loadPurchases();
+            return response.data; 
+         } catch (error) {
+            console.error(error);
+            return [];
+        }
+    };
+
+    const rejectPurchase = async (purchaseId) => {
+        try {
+            const response = await axios.put(`http://localhost:8080/WebShopAppREST/rest/purchases/reject/${purchaseId}`);
+            loadPurchases();
+            return response.data;
+         } catch (error) {
+            console.error(error);
+            return [];
+        }
+    };
   const getChocolatesByFactory = async (factoryId) => {
     try {
       const response = await axios.get(`http://localhost:8080/WebShopAppREST/rest/chocolates/factory/${factoryId}`);
@@ -447,7 +472,10 @@ const addChcolate = (factory) => {
 
   const createWorker = async () => {
   try {
-    const response = await axios.post('http://localhost:8080/WebShopAppREST/rest/user/register/w', newManagerForm.value);
+    const factoryId = route.params.id; 
+    console.log("ID: ", factoryId);
+    console.log(newManagerForm);
+    const response = await axios.post(`http://localhost:8080/WebShopAppREST/rest/user/register/w/${factoryId}`, newManagerForm.value);
     if (!response.data) {
       console.error("Manager wasn't able to be created! Error");
     } else {        
@@ -467,6 +495,7 @@ const yourProfile = () => {
   profile.value = true;
   showFactory.value = false;
   showNewWorkerForm.value = false;
+  commentView.value = false;
   fetchUser();
 };
 
@@ -518,10 +547,11 @@ const logout = () => {
   
   <style scoped>
 .card {
-  background-color: rgb(64, 151, 249);
+  background-color: #411594;
   width: 100%;
   cursor: pointer;
   transition: transform 0.2s ease;
+  margin-bottom: 10px;
 }
 
 .card:hover {
@@ -691,11 +721,11 @@ select {
 @keyframes checked-anim {
   50% {
     width: 300px; /* Smanjite širinu animacije */
-    height: 450px; /* Smanjite visinu animacije */
+    height: 500px; /* Smanjite visinu animacije */
   }
   100% {
     width: 250px; /* Konačna širina menija */
-    height: 400px; /* Konačna visina menija */
+    height: 450px; /* Konačna visina menija */
     border-bottom-right-radius:20%;
   }
 }

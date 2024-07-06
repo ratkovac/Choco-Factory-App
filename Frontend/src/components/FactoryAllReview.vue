@@ -1,15 +1,4 @@
 <template>
-  <div>
-    <input type="checkbox" id="menu-toggle"/>
-    <label id="trigger" for="menu-toggle"></label>
-    <label id="burger" for="menu-toggle"></label>
-    <ul id="menu">
-      <li><a href="#" @click="factoryShowClick">Factories</a></li>
-      <li><a href="#" @click="dodajFabriku">New Factory</a></li>
-      <li><a href="#" @click="yourProfile">Your Profile</a></li>
-      <li><a href="#" @click="logout">Log out</a></li>
-    </ul>
-  </div>
   <section class="py-5">
     <div class="container px-4 px-lg-5 my-5">
       <div class="row gx-5 gx-lg-1 align-items-center">
@@ -103,7 +92,7 @@ const location = ref({
 
 const getCommentsByFactory = async (factoryId) => {
   try {
-    const response = await axios.get(`http://localhost:8080/WebShopAppREST/rest/comments/factory/${factoryId}`);
+    const response = await axios.get(`http://localhost:8080/WebShopAppREST/rest/comments/factory/valid/${factoryId}`);
     return response.data;
   } catch (error) {
     console.error(error);
