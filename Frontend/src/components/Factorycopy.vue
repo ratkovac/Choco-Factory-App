@@ -32,7 +32,7 @@
       <select v-model="sortParams.criterion" class="form-select" aria-label="Default select example">
         <option value="">Sortiraj po...</option>
         <option value="name">Naziv</option>
-        <option value="location">Lokacija</option>
+        <option value="address">Lokacija</option>
         <option value="rate">Prosečna ocena</option>
       </select>
     </div>
@@ -123,7 +123,7 @@
             <img :src="factory.pathToLogo" alt="Factory Logo" class="img-thumbnail" style="max-width: 80px;">
           </td>
           <td>{{ factory.name }}</td>
-          <td>{{ factory.location }}</td>
+          <td>{{ factory.location.address }}</td>
           <td style="padding-left: 50px;">{{ factory.rate }}</td>
           <td>
             <button @click="pregledajFabriku(factory)" class="btn btn-outline-primary btn-sm">
@@ -223,7 +223,7 @@ const profile = ref(false);
 const searchParams = reactive({
   factoryName: '',
   chocolateName: '',
-  location: '',
+  address: '',
   averageRating: null,
   chocolateType: '',
   chocolateCategory: '',
@@ -274,7 +274,7 @@ const filterFactories = () => {
   filteredFactories.value = factories.value.filter(factory => {
     const matchFactoryName = factory.name.toLowerCase().includes(searchParams.factoryName.toLowerCase());
     const matchChocolateName = factoryContainsChocolate(factory, searchParams.chocolateName);
-    const matchLocation = factory.location.toLowerCase().includes(searchParams.location.toLowerCase());
+    const matchAddress = factory.location.address.toLowerCase().includes(searchParams.address.toLowerCase());
     const matchAverageRating = !searchParams.averageRating || factory.rate >= searchParams.averageRating;
     const matchChocolateCategory =
       (!chocolateCategoryFilters.regular || factoryContainsChocolateWithCategory(factory, 'Regular')) &&
@@ -288,7 +288,7 @@ const filterFactories = () => {
     return (
       matchFactoryName &&
       matchChocolateName &&
-      matchLocation &&
+      matchAddress &&
       matchAverageRating &&
       matchChocolateCategory &&
       matchIsOpen &&
@@ -322,7 +322,7 @@ const searchFactories = async () => {
       params: {
         factoryName: searchParams.factoryName,
         chocolateName: searchParams.chocolateName,
-        location: searchParams.location,
+        address: searchParams.address,
         averageRating: searchParams.averageRating,
         chocolateType: searchParams.chocolateType,
         chocolateCategory: searchParams.chocolateCategory,
@@ -342,9 +342,19 @@ const sortedFactories = computed(() => {
   if (sortParams.criterion) {
     sorted.sort((a, b) => {
       let modifier = sortParams.ascending === 'true' ? 1 : -1;
-      if (a[sortParams.criterion] < b[sortParams.criterion]) return -1 * modifier;
-      if (a[sortParams.criterion] > b[sortParams.criterion]) return 1 * modifier;
-      return 0;
+      if (sortParams.criterion === 'address') {
+        // Comparing addresses directly
+        let addressA = a.location.address.toLowerCase();
+        let addressB = b.location.address.toLowerCase();
+        if (addressA < addressB) return -1 * modifier;
+        if (addressA > addressB) return 1 * modifier;
+        return 0;
+      } else {
+        // For other criteria (name, rate), compare directly
+        if (a[sortParams.criterion] < b[sortParams.criterion]) return -1 * modifier;
+        if (a[sortParams.criterion] > b[sortParams.criterion]) return 1 * modifier;
+        return 0;
+      }
     });
   }
   return sorted;

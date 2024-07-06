@@ -1,6 +1,6 @@
 <template>
   <section class="py-5">
-    <div class="container px-4 px-lg-5 my-5"      <!-- Factories Table -->
+    <div class="container px-4 px-lg-5 my-5">
       <div class="row gx-5 gx-lg-1 align-items-center mb-4">
         <div class="col-md-12">
           <h1 class="display-5 fw-bold mb-4">{{ title }}

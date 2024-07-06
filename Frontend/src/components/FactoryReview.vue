@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
   <div>
     <input type="checkbox" id="menu-toggle"/>
     <label id="trigger" for="menu-toggle"></label>
@@ -364,13 +363,5 @@ html, body, template{
 }
 [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
     display: none;
-
-  .btn-update {
-    background-color: cadetblue;
-    height: 25px;
-    width: auto;
-    font-size: 12px;
-    color: white;
-  }
 }
   </style>
