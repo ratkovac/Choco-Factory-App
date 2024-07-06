@@ -71,7 +71,7 @@
             <td>{{ user.username }}</td>
             <td>{{ user.role }}</td>
             <td>
-              <button @click="toggleUserStatus(user)" class="btn btn-sm" :class="{'btn-success': user.status === 'ACTIVATED', 'btn-danger': user.status === 'DEACTIVATED'}">
+              <button @click="toggleUserStatus(user)" class="btn btn-sm" :class="{'btn-danger': user.status === 'ACTIVATED', 'btn-success': user.status === 'DEACTIVATED'}">
                 {{ user.status === 'ACTIVATED' ? 'Deactivate' : 'Activate' }}
               </button>
             </td>
@@ -155,6 +155,7 @@
       if (response.status === 200) {
         user.status = newStatus ? 'ACTIVATED' : 'DEACTIVATED';
         user.isActive = newStatus;
+        loadUsers();
       }
     } catch (error) {
       console.error('Failed to change user status:', error);

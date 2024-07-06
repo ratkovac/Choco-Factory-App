@@ -57,6 +57,18 @@ public class PurchaseDAO {
         }        
         return userPurchases; // Vrati listu kupovina koje pripadaju korisniku sa datim id
     }
+    
+    public List<Purchase> findAllByFactory(String id) {
+    	List<Purchase> factoryPurchases = new ArrayList<>();
+    	for (Purchase purchase : purchases.values()) {
+    		Factory f = purchase.getFactory();
+    		Factory factory = factoryDAO.findFactory(f.getId());
+    		if (factory.getId().equals(id)) {
+    			factoryPurchases.add(purchase);
+    		}
+    	}
+    	return factoryPurchases;
+    }
 
     public Purchase findPurchase(String id) {
     	System.out.println("EEEE");

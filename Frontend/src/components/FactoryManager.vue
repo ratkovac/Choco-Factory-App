@@ -8,9 +8,10 @@
       <label id="burger" for="menu-toggle"></label>
       <ul id="menu">
         <li><a href="#" @click="factoryShowClick">Your Factory</a></li>
+        <li><a href="#" @click="purchasesDisplayClick">Purchases</a></li>
         <li><a href="#" @click="addWorker">New Worker</a></li>
         <li><a href="#" @click="yourProfile">Your Profile</a></li>
-        <li><a href="#">Logout</a></li>
+        <li><a href="#" @click="logout">Logout</a></li>
       </ul>
     </div>
     <div v-if="showFactory">
@@ -194,10 +195,65 @@
     </div>
   </div>
   </div>
+  <div v-if="purchasesShow" class="purchases-section">
+    <h2>Kupovine u vašoj fabrici:</h2>
+    <div class="card-container">
+      <div v-for="purchase in purchases" :key="purchase.id" class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ purchase.factory.name }}</h5>
+          <p class="card-text"><strong>Cena:</strong> {{ purchase.price }} RSD</p>
+          <p class="card-text"><strong>Status:</strong> {{ purchase.status }}</p>
+          <p class="card-text"><strong>Datum:</strong> {{ purchase.purchaseDateTime }}</p>
+        </div>
+      </div>
+      <div v-if="purchases.length === 0" class="no-results">
+        Nema rezultata pretrage
+      </div>
+    </div>
+  </div>
+  <!-- <div v-if="purchasesShow" class="purchases-section">
+      <h2>Kupovine u vašoj fabrici:</h2>
+      <div class="purchases-list row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" style="margin-top: 10px;">
+              <div class="col" v-for="purchase in purchases" :key="purchase.id">
+                <div class="card h-100">
+                  <img :src="purchase.factory.pathToLogo" class="card-img-top img-thumbnail" alt="Slika fabrike">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ purchase.factory.name }}</h5>
+                    <p class="card-text">Cena: {{ purchase.price }} RSD</p>
+                    <p class="card-text">Status: {{ purchase.status }}</p>
+                    <p class="card-text">Datum: {{ purchase.purchaseDateTime }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+      <div class="table-responsive" style="min-height: 500px">
+    <table class="table table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Naziv fabrike</th>
+          <th scope="col">Cena</th>
+          <th scope="col">Status</th>
+          <th scope="col">Datum</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="purchase in purchases" :key="purchase.id">
+          <td>{{ purchase.factory.name }}</td>
+          <td>{{ purchase.price }}</td>
+          <td>{{ purchase.status }}</td>
+          <td>{{ purchase.purchaseDateTime }}</td>
+        </tr>
+        <tr v-if="purchases.length === 0">
+          <td colspan="5" class="text-center">Nema rezultata pretrage</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    </div> -->
   </template>
   
   <script setup>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, computed, reactive } from 'vue';
   import axios from 'axios';
   import { useRoute, useRouter } from 'vue-router';
 
@@ -208,16 +264,12 @@
   const showFactory = ref(true);
   const showNewWorkerForm = ref(false);
   const profile = ref(false);
+  const purchasesShow = ref(false);
+  const purchases = ref([]);
 
   const firstName = ref(route.query.firstName);
 const lastName = ref(route.query.lastName);
 const username = ref(route.query.username);
-
-  const factoryShowClick = () => {
-    showFactory.value = true;
-    showNewWorkerForm.value = false;
-    profile.value = false;
-  }
 
   const factory = ref({
   name: '',
@@ -242,6 +294,7 @@ const username = ref(route.query.username);
     showFactory.value = false;
     showNewWorkerForm.value = true;
     profile.value = false;
+    purchasesShow.value = false;
   };
   
   const getCommentsByFactory = async (factoryId) => {
@@ -266,6 +319,37 @@ const username = ref(route.query.username);
     }
   };
 
+  const purchasesDisplayClick = () => {
+  loadPurchases();
+  purchasesShow.value = true;
+  showFactory.value = false;
+  profile.value = false;
+  showNewWorkerForm.value = false;
+  console.log("purchasesShow:", purchasesShow.value);
+};
+
+const factoryShowClick = () => {
+  showFactory.value = true;
+  purchasesShow.value = false;
+  showNewWorkerForm.value = false;
+  profile.value = false;
+}
+
+const loadPurchases = async () => {
+  try {
+    const factoryId = route.params.id;
+    const response = await axios.get(`http://localhost:8080/WebShopAppREST/rest/purchases/factory/${factoryId}`);
+    purchases.value = response.data;
+
+    for (let purchase of purchases.value) {
+      const factoryId = purchase.factory.id;
+      const factoryResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factories/${factoryId}`);
+      purchase.factory.name = factoryResponse.data.name; // Dodaj naziv fabrike u objekat kupovine
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
   
   onMounted(async () => {
   try {
@@ -378,6 +462,41 @@ const logout = () => {
   </script>
   
   <style scoped>
+.card {
+  background-color: rgb(64, 151, 249);
+  width: 100%;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card-img-left {
+  max-width: 150px;
+  object-fit: cover;
+  float: left;
+  margin-right: 10px;
+}
+
+.card-title {
+  color: white;
+  font-weight: bold;
+  margin-bottom: 1rem; /* Povećan razmak ispod naslova */
+}
+
+.card-text {
+  color: white;
+  font-weight: bold;
+}
+
+.no-results {
+  text-align: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
 .border {
     border: 1px solid #dee2e6;
   }

@@ -57,6 +57,14 @@ public class PurchaseService {
         PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
         return dao.findAllByUser(id);
     }
+    
+    @GET
+    @Path("/factory/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Collection<Purchase> getPurchasesByFactory(@PathParam("id") String id) {
+        PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+        return dao.findAllByFactory(id);
+    }
 
     @POST
     @Path("/")
