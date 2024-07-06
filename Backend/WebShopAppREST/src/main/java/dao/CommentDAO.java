@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import beans.Comment;
@@ -55,6 +56,32 @@ public class CommentDAO {
     
     public Collection<Comment> getAllComments() {
         return comments.values();
+    }
+    
+    public Collection<Comment> getValidComments() {
+        List<Comment> validComments = new ArrayList<>();
+        for (Comment comment : comments.values()) {
+            if (comment.isValid()) {
+                validComments.add(comment);
+            }
+        }
+        return validComments;
+    }
+    
+    public Comment updateComment(String id, Comment comment) {
+        Comment existingComment = comments.containsKey(id) ? comments.get(id) : null;
+        if (existingComment == null) {
+            return addComment(comment);
+        } else {
+            existingComment.setId(comment.getId());
+            existingComment.setText(comment.getText());
+            existingComment.setValid(comment.isValid());
+            existingComment.setFactoryId(comment.getFactoryId());
+            // Dodajte ostala polja koja želite ažurirati
+        }
+
+        saveCommentsToFile();
+        return existingComment;
     }
     
     private void loadCommentsFromFile(String filePath) {

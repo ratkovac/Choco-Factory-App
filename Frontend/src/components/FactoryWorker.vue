@@ -14,7 +14,6 @@
     </ul>
   </div>
   <div v-if="showFactory">
-      <h2><label>Username:</label> {{  firstName }}</h2>
       <div class="col-md-3">
       <img :src="factory.pathToLogo" alt="Factory Logo" style="max-width: 100px;">
       </div>
@@ -68,10 +67,10 @@
                         </template>
                     </td>
                     <td class="border">
-                        <button v-if="editingChocolateId !== chocolate.id" @click="editChocolate(chocolate.id)" class="btn btn-primary btn-update">Izmeni količinu</button>
+                        <button v-if="editingChocolateId !== chocolate.id" @click="editChocolate(chocolate.id)" style="width: 160px; margin-bottom: 0px; margin-right: 30px; background-color: rgb(150, 29, 37); border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Izmeni količinu</button>
                         <div v-else>
-                            <button @click="saveChocolate(chocolate.id)" class="btn btn-success btn-update">Sačuvaj izmene</button>
-                            <button @click="cancelEdit" style="margin-left: 5px;" class="btn btn-success btn-update">Otkazi</button>
+                            <button @click="saveChocolate(chocolate.id)" style="width: 160px; margin-bottom: 0px; margin-right: 15px; background-color: rgb(150, 29, 37); border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Sačuvaj izmene</button>
+                            <button @click="cancelEdit" style="width: 100px; margin-bottom: 0px; margin-right: 0px; background-color: rgb(150, 29, 37); border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart">Otkazi</button>
                         </div>                        
                     </td>
                   </tr>
@@ -134,14 +133,12 @@
               </div>
               <div class="row mt-4">
                 <div class="col-md-6">
-                  <button class="btn btn-primary profile-button" type="button" style="background-color: rgb(150, 29, 37);
-    border-color: rgb(150, 29, 37);" @click="saveProfile">
+                  <button  type="button" style="width: 160px; margin-bottom: 0px; margin-right: 30px; background-color: rgb(150, 29, 37); border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart"@click="saveProfile">
                     Save Profile
                   </button>
                 </div>
                 <div class="col-md-6">
-                  <button class="btn btn-primary profile-button" type="button" style="background-color: rgb(150, 29, 37);
-    border-color: rgb(150, 29, 37);" @click="logout">Logout</button>
+                  <button  type="button" style="width: 160px; margin-bottom: 0px; margin-right: 30px; background-color: rgb(150, 29, 37); border-color: #ccc; font-weight: 800; font-size: 14px; letter-spacing: 1px;" class="btn btn-primary btn-add-to-cart" @click="logout">Logout</button>
                 </div>
               </div>
             </div>

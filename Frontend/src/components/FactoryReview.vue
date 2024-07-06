@@ -1,4 +1,15 @@
 <template>
+  <div>
+    <input type="checkbox" id="menu-toggle"/>
+    <label id="trigger" for="menu-toggle"></label>
+    <label id="burger" for="menu-toggle"></label>
+    <ul id="menu">
+      <li><a href="#" @click="factoryShowClick">Factories</a></li>
+      <li><a href="#" @click="dodajFabriku">New Factory</a></li>
+      <li><a href="#" @click="yourProfile">Your Profile</a></li>
+      <li><a href="#" @click="logout">Log out</a></li>
+    </ul>
+  </div>
     <section class="py-5">
       <div class="container px-4 px-lg-5 my-5">
         <div class="row gx-5 gx-lg-1 align-items-center">
@@ -17,7 +28,7 @@
                     <p v-if="factory.status"><strong>Status:</strong> {{ factory.status }}</p>
                     <p><strong>Komentari:</strong>
                       <ul v-if="comments && comments.length > 0">
-                        <li v-for="comment in comments" :key="comment.id">{{ comment.text }}</li>
+                        <div v-for="comment in comments" :key="comment.id">{{ comment.text }}</div>
                       </ul>
                       <span v-else>Nema komentara</span>
                     </p>
@@ -36,7 +47,7 @@
                                     <th class="border">Masa</th>
                                     <th class="border">Detalji</th>
                                     <th class="border">Zaliha</th>
-                                    <th class="border"></th> <!-- Dodajte praznu ćeliju za dugmad -->
+                                   <!-- <th class="border"></th> --> <!-- Dodajte praznu ćeliju za dugmad -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -51,19 +62,19 @@
                                     <td class="border">{{ chocolate.mass }}</td>
                                     <td class="border" style="word-wrap: break-word;">{{ chocolate.details }}</td>
                                     <td class="border">{{ chocolate.stock }}</td>
-                                    <td class="border">
+                                   <!-- <td class="border">
                                       <button @click="updateChocolate(chocolate.id, factory)" class="btn btn-primary btn-update">Ažuriraj</button>
                                         <button @click="deleteChocolate(chocolate.id, factory)" class="btn btn-danger btn-update">Obriši</button>
-                                    </td>
+                                    </td>-->
                                 </tr>
                             </tbody>
                         </table>
                         <span v-else>Nema dostupnih čokolada</span>
                     </div>
 
-                    <button @click="addChcolate(factory)" class="btn btn-primary btn-view-factory">
+                    <!--<button @click="addChcolate(factory)" class="btn btn-primary btn-view-factory">
                         Dodaj cokoladu
-                        </button>
+                        </button> -->
                   </div>
                 </div>
               </div>
@@ -197,6 +208,151 @@ const addChcolate = (factory) => {
     font-size: 12px;
     color: white;
   }
+  @import url(https://fonts.googleapis.com/css?family=Roboto:400,700);
+
+@keyframes checked-anim {
+  50% {
+    width: 300px; /* Smanjite širinu animacije */
+    height: 450px; /* Smanjite visinu animacije */
+  }
+  100% {
+    width: 250px; /* Konačna širina menija */
+    height: 400px; /* Konačna visina menija */
+    border-bottom-right-radius:20%;
+  }
+}
+@keyframes not-checked-anim {
+    0% {
+        width: 3000px;
+        height: 3000px;
+    }
+}
+li, a {
+    margin: 75px 0 -55px 0;
+    color: #fff;
+    font: 14pt "Roboto", sans-serif;
+    font-weight: 700;
+    line-height: 1.8;
+    text-decoration: none;
+    text-transform: none;
+    list-style: none;
+    outline: 0;
+    display: none;
+}
+li {
+    width: 230px;
+    text-indent: 56px;}
+a:focus {
+    display: block;
+    color: #333;
+    background-color: #eee;
+    transition: all .5s;
+}
+aside {
+    position: absolute;
+    color: white;
+    top: 35%;
+    right: 10%;
+    text-align: right;
+}
+h1 {
+    line-height: 0;
+    font-size: 4vw;
+    font-weight: 700;
+}
+h3 {
+    float: right;
+    line-height: .3;
+    font-size: 2.5vw;
+    font-weight: lighter;
+}
+h4 {
+    float: left;
+    margin-left: -2%;
+    font-size: 1.5vw;
+    font-weight: lighter;
+}
+
+html, body, template{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #fff;
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
+}
+
+#trigger, #burger, #burger:before, #burger:after {
+    position: absolute;
+    top: 25px;
+    left: 25px; /* Align the right edge */
+    background: #fff;
+    width: 30px;
+    height: 5px;
+    transition: .2s ease;
+    cursor: pointer;
+    z-index: 1;
+}
+
+#trigger {
+    height: 25px;
+    background: none;
+}
+#burger:before {
+    content: " ";
+    top: 10px;
+    left: 0;
+}
+#burger:after {
+    content: " ";
+    top: 20px;
+    left: 0;
+}
+#menu-toggle:checked + #trigger + #burger {
+    top: 35px;
+    transform: rotate(180deg);
+    transition: transform .2s ease;
+}
+
+#menu-toggle:checked + #trigger + #burger:before {
+    width: 20px;
+    top: -2px;
+    left: 18px;
+    transform: rotate(45deg) translateX(-5px);
+    transition: transform .2s ease;
+}
+#menu-toggle:checked + #trigger + #burger:after {
+    width: 20px;
+    top: 2px;
+    left: 18px;
+    transform: rotate(-45deg) translateX(-5px);
+    transition: transform .2s ease;
+}
+#menu {
+    position: absolute;
+    top: 0; /* Align the top edge */
+    left: 0; /* Align the right edge */
+    margin: 0; 
+    padding: 0;
+    width: 110px;
+    height: 110px;
+    background-color: #2E8B57;
+    border-bottom-right-radius: 100%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.26);
+    animation: not-checked-anim .2s both;
+    transition: .2s;
+    overflow: hidden; /* Dodajte overflow hidden */
+}
+
+#menu-toggle:checked + #trigger + #burger + #menu {
+    animation: checked-anim 1s ease both;
+}
+#menu-toggle:checked + #trigger ~ #menu > li, a {
+    display: block;
+}
+[type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+    display: none;
+}
 
   </style>
   

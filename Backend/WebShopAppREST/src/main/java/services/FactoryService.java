@@ -78,6 +78,18 @@ public class FactoryService {
     public Factory updateFactory(@PathParam("id") String id, Factory updatedFactory) {
         return factoryDAO.updateFactory(id, updatedFactory);
     }
+    @PUT
+    @Path("/grade/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Factory updateGradeFactory(@PathParam("id") String id, String grade) {
+    	System.out.println("OCENA-----------------------------------------------------------------------------------" + grade);
+    	Factory factory = factoryDAO.findFactory(id);
+    	double rate = factory.getRate();
+    	rate += Double.parseDouble(grade);
+    	factory.setRate(rate/2);
+        return factoryDAO.updateFactory(id, factory);
+    }
     
     @GET
     @Path("/search")

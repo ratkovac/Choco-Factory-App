@@ -196,7 +196,7 @@
   border: 1px solid #ddd; 
   padding: 20px;
   border-radius: 5%;
-  background-color: darkslategray; 
+  background-color: #573b8a; 
 }
 .error-message {
   color: red;

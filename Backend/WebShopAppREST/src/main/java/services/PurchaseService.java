@@ -55,6 +55,7 @@ public class PurchaseService {
     @Produces(MediaType.APPLICATION_JSON)
     public Collection<Purchase> getPurchasesByUser(@PathParam("id") String id) {
         PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+        System.out.println("ID" + id);
         return dao.findAllByUser(id);
     }
 
@@ -70,10 +71,11 @@ public class PurchaseService {
     @Path("/cancel/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Purchase updatePurchase(@PathParam("id") String id, Purchase updatedCoco) {
+    public Purchase updatePurchase(@PathParam("id") String id) {
         PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
-        updatedCoco.setStatus("Otkazano");
-        return dao.updatePurchase(id, updatedCoco);
+        Purchase purchase = dao.findPurchase(id);
+        purchase.setStatus("Otkazano");
+        return dao.updatePurchase(id, purchase);
     }
     
     @PUT
@@ -87,6 +89,7 @@ public class PurchaseService {
         System.out.println(id);
         Purchase pur = dao.findPurchase(id);
         System.out.println("=====================================================================");
+        System.out.println(pur.getChocolates().size() + " COKOLADE");
         pur.setStatus("Odobreno");
         return dao.updatePurchase(id, pur);
     }

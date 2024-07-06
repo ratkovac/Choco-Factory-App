@@ -1,7 +1,6 @@
 <template>
   <section class="py-5">
-    <div class="container px-4 px-lg-5 my-5">
-      <!-- Factories Table -->
+    <div class="container px-4 px-lg-5 my-5"      <!-- Factories Table -->
       <div class="row gx-5 gx-lg-1 align-items-center mb-4">
         <div class="col-md-12">
           <h1 class="display-5 fw-bold mb-4">{{ title }}
@@ -211,7 +210,7 @@ const pregledajFabriku = (factory) => {
 
 const dodajFabriku = () => {
   router.push({ path: `/factories/create` })
-}
+};
 
 const searchFactories = async () => {
   try {
@@ -333,4 +332,19 @@ const updateChocolateCategoryFilters = () => {
 .mb-2 {
   margin-bottom: 0.5rem;
 }
+
+.custom-table img {
+  max-width: 60px;
+  max-height: 60px;
+  display: block;
+  margin: 0 auto;
+}
+
+.custom-table img {
+  max-width: 60px;
+  max-height: 60px;
+  display: block;
+  margin: 0 auto;
+}
 </style>
+

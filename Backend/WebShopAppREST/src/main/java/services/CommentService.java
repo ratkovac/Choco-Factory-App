@@ -47,6 +47,14 @@ public class CommentService {
     }
 	
 	@GET
+    @Path("/valid")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ArrayList<Comment> getValidComments() {
+        System.out.println("Pozvana je metoda getComments()");
+        return new ArrayList<>(commentDAO.getValidComments());
+    }
+	
+	@GET
 	@Path("/factory/{factoryId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ArrayList<Comment> GetCommentsByFactory(@PathParam("factoryId") String factoryId) {
@@ -80,7 +88,29 @@ public class CommentService {
 	    return comments;
 	}
 	
+	@PUT
+	@Path("/accept/{commentId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Comment acceptComment(@PathParam("commentId") String commentId) {
+	    System.out.println("DODAVANJE KOMENTARA ---------------------------------------------------------");
+	    Comment comment = commentDAO.getCommentById(commentId);
+	    comment.setValid(true);
+	    System.out.println("DODAVANJE KOMENTARA --------------------------------------------------------2-");
+	    return commentDAO.updateComment(commentId, comment);
+	}
 	
+	@PUT
+	@Path("/reject/{commentId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Comment rejectComment(@PathParam("commentId") String commentId) {
+	    System.out.println("DODAVANJE KOMENTARA ---------------------------------------------------------");
+	    Comment comment = commentDAO.getCommentById(commentId);
+	    comment.setValid(false);
+	    System.out.println("DODAVANJE KOMENTARA --------------------------------------------------------2-");
+	    return commentDAO.updateComment(commentId, comment);
+	}
 	
 	
 }

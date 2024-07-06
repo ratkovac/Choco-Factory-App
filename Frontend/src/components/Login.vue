@@ -82,7 +82,16 @@ export default {
               console.log("EEEEE2");
               console.log(this.user.role);
               if (this.user.role === 'Administrator') {
-                router.push({ path: `/loggedInAdmin/${this.user.id}` });
+                router.push({ path: `/factories/admin/${this.user.id}` });
+                router.push({ 
+                  path: `/adminHome/${this.factoryId}`, 
+                  query: {
+                    id: userId,
+                    firstName: responseData.firstName,
+                    lastName: responseData.lastName,
+                    username: responseData.username
+                  }
+                });
               } else if (this.user.role === 'Manager') {
                 if (this.factoryId) {
                   console.log("username:");

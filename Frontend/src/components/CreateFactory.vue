@@ -1,4 +1,15 @@
 <template>
+    <div>
+    <input type="checkbox" id="menu-toggle"/>
+    <label id="trigger" for="menu-toggle"></label>
+    <label id="burger" for="menu-toggle"></label>
+    <ul id="menu">
+      <li><a href="#" @click="factoryShowClick">Factories</a></li>
+      <li><a href="#" @click="dodajFabriku">New Factory</a></li>
+      <li><a href="#" @click="yourProfile">Your Profile</a></li>
+      <li><a href="#" @click="logout">Log out</a></li>
+    </ul>
+  </div>
     <div class="main">
         <div class="signup">
             <form @submit.prevent="submitFactory" v-if="!showManagerSelection && !showNewManagerForm">
@@ -64,8 +75,8 @@
                 
                 <!-- Back to Factory Form Button -->
                 <div class="form-group buttons-inline" style="margin-top: 40px; margin-bottom: 0px">
-                    <button type="button" class="create-factory-button" @click="toggleManagerSelection" style="width: 250px;">Back to Factory Form</button>
-                    <button type="submit" class="create-factory-button" @click="submitFactory"style="width: 250px; height: 40px">Create Factory</button>
+                    <button type="button" class="create-factory-button" @click="toggleManagerSelection" style="width: 300px;">Back to Factory Form</button>
+                    <button type="submit" class="create-factory-button" @click="submitFactory"style="width: 250px;">Create Factory</button>
                 </div>
             </div>
             
@@ -246,7 +257,7 @@ const createNewManager = async () => {
     align-items: center;
     min-height: auto;
     background-color: #f0f0f0; /* Light gray background */
-    border: 10px solid #6d44b8; /* Border with increased thickness */
+    border: 10px solid #2E8B57; /* Border with increased thickness */
     border-radius: 15px; /* Adjust border radius for rounded corners */
 }
 
@@ -301,7 +312,7 @@ select {
 
 .create-factory-button {
     padding: 10px;
-    background-color: #573b8a; /* Purple background */
+    background-color: #2E8B57; /* Purple background */
     color: #fff; /* White text */
     border: none;
     border-radius: 4px;
@@ -310,7 +321,7 @@ select {
 }
 
 .create-factory-button:hover {
-    background-color: #6d44b8; /* Darker purple on hover */
+    background-color: #2E8B57; /* Darker purple on hover */
 }
 
 .add-manager-button {
@@ -319,15 +330,16 @@ select {
     margin-left: 40px;
     padding: 10px;
     background-color: white; /* White background */
-    color: #6d44b8; /* Purple text color */
-    border: 3.5px solid #6d44b8;
+    color: #2E8B57; /* Purple text color */
+    border: 3.5px solid #2E8B57;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .add-manager-button:hover {
-    background-color: #6d44b8; /* Darker purple on hover */
+    background-color: #2E8B57; /* Darker purple on hover */
     color: white; /* White text color */
 }
+
 </style>

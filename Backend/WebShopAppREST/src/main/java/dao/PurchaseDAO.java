@@ -33,7 +33,8 @@ public class PurchaseDAO {
     private FactoryDAO factoryDAO;
 
     public PurchaseDAO(String contextPath) {
-        this.fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\purchases.csv"; // Podesite putanju do CSV fajla
+        this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\purchases.csv"; // Podesite putanju do CSV fajla
+        //this.fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\purchases.csv"; // Podesite putanju do CSV fajla
         cocoInCartDAO = new CocoInCartDAO(contextPath); // Inicijalizacija DAO za čokolade u korpi
         userDAO = new UserDAO(contextPath); // Inicijalizacija DAO za korisnike (kupce)
         cocoDAO = new CocoDAO(contextPath);
@@ -49,6 +50,7 @@ public class PurchaseDAO {
     }
     
     public List<Purchase> findAllByUser(String id) {
+    	System.out.println("-((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((" + id);
         List<Purchase> userPurchases = new ArrayList<>();     
         for (Purchase purchase : purchases.values()) {
             if (purchase.getUser().getId().equals(id)) {
@@ -70,12 +72,25 @@ public class PurchaseDAO {
     	System.out.println(pur.getStatus());
     	if(pur.getStatus().equals("Odobreno")) {
     		updateFactory(pur);
+    	} else if (pur.getStatus().equals("Otkazano")) {
+    		System.out.println("OTKANZANOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo");
+    		User user = pur.getUser();
+    		double currentPoints = user.getPoints();
+    		double minus = purchase.getPrice() / 1000 * 133 * 4;
+    		if(minus >= currentPoints) {
+    			user.setPoints(0);
+    			userDAO.updateUserForm(user.getId(), user);
+    		} else {
+    			user.setPoints(currentPoints - minus);
+    			userDAO.updateUserForm(user.getId(), user);
+    		}
     	}
         Purchase existingPurchase = purchases.containsKey(id) ? purchases.get(id) : null;
         if (existingPurchase == null) {
             return savePurchase(purchase);
         } else {
             existingPurchase.setId(purchase.getId());
+            System.out.println("VELICINA COKOLADA" + purchase.getChocolates().size());
             existingPurchase.setChocolates(purchase.getChocolates());
             existingPurchase.setFactory(purchase.getFactory());
             existingPurchase.setPurchaseDateTime(purchase.getPurchaseDateTime());
