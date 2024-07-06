@@ -10,7 +10,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import beans.Factory;
-import beans.Location;
 import dao.FactoryDAO;
 
 @Path("/factories")

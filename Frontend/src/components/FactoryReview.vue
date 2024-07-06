@@ -1,5 +1,6 @@
 <template>
-    <div>
+<<<<<<< HEAD
+  <div>
     <input type="checkbox" id="menu-toggle"/>
     <label id="trigger" for="menu-toggle"></label>
     <label id="burger" for="menu-toggle"></label>
@@ -83,11 +84,11 @@
     </div>
   </section>
 </template>
-  
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  import axios from 'axios';
-  import { useRoute, useRouter } from 'vue-router';
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
@@ -178,31 +179,31 @@ const deleteChocolate = async (chocolateId, factory) => {
 
 <style scoped>
 .border {
-    border: 1px solid #dee2e6;
-  }
+  border: 1px solid #dee2e6;
+}
 
-  .custom-table {
-    width: 100%;
-    margin-bottom: 1rem;
-    background-color: transparent;
-    border-collapse: collapse;
-  }
+.custom-table {
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+  border-collapse: collapse;
+}
 
-  .custom-table th,
-  .custom-table td {
-    padding: 0.75rem;
-    vertical-align: top;
-    border-top: 1px solid #dee2e6;
-  }
+.custom-table th,
+.custom-table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
 
-  .custom-table thead th {
-    vertical-align: bottom;
-    border-bottom: 2px solid #dee2e6;
-  }
+.custom-table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+}
 
-  .custom-table tbody + tbody {
-    border-top: 2px solid #dee2e6;
-  }
+.custom-table tbody + tbody {
+  border-top: 2px solid #dee2e6;
+}
 
   .btn-view-factory {
     background-color: cadetblue;
@@ -363,7 +364,13 @@ html, body, template{
 }
 [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
     display: none;
-}
 
+  .btn-update {
+    background-color: cadetblue;
+    height: 25px;
+    width: auto;
+    font-size: 12px;
+    color: white;
+  }
+}
   </style>
-  
