@@ -32,8 +32,8 @@ public class UserDAO {
 	}
 	
 	public UserDAO(String contextPath) {
-		FileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
-		//FileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
+		//FileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
+		FileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\users.csv";
 		factoryDAO = new FactoryDAO(contextPath);
 		
 		loadUsers(FileLocation);
@@ -50,7 +50,7 @@ public class UserDAO {
     }
 	
 	public ArrayList<User> findAll() {
-		return users;
+	    return users;
 	}
 	
 	public ArrayList<User> getAllManagers(FactoryDAO factoryDAO) {
@@ -58,19 +58,19 @@ public class UserDAO {
         this.factoryDAO = factoryDAO;
 		loadUsers(FileLocation);
         for (User user : users) {
-        	System.out.println(user.getFactory().getId() + "ID JE:");
-        	System.out.println("Role" + user.getRole());
+        	//System.out.println(user.getFactory().getId() + "ID JE:");
+        	//System.out.println("Role" + user.getRole());
             if (user.getRole() == UserRole.Manager && user.getFactory().getId() == "0") {
                 managers.add(user);
                 System.out.println("ime" + user.getFirstName());
             }
         }
-        System.out.println(managers.size());
+        //System.out.println(managers.size());
         return managers;
     }
 	
 	public User getRegisteringUser(String username, String password) {
-	    System.out.println("Trazi usera");
+	    //System.out.println("Trazi usera");
 	    for (User user : users) {
 	        System.out.println("Provera korisnika: " + user.getUsername() + ", " + user.getPassword());
 	        if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
@@ -274,7 +274,7 @@ public class UserDAO {
 					type = st.nextToken().trim();
 					canceled = st.nextToken().trim();
 					
-					System.out.println(canceled + "-------------------------------------------broj otkazanih");
+					//System.out.println(canceled + "-------------------------------------------broj otkazanih");
 				}
 				UserStatus status = UserStatus.valueOf(statusStr);
 	            UserRole role = UserRole.valueOf(roleStr);
@@ -347,7 +347,7 @@ public class UserDAO {
 	    }
 	}
 	
-	public List<User> searchUsers(String firstName, String lastName, String username, UserRole role) {
+	public List<User> searchUsers(String firstName, String lastName, String username, UserRole role, String type) {
 	    List<User> result = new ArrayList<>();
 
 	    for (User user : users) {
@@ -366,6 +366,10 @@ public class UserDAO {
 	        }
 
 	        if (role != null && user.getRole() != role) {
+	            matches = false;
+	        }
+	        
+	        if (type != null && !user.getType().equalsIgnoreCase(type)) {
 	            matches = false;
 	        }
 
@@ -393,6 +397,8 @@ public class UserDAO {
             case "username":
                 comparator = Comparator.comparing(User::getUsername);
                 break;
+            case "points":
+            	comparator = Comparator.comparingDouble(User::getPoints);
             default:
                 throw new IllegalArgumentException("Nepoznat kriterijum za sortiranje: " + criterion);
         }

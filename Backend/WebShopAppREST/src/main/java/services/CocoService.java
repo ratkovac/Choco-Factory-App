@@ -48,8 +48,9 @@ public class CocoService {
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Coco> getCocolatesByFactory(@PathParam("factoryId") String factoryId) {
 		CocoDAO cocoDAO = (CocoDAO) ctx.getAttribute("cocoDAO");
-		cocoDAO = new CocoDAO("C:\\\\Users\\\\janic\\\\FAX\\\\SEMESTAR 6\\\\Veb programiranje\\\\CocoFactory\\\\veb-projekat\\\\Backend\\\\WebShopAppREST\\\\src\\\\main\\\\webapp\\\\chocolates.csv");
-        return cocoDAO.getCocolatesByFactory(factoryId);
+		//cocoDAO = new CocoDAO("C:\\\\Users\\\\janic\\\\FAX\\\\SEMESTAR 6\\\\Veb programiranje\\\\CocoFactory\\\\veb-projekat\\\\Backend\\\\WebShopAppREST\\\\src\\\\main\\\\webapp\\\\chocolates.csv");
+		cocoDAO = new CocoDAO("C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv");
+		return cocoDAO.getCocolatesByFactory(factoryId);
     }
 	
 	@GET

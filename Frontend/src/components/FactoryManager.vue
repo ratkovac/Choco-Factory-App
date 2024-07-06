@@ -716,7 +716,7 @@ select {
     background-color: #6d44b8; /* Darker purple on hover */
     color: white; /* White text color */
 }
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,700);
+/* @import url(https://fonts.googleapis.com/css?family=Roboto:400,700); */
 
 @keyframes checked-anim {
   50% {

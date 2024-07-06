@@ -1,4 +1,8 @@
 <template>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch/dist/geosearch.css" /> 
+    </head>
     <div>
     <input type="checkbox" id="menu-toggle"/>
     <label id="trigger" for="menu-toggle"></label>
@@ -26,9 +30,14 @@
                     <label for="location">Location</label>
                     <MapComponent @update-location="updateLocation" :location="factoryForm.location"></MapComponent>
                 </div> -->
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="location">Location</label>
                     <input id="location" type="text" v-model="factoryForm.location" required>
+                </div> -->
+
+                <div class="form-group">
+                    <label for="factoryLocation">Location:</label>
+                    <div ref="mapContainer" style="width: 100%; height: 50vh; z-index: 1;"></div>
                 </div>
 
                 
@@ -76,7 +85,7 @@
                 <!-- Back to Factory Form Button -->
                 <div class="form-group buttons-inline" style="margin-top: 40px; margin-bottom: 0px">
                     <button type="button" class="create-factory-button" @click="toggleManagerSelection" style="width: 300px;">Back to Factory Form</button>
-                    <button type="submit" class="create-factory-button" @click="submitFactory"style="width: 250px;">Create Factory</button>
+                    <button type="submit" class="create-factory-button" @click="submitFactory" style="width: 250px;">Create Factory</button>
                 </div>
             </div>
             
@@ -136,13 +145,17 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-import MapComponent from './MapComponent.vue';
+import L from 'leaflet';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
+import 'leaflet/dist/leaflet.css'
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
+import "leaflet-defaulticon-compatibility"
 
 const router = useRouter();
 
 const factoryForm = ref({
   name: '',
-  location: '',
+  locationId: '',
   workingTime: '',
   pathToLogo: '', 
   rate: 0.0,
@@ -150,6 +163,16 @@ const factoryForm = ref({
   comments: [],
   status: 'Ne radi',
   chocolateIds: []
+});
+
+const map = ref();
+const mapContainer = ref();
+const currentMarkup = ref(null);
+const location = ref({
+  id: '',
+  lat: 0.0,
+  lng: 0.0,
+  address: ''
 });
 
 const availableManagers = ref([]);
@@ -161,6 +184,7 @@ onMounted(async () => {
     } catch (error) {
         console.error('Error fetching managers:', error);
     }
+    createMap();
 });
 
 const selectedManager = ref(null);
@@ -178,22 +202,34 @@ const newManagerForm = ref({
 
 const submitFactory = async () => {
   try {
-    // POST request to add factory
-    const response = await axios.post('http://localhost:8080/WebShopAppREST/rest/factories/add', factoryForm.value);
-    if (!response.data) {
+    // Prvo dodaj lokaciju
+    const locationResponse = await axios.post('http://localhost:8080/WebShopAppREST/rest/location/add', location.value);
+    if (!locationResponse.data) {
+      console.error("Location wasn't able to be saved! Error");
+      return;
+    }
+
+    // Ažuriraj factoryForm sa ID-em lokacije
+    factoryForm.value.locationId = locationResponse.data.id;
+
+    // Zatim dodaj fabriku
+    const factoryResponse = await axios.post('http://localhost:8080/WebShopAppREST/rest/factories/add', factoryForm.value);
+    if (!factoryResponse.data) {
       console.error("Factory wasn't able to be saved! Error");
-    } else {
-      console.log(response.data);
-      
-      // Save the factory ID from the response
-      const factoryId = response.data.id;
-      const selectedManagerId = selectedManager.value; // Use only the ID
-      
-      console.log("Factory ID:", factoryId);
-      console.log("Selected Manager ID:", selectedManagerId);
-      
-      // Use the factoryId in a PUT request to update manager
-      const updateResponse = await axios.put(
+      return;
+    }
+
+    console.log(factoryResponse.data);
+
+    // Sačuvaj ID fabrike iz odgovora
+    const factoryId = factoryResponse.data.id;
+    const selectedManagerId = selectedManager.value;
+
+    console.log("Factory ID:", factoryId);
+    console.log("Selected Manager ID:", selectedManagerId);
+
+    // Koristi factoryId u PUT zahtevu za ažuriranje menadžera
+    const updateResponse = await axios.put(
       `http://localhost:8080/WebShopAppREST/rest/user/update/manager/${factoryId}`,
       null, // Tijelo zahtjeva je null jer se managerId šalje kao query parametar
       {
@@ -206,15 +242,65 @@ const submitFactory = async () => {
       }
     );
 
-      console.log(updateResponse.data); // Handle the response as needed
-    }
+    console.log(updateResponse.data); // Obradi odgovor po potrebi
+
   } catch (error) {
     console.error(error);
     console.error("Factory or manager update failed! Error");
   }
 };
 
+function createMap() {
+  map.value = L.map(mapContainer.value).setView([45.221, 19.830], 7); //45.221/19.830  7/44.229/19.435
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map.value);
 
+  
+  const provider = new OpenStreetMapProvider();
+  const searchControl = new GeoSearchControl({
+    provider: provider,
+    style: 'bar',
+    autoComplete: true,
+    showMarker: true,
+    autoCompleteDelay: 250,
+    retainZoomLevel: false,
+    animateZoom: true,
+    keepResult: true,
+    searchLabel: 'Enter address'
+  });
+
+  map.value.addControl(searchControl);
+
+  map.value.on('click', function (e) {
+      if (currentMarkup.value) {
+          map.value.removeLayer(currentMarkup.value);
+      }
+      currentMarkup.value = L.marker(e.latlng).addTo(map.value);
+      const { lat, lng } = e.latlng;
+      console.log(lat + " i " + lng)
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`)
+      .then(response => response.json())
+      .then( data =>{
+        const {address} = data
+        console.log(address)
+
+        const street = address.road || ""
+        const streetNumber = address.house_number || ""
+        const place = address.city_district || address.city || address.town || address.village || ""
+        const postalCode = address.postcode || ""
+
+        location.value.id = "1"
+        location.value.lat = lat
+        location.value.lng = lng
+        location.value.address = street + " " + streetNumber + ", " + place + ", " + postalCode 
+
+      })
+      .catch(error => {
+        console.error("Error fetching location:", error);
+      })
+    })
+}
 
 const toggleManagerSelection = () => {
   showManagerSelection.value = !showManagerSelection.value;
@@ -251,95 +337,105 @@ const createNewManager = async () => {
 </script>
 
 <style scoped>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto; /* Omogućava skrolovanje */
+}
+
 .main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: auto;
-    background-color: #f0f0f0; /* Light gray background */
-    border: 10px solid #2E8B57; /* Border with increased thickness */
-    border-radius: 15px; /* Adjust border radius for rounded corners */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: auto;
+  background-color: #f0f0f0; /* Light gray background */
+  border: 10px solid #2E8B57; /* Border with increased thickness */
+  border-radius: 15px; /* Adjust border radius for rounded corners */
+  padding: 20px; /* Add some padding */
+  margin: 20px; /* Add some margin */
 }
 
 .signup {
-    background-color: #fff; /* White background for the form */
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Light shadow */
-    width: 400px; /* Adjust width as needed */
+  background-color: #fff; /* White background for the form */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Light shadow */
+  width: 400px; /* Adjust width as needed */
+  overflow: auto; /* Omogućava skrolovanje unutar signup kontejnera */
+  max-height: 80vh; /* Postavlja maksimalnu visinu */
 }
 
 .form-group {
-    margin-bottom: 20px; /* Spacing between form groups */
+  margin-bottom: 20px; /* Spacing between form groups */
 }
 
 label {
-    font-weight: bold;
-    color: #333; /* Darker font color */
+  font-weight: bold;
+  color: #333; /* Darker font color */
 }
 
 input[type="text"],
 input[type="password"],
 input[type="date"],
 select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc; /* Light gray border */
-    border-radius: 4px;
-    box-sizing: border-box; /* Ensure padding and border are included in width */
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 4px;
+  box-sizing: border-box; /* Ensure padding and border are included in width */
 }
 
 select {
-    height: 40px; /* Match input height for consistency */
+  height: 40px; /* Match input height for consistency */
 }
 
 .logo-upload {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .selected-logo {
-    max-width: 80px; /* Adjust size of selected logo */
-    max-height: 50px;
-    margin-left: 10px; /* Margin to separate from file input */
+  max-width: 80px; /* Adjust size of selected logo */
+  max-height: 50px;
+  margin-left: 10px; /* Margin to separate from file input */
 }
 
 .buttons-inline {
-    display: flex;
-    justify-content: flex-start; /* Align buttons to the start */
-    gap: 30px; /* Adjust space between buttons */
+  display: flex;
+  justify-content: flex-start; /* Align buttons to the start */
+  gap: 30px; /* Adjust space between buttons */
 }
 
 .create-factory-button {
-    padding: 10px;
-    background-color: #2E8B57; /* Purple background */
-    color: #fff; /* White text */
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease; /* Smooth transition */
+  padding: 10px;
+  background-color: #2E8B57; /* Purple background */
+  color: #fff; /* White text */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .create-factory-button:hover {
-    background-color: #2E8B57; /* Darker purple on hover */
+  background-color: #2E8B57; /* Darker purple on hover */
 }
 
 .add-manager-button {
-    width: 80%;
-    height: 40px;
-    margin-left: 40px;
-    padding: 10px;
-    background-color: white; /* White background */
-    color: #2E8B57; /* Purple text color */
-    border: 3.5px solid #2E8B57;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease; /* Smooth transition */
+  width: 80%;
+  height: 40px;
+  margin-left: 40px;
+  padding: 10px;
+  background-color: white; /* White background */
+  color: #2E8B57; /* Purple text color */
+  border: 3.5px solid #2E8B57;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .add-manager-button:hover {
-    background-color: #2E8B57; /* Darker purple on hover */
-    color: white; /* White text color */
+  background-color: #2E8B57; /* Darker purple on hover */
+  color: white; /* White text color */
 }
-
 </style>

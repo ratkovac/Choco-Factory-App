@@ -434,7 +434,7 @@ const logout = () => {
 .table td {
     vertical-align: middle;
 }
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,700);
+/* @import url(https://fonts.googleapis.com/css?family=Roboto:400,700); */
 
 @keyframes checked-anim {
   50% {

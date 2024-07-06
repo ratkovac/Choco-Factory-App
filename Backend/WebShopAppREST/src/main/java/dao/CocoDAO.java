@@ -24,8 +24,8 @@ public class CocoDAO {
 	}
 	
 	public CocoDAO(String contextPath) {
-        fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv";
-        //fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv";
+        //fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv";
+        fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv";
 		loadCocos(fileLocation);
 		System.out.println(fileLocation + "eeeee");
 	}
@@ -94,9 +94,9 @@ public class CocoDAO {
 			c.setMass(coco.getMass());
 			c.setDetails(coco.getDetails());
 			c.setPicture(coco.getPicture());
-			System.out.println(c.getStock() + "PRe");
+			//System.out.println(c.getStock() + "PRe");
 			c.setStock(coco.getStock());
-			System.out.println(c.getStock() + "Posle");
+			//System.out.println(c.getStock() + "Posle");
 			c.setDeleted(coco.isDeleted());
 			c.setFactoryId(coco.getFactoryId());
 		}
@@ -209,8 +209,8 @@ public class CocoDAO {
         		}
         	}
         }
-		System.out.println(cocos.size() + "ovo je cocos");
-		System.out.println(cocolates.size());
+		//System.out.println(cocos.size() + "ovo je cocos");
+		//System.out.println(cocolates.size());
         return cocolates;
 	}
 

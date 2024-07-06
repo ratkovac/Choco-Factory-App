@@ -17,6 +17,7 @@
         <option value="firstName">Ime</option>
         <option value="lastName">Prezime</option>
         <option value="username">Korisničko ime</option>
+        <option value="points">Poeni</option>
       </select>
     </div>
     <div class="col-md-2 mb-2">
@@ -57,7 +58,22 @@
               <label for="suspicious" class="form-check-label">Sumnjiv</label>
           </div>
       </div>
+      <div class="row gx-1 gx-lg-1 align-items-center mb-3">
+          <div class="col-md-2 mb-2 form-check">
+              <input type="checkbox" id="bronze" v-model="selectedTypes.Bronze" @change="filterUsers" class="form-check-input">
+              <label for="bronze" class="form-check-label">Bronze</label>
+          </div>
+          <div class="col-md-2 mb-2 form-check">
+              <input type="checkbox" id="silver" v-model="selectedTypes.Silver" @change="filterUsers" class="form-check-input">
+              <label for="silver" class="form-check-label">Silver</label>
+          </div>
+          <div class="col-md-2 mb-2 form-check">
+              <input type="checkbox" id="golden" v-model="selectedTypes.Golden" @change="filterUsers" class="form-check-input">
+              <label for="golden" class="form-check-label">Golden</label>
+          </div>
+      </div>
     </div>
+
   </div>
 
   <!-- User Table -->
@@ -68,8 +84,10 @@
           <th scope="col">Ime</th>
           <th scope="col">Prezime</th>
           <th scope="col">Korisničko ime</th>
+          <th scope="col">Poeni</th>
           <th scope="col">Uloga</th>
           <th scope="col">Status</th>
+          <th scope="col">Tip</th>
         </tr>
       </thead>
       <tbody>
@@ -77,7 +95,9 @@
           <td>{{ user.firstName }}</td>
           <td>{{ user.lastName }}</td>
           <td>{{ user.username }}</td>
+          <td>{{ user.points }}</td>
           <td>{{ user.role }}</td>
+          <td>{{ user.type }}</td>
           <td>
             <button @click="toggleUserStatus(user)" class="btn btn-sm" :class="{'btn-success': user.status === 'ACTIVATED', 'btn-danger': user.status === 'DEACTIVATED'}">
               {{ user.status === 'ACTIVATED' ? 'Deactivate' : 'Activate' }}
@@ -113,6 +133,12 @@ const selectedRoles = reactive({
   Manager: false,
   Administrator: false,
   Worker: false,
+});
+
+const selectedTypes = reactive({
+  Bronze: false,
+  Silver: false,
+  Golden: false,
 });
 
 const sortParams = reactive({
@@ -155,7 +181,14 @@ const filterUsers = () => {
     (selectedRoles.Worker && user.role === 'Worker')
     );
 
-    return matchFirstName && matchLastName && matchUsername && matchRole && matchSuspicious;
+    const matchType = (
+    (!selectedTypes.Bronze && !selectedTypes.Silver && !selectedTypes.Golden) ||
+    (selectedTypes.Bronze && user.type === 'Bronze') ||
+    (selectedTypes.Silver && user.type === 'Silver') ||
+    (selectedTypes.Golden && user.type === 'Golden')
+    );
+
+    return matchFirstName && matchLastName && matchUsername && matchRole && matchType && matchSuspicious;
   });
 };
 

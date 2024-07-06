@@ -32,8 +32,8 @@ public class CartDAO {
     }
 
     public CartDAO(String contextPath) {
-        this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\carts.csv";
-        //this.fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\carts.csv";
+        //this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\carts.csv";
+        this.fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\carts.csv";
         System.out.println(fileLocation);
         cocoInCartDAO = new CocoInCartDAO(contextPath);
         purchaseDAO = new PurchaseDAO(contextPath);
@@ -71,7 +71,7 @@ public class CartDAO {
         carts.put(cart.getId(), cart);
         ArrayList<CocoInCart> chocolates = new ArrayList<CocoInCart>();
         ArrayList<Coco> cocos = new ArrayList<Coco>();
-        System.out.println("VELICINA: " + cart.getChocolates().size());
+        //System.out.println("VELICINA: " + cart.getChocolates().size());
         for(CocoInCart coco : cart.getChocolates()) {
         	chocolates.add(cocoInCartDAO.saveCocoInCart(coco));
         	cocos.add(cocoDAO.findCoco(coco.getIdChocolate()));
@@ -89,8 +89,8 @@ public class CartDAO {
         purchase.setCartId(chocolates);
         purchase.setChocolates(cocos);
         purchase.setFactory(factoryDAO.findFactory(factoryId));
-        System.out.println("OVO JE Factory:" + purchase.getFactory().getId());
-        System.out.println("OVO JE USER ID:" + cart.getUserId());
+        //System.out.println("OVO JE Factory:" + purchase.getFactory().getId());
+        //System.out.println("OVO JE USER ID:" + cart.getUserId());
         User user = userDAO.getUserById(cart.getUserId());
         double points = user.getPoints() + (cart.getTotalPrice()/1000) * 133;
         user.setPoints(points);

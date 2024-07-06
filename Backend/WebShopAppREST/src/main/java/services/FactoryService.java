@@ -101,12 +101,13 @@ public class FactoryService {
                                          @QueryParam("chocolateType") String chocolateType,
                                          @QueryParam("chocolateCategory") String chocolateCategory,
                                          @QueryParam("isOpen") boolean isOpen) {
-    	return factoryDAO.searchFactories(factoryName, chocolateName, address, averageRating, chocolateCategory, chocolateType, isOpen);
-        /*List<Factory> result = new ArrayList<>();
+    	//return factoryDAO.searchFactories(factoryName, chocolateName, address, averageRating, chocolateCategory, chocolateType, isOpen);
+        List<Factory> result = new ArrayList<>();
 
         for (Factory factory : factoryDAO.findAll()) {
+        	factory.setLocation(factoryDAO.getLocationById(factory.getLocationId()));
             if ((factoryName == null || factoryName.trim().isEmpty() || factory.getName().toLowerCase().contains(factoryName.toLowerCase())) &&
-                (location == null || location.trim().isEmpty() || factory.getLocation().equalsIgnoreCase(location)) &&
+                (address == null || address.trim().isEmpty() || factory.getLocation().getAddress().equalsIgnoreCase(address)) &&
                 (chocolateName == null || chocolateName.trim().isEmpty() || factoryDAO.factoryContainsChocolate(factory, chocolateName)) &&
                 (chocolateType == null || chocolateType.trim().isEmpty() || factoryDAO.factoryContainsChocolateWithType(factory, chocolateType)) &&
                 (chocolateCategory == null || chocolateCategory.trim().isEmpty() || factoryDAO.factoryContainsChocolateWithCategory(factory, chocolateCategory)) &&
@@ -117,7 +118,7 @@ public class FactoryService {
             }
         }
 
-        return result;*/
+        return result;
     }
 
     @GET

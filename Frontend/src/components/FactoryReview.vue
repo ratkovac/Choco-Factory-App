@@ -15,12 +15,13 @@
       <div class="row gx-5 gx-lg-1 align-items-center">
         <div class="col-md-12">
           <div class="card mb-3">
-            <div class="card-body">
+            <div class="card-body" style="background-color: aliceblue;">
               <div class="row">
-                <div class="col-md-3">
-                  <img :src="factory.pathToLogo" alt="Factory Logo" style="max-width: 100px;">
+                
+                <div >
+                  <div>
+                  <img :src="factory.pathToLogo" alt="Factory Logo" class="factory-logo img-fluid">
                 </div>
-                <div class="col-md-9">
                   <h2><strong>Naziv:</strong> {{ factory.name }}</h2>
                   <p><strong>Radno vreme:</strong> {{ factory.workingTime }}</p>
                   <p><strong>Lokacija:</strong> {{ location.address }}</p>
@@ -36,36 +37,36 @@
                     <span v-if="!(chocolates && chocolates.length > 0)">Nema dostupnih čokolada</span>
                   </p>
                   <div class="table-responsive" v-if="chocolates && chocolates.length > 0">
-                    <table v-if="chocolates && chocolates.length > 0" class="custom-table">
+                    <table class="custom-table">
                       <thead>
-                        <tr>
-                          <th class="border" style="width: 80px;">Slika</th>
-                          <th class="border">Naziv</th>
-                          <th class="border">Cena</th>
-                          <th class="border">Kategorija</th>
-                          <th class="border">Tip</th>
-                          <th class="border">Masa</th>
-                          <th class="border">Detalji</th>
-                          <th class="border">Zaliha</th>
+                        <tr style="background-color: #2E8B57; border-color: #ccc; color: white;">
+                          <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px; color: white;">Slika</th>
+                          <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px; color: white;">Naziv</th>
+                          <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px; color: white;">Cena</th>
+                          <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px; color: white;">Kategorija</th>
+                          <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px; color: white;">Tip</th>
+                          <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px; color: white;">Masa</th>
+                          <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px; color: white;">Detalji</th>
+                          <th class="border" style="font-weight: 700; font-size: 14px; letter-spacing: 1px; color: white;">Zaliha</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr v-for="chocolate in chocolates" :key="chocolate.id">
-                          <td class="border" style="padding: 0; width: 50px; height: 50px;">
-                            <img :src="chocolate.picture" alt="Slika čokolade" style="width: 100%; height: 100%; display: block;" />
+                          <td>
+                            <img :src="chocolate.picture" alt="Slika čokolade" class="chocolate-image img-thumbnail">
                           </td>
-                          <td class="border">{{ chocolate.name }}</td>
-                          <td class="border">{{ chocolate.cost }}</td>
-                          <td class="border">{{ chocolate.category }}</td>
-                          <td class="border">{{ chocolate.type }}</td>
-                          <td class="border">{{ chocolate.mass }}</td>
-                          <td class="border" style="word-wrap: break-word;">{{ chocolate.details }}</td>
-                          <td class="border">{{ chocolate.stock }}</td>
+                          <td>{{ chocolate.name }}</td>
+                          <td>{{ chocolate.cost }}</td>
+                          <td>{{ chocolate.category }}</td>
+                          <td>{{ chocolate.type }}</td>
+                          <td>{{ chocolate.mass }}</td>
+                          <td>{{ chocolate.details }}</td>
+                          <td>{{ chocolate.stock }}</td>
                         </tr>
                       </tbody>
                     </table>
-                    <span v-else>Nema dostupnih čokolada</span>
                   </div>
+                  <span v-else>Nema dostupnih čokolada</span>
                 </div>
               </div>
             </div>
@@ -357,5 +358,41 @@ html, body, template{
 }
 [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
     display: none;
+}
+.factory-logo {
+  max-width: 100px;
+  margin-bottom: 20px;
+}
+
+.custom-table th,
+.custom-table td {
+  vertical-align: middle;
+}
+
+.chocolate-image {
+  width: 50px;
+  height: 50px;
+  display: block;
+}
+
+.thead-dark th {
+  background-color: #343a40;
+  color: white;
+}
+
+.table {
+  background-color: #f8f9fa;
+}
+
+.card {
+  border: 1px solid #343a40;
+}
+
+.card-body {
+  background-color: #f8f9fa;
+}
+
+h2, p {
+  color: #343a40;
 }
   </style>

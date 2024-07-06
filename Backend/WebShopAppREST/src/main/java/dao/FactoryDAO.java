@@ -31,10 +31,11 @@ public class FactoryDAO {
 	
 	public FactoryDAO(String contextPath) {
 		System.out.println("OVO je context " + contextPath);
-		this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\factories.csv";
+		//this.fileLocation = "C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\factories.csv";
+		this.fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\factories.csv";
 		System.out.println("Ovo je putanja" + fileLocation);
-		this.cocoDAO = new CocoDAO("C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv");
-		this.locationDAO = new LocationDAO("C:\\Users\\janic\\FAX\\SEMESTAR 6\\Veb programiranje\\CocoFactory\\veb-projekat\\Backend\\WebShopAppREST\\src\\main\\webapp\\locations.csv");
+		this.cocoDAO = new CocoDAO("C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\chocolates.csv");
+		this.locationDAO = new LocationDAO("C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\locations.csv");
 		System.out.println("EE");
 		loadFactories(fileLocation);
 	}
@@ -44,6 +45,7 @@ public class FactoryDAO {
 	    // Ažuriranje statusa svake fabrike
 	    for (Factory factory : factories.values()) {
 	        factory.setStatus(checkStatus(factory.getWorkingTime()));
+			this.locationDAO = new LocationDAO("C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\locations.csv");
 	        factory.setLocation(locationDAO.getLocationById(factory.getLocationId()));
 	    }
 
@@ -210,9 +212,7 @@ public class FactoryDAO {
 	    if (factory.getName() == null || factory.getName().trim().isEmpty()) {
 	        factory.setName("Default Name");
 	    }
-	    /*if (factory.getLocation() == null || factory.getLocation().trim().isEmpty()) {
-	        factory.setLocation("Default Location");
-	    }*/
+
 	    if (factory.getWorkingTime() == null || factory.getWorkingTime().trim().isEmpty()) {
 	        factory.setWorkingTime("00:00-23:59");
 	    }
@@ -445,5 +445,9 @@ public class FactoryDAO {
         Collections.sort(sortedFactories, comparator);
         return sortedFactories;
     }
+	
+	public Location getLocationById(String locationId) {
+		return locationDAO.getLocationById(locationId);
+	}
 
 }

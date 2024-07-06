@@ -21,29 +21,29 @@
     </div>
     
     <!-- Conditional Rendering -->
-    <div v-if="!isFactorySelected">
-      <!-- Factories List -->
-      <div class="factories-list row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" style="margin-top: 10px;">
-        <div class="col" v-for="factory in sortedFactories" :key="factory.id">
-          <div class="card h-100" @click="selectFactory(factory)">
-            <img :src="factory.pathToLogo" class="card-img-top img-thumbnail" alt="Factory Logo">
-            <div class="card-body">
-              <h5 class="card-title">{{ factory.name }}</h5>
-              <p class="card-text location">Lokacija: {{ factory.location.address }}</p>
-              <p class="card-text">Prosečna ocena: {{ factory.rate }}</p>
-              <!-- Prikaz komentara za fabriku -->
-              <div v-if="filteredComments(factory.id).length > 0">
-                <h6 class="card-title">Komentari:</h6>
-                  <div v-for="comment in filteredComments(factory.id)" :key="comment.id">
-                    <p class="card-text"> - {{ comment.text }} </p>
-                  </div>
-              </div>
-              <p v-else class="card-text">Nema komentara za ovu fabriku.</p>
+    <div v-if="!isFactorySelected" class="factories-list-container">
+  <!-- Factories List -->
+  <div class="factories-list row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" style="margin-top: 10px;">
+    <div class="col" v-for="factory in sortedFactories" :key="factory.id">
+      <div class="card h-100" @click="selectFactory(factory)">
+        <img :src="factory.pathToLogo" class="card-img-top img-thumbnail" alt="Factory Logo">
+        <div class="card-body">
+          <h5 class="card-title">{{ factory.name }}</h5>
+          <p class="card-text location">Lokacija: {{ factory.location.address }}</p>
+          <p class="card-text">Prosečna ocena: {{ factory.rate }}</p>
+          <!-- Prikaz komentara za fabriku -->
+          <div v-if="filteredComments(factory.id).length > 0">
+            <h6 class="card-title">Komentari:</h6>
+            <div v-for="comment in filteredComments(factory.id)" :key="comment.id">
+              <p class="card-text"> - {{ comment.text }} </p>
             </div>
           </div>
+          <p v-else class="card-text">Nema komentara za ovu fabriku.</p>
         </div>
       </div>
     </div>
+  </div>
+</div>
     
     <div v-if="chocolatesShow">
       <!-- Selected Factory Details and Chocolates -->
@@ -200,10 +200,10 @@
             <input v-model.number="searchParams.maxPrice" type="number" class="form-control" placeholder="Max cijena" @input="filterPurchases">
         </div>
         <div class="col-md-2 mb-2">
-            <input v-model="searchParams.startDate" type="text" class="form-control" placeholder="Datum od" @input="filterPurchases">
+          <input v-model="searchParams.startDate" type="date" class="form-control" placeholder="Datum od" @input="filterPurchases">
         </div>
         <div class="col-md-2 mb-2">
-            <input v-model="searchParams.endDate" type="text" class="form-control" placeholder="Datum do" @input="filterPurchases">
+          <input v-model="searchParams.endDate" type="date" class="form-control" placeholder="Datum do" @input="filterPurchases">
         </div>
     <div class="col-md-2 mb-2">
       <select v-model="sortParams.criterion" class="form-select" aria-label="Default select example">
@@ -396,13 +396,24 @@ const filterPurchases = () => {
     const matchPrice = (!searchParams.minPrice || purchase.price >= searchParams.minPrice) &&
                       (!searchParams.maxPrice || purchase.price <= searchParams.maxPrice);
     
-    const matchDate = (!searchParams.startDate || purchase.purchaseDateTime >= searchParams.startDate) &&
-                      (!searchParams.endDate || purchase.purchaseDateTime <= searchParams.endDate);
+    let startDateMatch = true;
+    let endDateMatch = true;
+
+    if (searchParams.startDate) {
+      const startDate = new Date(searchParams.startDate);
+      startDateMatch = new Date(purchase.purchaseDateTime) >= startDate;
+    }
+
+    if (searchParams.endDate) {
+      const endDate = new Date(searchParams.endDate);
+      endDateMatch = new Date(purchase.purchaseDateTime) <= endDate;
+    }
 
     return (
       matchFactoryName &&
       matchPrice &&
-      matchDate
+      startDateMatch &&
+      endDateMatch
     );
   });
 };
@@ -804,7 +815,7 @@ const logout = () => {
 }
 
 
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,700);
+/* @import url(https://fonts.googleapis.com/css?family=Roboto:400,700); */
 
 @keyframes checked-anim {
   50% {
@@ -948,5 +959,9 @@ html, body, template{
 }
 [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
     display: none;
+}
+.factories-list-container {
+  max-height: 600px; /* Prilagodi visinu po potrebi */
+  overflow-y: auto;
 }
 </style>

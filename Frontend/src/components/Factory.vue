@@ -44,16 +44,16 @@
       <div class="row gx-5 gx-lg-1 align-items-center">
         <div class="col-md-3">
           <div>
-            <h6 class="fw-bold">Category:</h6>
+            <h6 class="fw-bold">Chocolate category:</h6>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" v-model="chocolateCategoryFilters.regular" @change="updateChocolateCategoryFilters">
               <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" v-model="chocolateCategoryFilters.regular" @change="updateChocolateCategoryFilters">
                 Regular
               </label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" v-model="chocolateCategoryFilters.cooking" @change="updateChocolateCategoryFilters">
               <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" v-model="chocolateCategoryFilters.cooking" @change="updateChocolateCategoryFilters">
                 Cooking
               </label>
             </div>
@@ -61,22 +61,22 @@
         </div>
         <div class="col-md-3">
           <div>
-            <h6 class="fw-bold">Type:</h6>
+            <h6 class="fw-bold">Chocolate type:</h6>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" v-model="chocolateTypeFilters.milk" @change="updateChocolateTypeFilters">
               <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" v-model="chocolateTypeFilters.milk" @change="updateChocolateTypeFilters">
                 Milk
               </label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" v-model="chocolateTypeFilters.dark" @change="updateChocolateTypeFilters">
               <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" v-model="chocolateTypeFilters.dark" @change="updateChocolateTypeFilters">
                 Dark
               </label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" v-model="chocolateTypeFilters.white" @change="updateChocolateTypeFilters">
               <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" v-model="chocolateTypeFilters.white" @change="updateChocolateTypeFilters">
                 White
               </label>
             </div>
@@ -92,7 +92,7 @@
   </div>
 
   <!-- Factories Table -->
-  <div class="table-responsive" style="min-height: 500px">
+  <div class="table-container" style="height: 500px; overflow-y: auto;">
     <table class="table table-hover">
       <thead class="table-dark">
         <tr>
@@ -171,6 +171,7 @@ const loadFactories = async () => {
   try {
     const response = await axios.get('http://localhost:8080/WebShopAppREST/rest/factories');
     factories.value = response.data;
+    console.log(factories);
     filterFactories();
   } catch (error) {
     console.error(error);
@@ -282,5 +283,9 @@ const updateChocolateCategoryFilters = () => {
 <style>
 .table td {
     vertical-align: middle;
+}
+.table-container {
+  height: 500px; /* Promenite visinu po potrebi */
+  overflow-y: auto; /* Omogućava vertikalni scroll */
 }
 </style>
