@@ -17,22 +17,24 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import beans.Factory;
+import beans.Location;
 
 public class FactoryDAO {
 	
 	private HashMap<String, Factory> factories = new HashMap<>();
 	private CocoDAO cocoDAO;
+	private LocationDAO locationDAO;
 	private String fileLocation;
 	
 	public FactoryDAO() {
-		factories.put("1", new Factory("1", "Blabla", "strpce", "http:", 2.3, false, "2.5", null));
 	}
 	
 	public FactoryDAO(String contextPath) {
 		System.out.println("OVO je context " + contextPath);
-		this.fileLocation = new File(contextPath, "factories.csv").getAbsolutePath();
+		this.fileLocation = "C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\factories.csv";
 		System.out.println("Ovo je putanja" + fileLocation);
 		this.cocoDAO = new CocoDAO(contextPath);
+		this.locationDAO = new LocationDAO("C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\locations.csv");
 		System.out.println("EE");
 		loadFactories(fileLocation);
 	}
@@ -42,6 +44,7 @@ public class FactoryDAO {
 	    // Ažuriranje statusa svake fabrike
 	    for (Factory factory : factories.values()) {
 	        factory.setStatus(checkStatus(factory.getWorkingTime()));
+	        factory.setLocation(locationDAO.getLocationById(factory.getLocationId()));
 	    }
 
 	    // Sortiranje fabrika po statusu (Work > Do not work)
@@ -83,7 +86,7 @@ public class FactoryDAO {
 		} else {
 			f.setName(factory.getName());
 			f.setStatus(factory.getStatus());
-			f.setLocation(factory.getLocation());
+			f.setLocationId(factory.getLocationId());
 			f.setPathToLogo(factory.getPathToLogo());
 			f.setRate(factory.getRate());
 			f.setDeleted(factory.isDeleted());
@@ -127,7 +130,7 @@ public class FactoryDAO {
 			File file = new File(filePath);
 			System.out.println(filePath + " je");
 			in = new BufferedReader(new FileReader(file));
-			String line, id = "", name = "", workingTime = "" , location = "", pathToLogo = "", rate = "", isDeleted = "";
+			String line, id = "", name = "", workingTime = "" , locationId = "", pathToLogo = "", rate = "", isDeleted = "";
 			StringTokenizer st;
 			while ((line = in.readLine()) != null) {
 				System.out.println(line + "linija");
@@ -144,8 +147,8 @@ public class FactoryDAO {
 			        System.out.println("name je: " + name);
 			        workingTime = st.nextToken().trim();
 			        System.out.println("working je: " + workingTime);
-			        location = st.nextToken().trim();
-			        System.out.println("Location:" + location);
+			        locationId = st.nextToken().trim();
+			        System.out.println("Location:" + locationId);
 			        pathToLogo = st.nextToken().trim();
 			        System.out.println("pathToLogo:" + pathToLogo);
 			        rate = st.nextToken().trim();
@@ -162,8 +165,8 @@ public class FactoryDAO {
 			        	System.out.println("Idc: " + chocolateIdsStr);
 			            chocolateIds.add(Integer.parseInt(chocolateId));
 			        }
-			        System.out.println(id + name + workingTime + location + pathToLogo + rate + isDeleted);
-			        factories.put(id, new Factory(id, name, location, pathToLogo, Double.parseDouble(rate),
+			        System.out.println(id + name + workingTime + locationId + pathToLogo + rate + isDeleted);
+			        factories.put(id, new Factory(id, name, locationId, pathToLogo, Double.parseDouble(rate),
 			                        Boolean.parseBoolean(isDeleted), workinTime, chocolateIds));
 			    }
 			}
@@ -188,7 +191,7 @@ public class FactoryDAO {
 	    	            factory.getId(),
 	    	            factory.getName(),
 	    	            factory.getStatus(),
-	    	            factory.getLocation(),
+	    	            factory.getLocationId(),
 	    	            factory.getPathToLogo(),
 	    	            String.valueOf(factory.getRate()),
 	    	            String.valueOf(factory.isDeleted()),
@@ -207,9 +210,9 @@ public class FactoryDAO {
 	    if (factory.getName() == null || factory.getName().trim().isEmpty()) {
 	        factory.setName("Default Name");
 	    }
-	    if (factory.getLocation() == null || factory.getLocation().trim().isEmpty()) {
+	    /*if (factory.getLocation() == null || factory.getLocation().trim().isEmpty()) {
 	        factory.setLocation("Default Location");
-	    }
+	    }*/
 	    if (factory.getWorkingTime() == null || factory.getWorkingTime().trim().isEmpty()) {
 	        factory.setWorkingTime("00:00-23:59");
 	    }
@@ -268,7 +271,7 @@ public class FactoryDAO {
 	    return currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
 	}
 
-	public List<Factory> searchFactories(String factoryName, String chocolateName, String location, Double averageRating, String chocolateCategory, String chocolateType, boolean isOpen) {
+	public List<Factory> searchFactories(String factoryName, String chocolateName, String address, Double averageRating, String chocolateCategory, String chocolateType, boolean isOpen) {
 	    List<Factory> result = new ArrayList<>();
 
 	    for (Factory factory : factories.values()) {
@@ -282,9 +285,17 @@ public class FactoryDAO {
 	            matches = false;
 	        }
 
-	        if (location != null && !factory.getLocation().equalsIgnoreCase(location)) {
-	            matches = false;
-	        }
+	        if (address != null) {
+                String locationId = factory.getLocationId();
+                Location location = locationDAO.getLocationById(locationId);
+                if (location != null && location.getAddress() != null) {
+                    if (!location.getAddress().toLowerCase().contains(address.toLowerCase())) {
+                        matches = false;
+                    }
+                } else {
+                    matches = false;
+                }
+            }
 
 	        if (averageRating != null && factory.getRate() < averageRating) {
 	            matches = false;
@@ -414,8 +425,11 @@ public class FactoryDAO {
             case "name":
                 comparator = Comparator.comparing(Factory::getName);
                 break;
-            case "location":
-                comparator = Comparator.comparing(Factory::getLocation);
+            case "address":
+                comparator = Comparator.comparing(factory -> {
+                    Location location = locationDAO.getLocationById(factory.getLocationId());
+                    return location != null ? location.getAddress() : "";
+                });
                 break;
             case "rate":
                 comparator = Comparator.comparingDouble(Factory::getRate);

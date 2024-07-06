@@ -10,6 +10,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import beans.Factory;
+import beans.Location;
 import dao.FactoryDAO;
 
 @Path("/factories")
@@ -83,13 +84,14 @@ public class FactoryService {
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Factory> searchFactories(@QueryParam("factoryName") String factoryName,
-                                         @QueryParam("location") String location,
+                                         @QueryParam("address") String address,
                                          @QueryParam("averageRating") Double averageRating,
                                          @QueryParam("chocolateName") String chocolateName,
                                          @QueryParam("chocolateType") String chocolateType,
                                          @QueryParam("chocolateCategory") String chocolateCategory,
                                          @QueryParam("isOpen") boolean isOpen) {
-        List<Factory> result = new ArrayList<>();
+    	return factoryDAO.searchFactories(factoryName, chocolateName, address, averageRating, chocolateCategory, chocolateType, isOpen);
+        /*List<Factory> result = new ArrayList<>();
 
         for (Factory factory : factoryDAO.findAll()) {
             if ((factoryName == null || factoryName.trim().isEmpty() || factory.getName().toLowerCase().contains(factoryName.toLowerCase())) &&
@@ -104,7 +106,7 @@ public class FactoryService {
             }
         }
 
-        return result;
+        return result;*/
     }
 
     @GET

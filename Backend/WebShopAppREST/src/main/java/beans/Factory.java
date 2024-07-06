@@ -6,24 +6,25 @@ public class Factory {
     private String id;
     private String name;
     private String status; // Promenjen tip sa FactoryStatus na String
-    private String location;
-    private String pathToLogo;
+    private String locationId;
+	private String pathToLogo;
     private double rate;
     private boolean isDeleted;
     private String workingTime;
     private ArrayList<String> comments;
     private ArrayList<Integer> chocolateIds;
+    private Location location;
     
     public Factory() {
         this.id = "0";
     }
     
-    public Factory(String id, String name, String location, String pathToLogo, double rate,
+    public Factory(String id, String name, String locationId, String pathToLogo, double rate,
             boolean isDeleted, String workingTime, ArrayList<Integer> chocolateIds) {
         super();
         this.id = id;
         this.name = name;
-        this.location = location;
+        this.locationId = locationId;
         this.pathToLogo = pathToLogo;
         this.rate = rate;
         this.isDeleted = isDeleted;
@@ -56,14 +57,14 @@ public class Factory {
     public void setStatus(String status) {
         this.status = status;
     }
+    
+    public String getLocationId() {
+		return locationId;
+	}
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
 
     public String getPathToLogo() {
         return pathToLogo;
@@ -122,8 +123,16 @@ public class Factory {
 
 	@Override
 	public String toString() {
-		return "Factory [id=" + id + ", name=" + name + ", status=" + status + ", location=" + location
+		return "Factory [id=" + id + ", name=" + name + ", status=" + status + ", location=" + locationId
 				+ ", pathToLogo=" + pathToLogo + ", rate=" + rate + ", isDeleted=" + isDeleted + ", workingTime="
 				+ workingTime + ", comments=" + comments + ", chocolateIds=" + chocolateIds + "]";
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 }

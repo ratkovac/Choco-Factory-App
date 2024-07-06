@@ -39,7 +39,7 @@
     
     <div v-if="chocolatesShow">
       <!-- Selected Factory Details and Chocolates -->
-      <section class="py-5" style="width: 1000px;">
+      <section class="py-5" style="width: 1200px;">
         <div class="row">
           <div class="col-md-30 d-flex align-items-center" style="margin-left: 0px; margin-bottom: 30px;">
             <img :src="selectedFactory.pathToLogo" alt="Factory Logo" style="max-width: 100px;">
