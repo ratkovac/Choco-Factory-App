@@ -8,9 +8,8 @@
     <label id="burger" for="menu-toggle"></label>
     <ul id="menu">
       <li><a href="#" @click="factoryShowClick">Your Factory</a></li>
-      <li><a href="#" @click="addWorker">New Worker</a></li>
       <li><a href="#" @click="yourProfile">Your Profile</a></li>
-      <li><a href="#">Logout</a></li>
+      <li><a href="#" @click="logout">Logout</a></li>
     </ul>
   </div>
   <div v-if="showFactory">

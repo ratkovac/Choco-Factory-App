@@ -206,6 +206,7 @@ const submitFactory = async () => {
     const locationResponse = await axios.post('http://localhost:8080/WebShopAppREST/rest/location/add', location.value);
     if (!locationResponse.data) {
       console.error("Location wasn't able to be saved! Error");
+      alert("Došlo je do greške prilikom čuvanja lokacije. Pokušajte ponovo.");
       return;
     }
 
@@ -216,6 +217,7 @@ const submitFactory = async () => {
     const factoryResponse = await axios.post('http://localhost:8080/WebShopAppREST/rest/factories/add', factoryForm.value);
     if (!factoryResponse.data) {
       console.error("Factory wasn't able to be saved! Error");
+      alert("Došlo je do greške prilikom čuvanja fabrike. Pokušajte ponovo.");
       return;
     }
 
@@ -244,9 +246,12 @@ const submitFactory = async () => {
 
     console.log(updateResponse.data); // Obradi odgovor po potrebi
 
+    // Obavesti korisnika da je fabrika uspešno kreirana i menadžer ažuriran
+    alert("Fabrika je uspešno kreirana!");
+
   } catch (error) {
     console.error(error);
-    console.error("Factory or manager update failed! Error");
+    alert("Došlo je do greške prilikom kreiranja fabrike ili ažuriranja menadžera. Pokušajte ponovo.");
   }
 };
 
@@ -325,7 +330,7 @@ const createNewManager = async () => {
             console.error('Error fetching managers:', error);
         }
       console.log(response.data);
-      availableManagers.value.push(response.data);
+      //availableManagers.value.push(response.data);
       showNewManagerForm.value = false;
       showManagerSelection.value = true;
     }

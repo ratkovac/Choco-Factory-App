@@ -173,13 +173,13 @@ export default {
   border: 1px solid #555;
   border-radius: 4px;
   background-color: #444;
-  color: #FFF;
+  color: red; /* Dodajte boju teksta za default stanje */
 }
 
 .formInput:focus {
   outline: none;
   border-color: #573b8a;
-  color: #FFF; /* Dodajte boju teksta za fokusirano stanje */
+  color: red; /* Dodajte boju teksta za fokusirano stanje */
 }
 
 .formButton {
@@ -202,4 +202,5 @@ p {
   text-align: center;
   margin-top: 10px;
 }
+
 </style>

@@ -3,10 +3,9 @@
       <div class="container px-4 px-lg-5 my-5">
         <div class="row gx-5 gx-lg-1 align-items-center">
           <div class="col-md-120">
-            <div class="small mb-1" :style="{ margin: '20px 30px 0px 140px' }">{{ factoryName }}</div>
-            <h1 class="display-7 fw-bolder" :style="{ margin: '0px 0px 0px 95px' }">{{ title }}</h1>
+            <h1 style="margin-bottom: 60px; font-size: 50px">{{ title }}</h1>
             <div class="card h-100">
-              <form class="card-body custom-form" @submit.prevent="saveChocolate()">
+              <form class="card-body custom-form" @submit.prevent="saveChocolate()" style="background-color: #6d44b8">
                 <div class="form-group">
                   <label for="name">Name:</label><br>
                   <input type="text" id="name" v-model="coco.name" :class="{ 'error': !validation.nameValid }" class="form-control custom-input">
@@ -23,10 +22,8 @@
                 <div class="form-group">
                   <label for="category">Category:</label><br>
                   <select id="category" v-model="coco.category" :class="{ 'error': !validation.categoryValid }" class="form-control custom-input">
-                    <option value="Bar">Bar</option>
-                    <option value="Truffle">Truffle</option>
-                    <option value="Biscuit">Biscuit</option>
-                    <option value="Praline">Praline</option>
+                    <option value="Regular">Regular</option>
+                    <option value="Cooking">Cooking</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -46,10 +43,10 @@
                   <input type="text" id="image" v-model="coco.picture" :class="{ 'error': !validation.imageValid }" class="form-control custom-input">
                 </div>
                 <div class="form-group">
-                  <img class="card-img-top mb-5 mb-md-0" :src="coco.picture" alt="url">
+                  <img class="card-img-top mb-5 mb-md-0" :src="coco.picture" alt="url" style="max-height: 100px; max-width: 200px;">
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-outline-dark flex-shrink-0 custom-button" type="submit">Save Chocolate</button>
+                    <button class="btn btn-outline-dark flex-shrink-0 custom-button" type="submit" style="background-color: white">Save Chocolate</button>
                 </div>                
               </form>
             </div>
@@ -192,51 +189,7 @@
 </script>
 
 <style scoped>
-.custom-form {
-  border: 1px solid #ddd; 
-  padding: 20px;
-  border-radius: 5%;
-  background-color: #573b8a; 
-}
-.error-message {
-  color: red;
-}
 
-img {
-  max-width: 80x;
-  max-height: 50px;
-}
-
-.error {
-  border: 2px solid rgb(241, 53, 19);
-}
-
-.custom-input {
-  width: 300px;
-  height: 25px;
-  font-size: 14px;
-  font-family: Arial, sans-serif;
-  font-weight: 545;
-  margin-bottom: 10px;
-}
-
-.custom-input-textarea {
-  width: 300px;
-  height: 80px; 
-  font-size: 14px;
-  font-family: Arial, sans-serif;
-  font-weight: 545;
-  margin-bottom: 10px;
-}
-.custom-input,
-button.custom-button {
-  width: 300px; 
-  height: 25px; 
-  font-size: 14px;
-  font-family: Arial, sans-serif;
-  font-weight: 545;
-  margin-bottom: 10px;
-}
 
 </style>
   

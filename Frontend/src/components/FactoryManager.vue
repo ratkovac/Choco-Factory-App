@@ -225,10 +225,40 @@
         <span v-else>Nema komentara</span>
     </div>
     </div>
-  <div v-if="purchasesShow" class="purchases-section">
+    <div v-if="purchasesShow" class="purchases-section">
+    <div class="row gx-5 gx-lg-1 align-items-center mb-2">
+      <div class="col-md-2 mb-2">
+        <input v-model.number="searchParams.minPrice" type="number" class="form-control" placeholder="Min cijena" @input="filterPurchases">
+      </div>
+      <div class="col-md-2 mb-2">
+        <input v-model.number="searchParams.maxPrice" type="number" class="form-control" placeholder="Max cijena" @input="filterPurchases">
+      </div>
+      <div class="col-md-2 mb-2">
+        <input v-model="searchParams.startDate" type="date" class="form-control" placeholder="Datum od" @input="filterPurchases">
+      </div>
+      <div class="col-md-2 mb-2">
+        <input v-model="searchParams.endDate" type="date" class="form-control" placeholder="Datum do" @input="filterPurchases">
+      </div>
+      <div class="col-md-2 mb-2">
+        <select v-model="sortParams.criterion" class="form-select" aria-label="Default select example">
+          <option value="">Sortiraj po...</option>
+          <option value="price">Cena</option>
+          <option value="date">Datum</option>
+        </select>
+      </div>
+      <div class="col-md-2 mb-2">
+        <select v-model="sortParams.ascending" class="form-select" aria-label="Default select example">
+          <option value="true">Rastuće</option>
+          <option value="false">Opadajuće</option>
+        </select>
+      </div>
+      <div class="col-md-2 mb-2">
+        <button @click="clearFilters" class="btn btn-secondary">Očisti pretragu</button>
+      </div>
+    </div>
     <h2>Kupovine u vašoj fabrici:</h2>
     <div class="card-container">
-      <div v-for="purchase in purchases" :key="purchase.id" class="card">
+      <div v-for="purchase in sortedPurchases" :key="purchase.id" class="card">
         <div class="card-body" style="background-color: #573b8a; border-color: gray;">
           <h5 class="card-title">{{ purchase.factory.name }}</h5>
           <p class="card-text"><strong>Cena:</strong> {{ purchase.price }} RSD</p>
@@ -237,10 +267,10 @@
           <div v-if="purchase.status === 'Obrada'">
             <button @click="acceptPurchase(purchase.id)" class="btn btn-success">Prihvati Kupovinu</button>
             <button @click="rejectPurchase(purchase.id)" class="btn btn-danger">Odbij Kupovinu</button>
-            </div>
+          </div>
         </div>
       </div>
-      <div v-if="purchases.length === 0" class="no-results">
+      <div v-if="sortedPurchases.length === 0" class="no-results">
         Nema rezultata pretrage
       </div>
     </div>
@@ -322,6 +352,18 @@ const username = ref(route.query.username);
   gender: '',
   birthDate: ''
 });
+
+const searchParams = reactive({
+  minPrice: '',
+  maxPrice: '',
+  startDate: '',
+  endDate: ''
+});
+
+const sortParams = reactive({
+  criterion: '',
+  ascending: 'true'
+});
   const chocolates = ref([]);
   const comments = ref([]);
 
@@ -337,7 +379,18 @@ const username = ref(route.query.username);
     showNewWorkerForm.value = false;
     profile.value = false;
     commentView.value = true;
+    purchasesShow.value = false;
   }
+
+  const clearFilters = () => {
+  searchParams.minPrice = '';
+  searchParams.maxPrice = '';
+  searchParams.startDate = '';
+  searchParams.endDate = '';
+  sortParams.criterion = '';
+  sortParams.ascending = 'true';
+  filterPurchases();
+};
   const getCommentsByFactory = async (factoryId) => {
     console.log("Uslo1");
   try {
@@ -397,6 +450,52 @@ const factoryShowClick = () => {
   profile.value = false;
 }
 
+const filterPurchases = () => {
+  filteredPurchases.value = purchases.value.filter(purchase => {
+    const matchPrice = (!searchParams.minPrice || purchase.price >= searchParams.minPrice) &&
+                      (!searchParams.maxPrice || purchase.price <= searchParams.maxPrice);
+    
+    let startDateMatch = true;
+    let endDateMatch = true;
+
+    if (searchParams.startDate) {
+      const startDate = new Date(searchParams.startDate);
+      startDateMatch = new Date(purchase.purchaseDateTime) >= startDate;
+    }
+
+    if (searchParams.endDate) {
+      const endDate = new Date(searchParams.endDate);
+      endDateMatch = new Date(purchase.purchaseDateTime) <= endDate;
+    }
+
+    return (
+      matchPrice &&
+      startDateMatch &&
+      endDateMatch
+    );
+  });
+};
+
+const filteredPurchases = ref([]);
+
+const sortedPurchases = computed(() => {
+  let sorted = [...filteredPurchases.value];
+  if (sortParams.criterion) {
+    sorted.sort((a, b) => {
+      let modifier = sortParams.ascending === 'true' ? 1 : -1;
+      if (sortParams.criterion === 'price') {
+        return modifier * (a.price - b.price);
+      } else if (sortParams.criterion === 'date') {
+        let dateA = new Date(a.purchaseDateTime).getTime();
+        let dateB = new Date(b.purchaseDateTime).getTime();
+        return modifier * (dateA - dateB);
+      }
+      return 0;
+    });
+  }
+  return sorted;
+});
+
 const loadPurchases = async () => {
   try {
     const factoryId = route.params.id;
@@ -406,8 +505,9 @@ const loadPurchases = async () => {
     for (let purchase of purchases.value) {
       const factoryId = purchase.factory.id;
       const factoryResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factories/${factoryId}`);
-      purchase.factory.name = factoryResponse.data.name; // Dodaj naziv fabrike u objekat kupovine
+      purchase.factory.name = factoryResponse.data.name;
     }
+    filterPurchases();
   } catch (error) {
     console.error(error);
   }
@@ -496,6 +596,7 @@ const yourProfile = () => {
   showFactory.value = false;
   showNewWorkerForm.value = false;
   commentView.value = false;
+  purchasesShow.value = false;
   fetchUser();
 };
 
@@ -546,12 +647,19 @@ const logout = () => {
   </script>
   
   <style scoped>
+.card-container {
+  display: flex;
+  flex-wrap: wrap; /* Omogućava prelazak u novi red kad nema dovoljno prostora */
+  gap: 10px; /* Razmak između kartica */
+}
+
 .card {
   background-color: #411594;
-  width: 100%;
+  width: calc(33.333% - 10px); /* Prilagođava širinu kartica */
   cursor: pointer;
   transition: transform 0.2s ease;
   margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .card:hover {

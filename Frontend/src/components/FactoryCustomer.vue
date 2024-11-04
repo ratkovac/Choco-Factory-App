@@ -219,6 +219,9 @@
         <option value="false">Opadajuće</option>
       </select>
     </div>
+    <div class="col-md-2 mb-2">
+        <button @click="clearFilters" class="btn btn-secondary">Očisti pretragu</button>
+      </div>
   </div>
       <h2>Vaše kupovine</h2>
       <div class="table-responsive" style="min-height: 500px">
@@ -497,6 +500,17 @@ const loadFactories = async () => {
   }
 };
 
+const clearFilters = () => {
+  searchParams.factoryName = '';
+  searchParams.minPrice = '';
+  searchParams.maxPrice = '';
+  searchParams.startDate = '';
+  searchParams.endDate = '';
+  sortParams.criterion = '';
+  sortParams.ascending = 'true';
+  filterPurchases();
+};
+
 const loadComments = async () => {
   try {
     const response = await axios.get('http://localhost:8080/WebShopAppREST/rest/comments/valid');
@@ -566,20 +580,30 @@ const loadFactoryDetails = async (factoryId) => {
 };
 
 const buy = async () => {
-  console.log("PRE:" + cart.value.totalPrice)
+  console.log("PRE:" + cart.value.totalPrice);
   cart.value.totalPrice *= discount.value;
   console.log("POSLE:" + cart.value.totalPrice);
   try {
     const response = await axios.post(`http://localhost:8080/WebShopAppREST/rest/carts/`, cart.value);
-    console.log(selectedFactory.value);
-    const chocolatesResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/chocolates/factory/${selectedFactory.value.id}`);
-    chocolates.value = chocolatesResponse.data.map(chocolate => ({ ...chocolate, quantity: 1 }));
-    chocolatesList.value = chocolatesResponse.data;
-  } catch(error) {
+    
+    // Proverite da li je kupovina uspela
+    if (response.status === 200 || response.status === 201) {
+      alert("Kupovina je uspešno izvršena!");
+      
+      console.log(selectedFactory.value);
+      const chocolatesResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/chocolates/factory/${selectedFactory.value.id}`);
+      chocolates.value = chocolatesResponse.data.map(chocolate => ({ ...chocolate, quantity: 1 }));
+      chocolatesList.value = chocolatesResponse.data;
+      loadPurchases();
+    } else {
+      alert("Došlo je do problema tokom kupovine. Pokušajte ponovo.");
+    }
+  } catch (error) {
     console.error(error);
+    alert("Došlo je do greške prilikom obavljanja kupovine. Pokušajte ponovo.");
   }
-  
 };
+
 const sortedFactories = computed(() => {
   return filteredFactories.value;
 });

@@ -55,6 +55,7 @@ public class PurchaseService {
     @Produces(MediaType.APPLICATION_JSON)
     public Collection<Purchase> getPurchasesByUser(@PathParam("id") String id) {
         PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+        dao = new PurchaseDAO("C:\\Users\\HP\\OneDrive\\Radna površina\\najnoviji web projekat\\CocoFactory\\Backend\\WebShopAppREST\\src\\main\\webapp\\purchases.csv");
         System.out.println("ID" + id);
         return dao.findAllByUser(id);
     }

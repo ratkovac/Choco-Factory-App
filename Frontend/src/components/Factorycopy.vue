@@ -106,7 +106,7 @@
   </div>
 
   <!-- Factories Table -->
-  <div class="table-responsive" style="min-height: 500px">
+  <div class="table-responsive" style="height: 500px; overflow-y: auto;">
     <table class="table table-hover">
       <thead class="table-dark">
         <tr>

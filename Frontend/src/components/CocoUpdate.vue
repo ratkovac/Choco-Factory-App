@@ -207,10 +207,10 @@
   color: red;
 }
 
-img {
-  max-width: 80x;
+/*img {
+  max-width: 80px;
   max-height: 50px;
-}
+}*/
 
 .error {
   border: 2px solid rgb(241, 53, 19);
@@ -242,6 +242,5 @@ button.custom-button {
   font-weight: 545;
   margin-bottom: 10px;
 }
-
 </style>
   

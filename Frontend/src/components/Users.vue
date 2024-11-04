@@ -95,11 +95,11 @@
           <td>{{ user.firstName }}</td>
           <td>{{ user.lastName }}</td>
           <td>{{ user.username }}</td>
-          <td>{{ user.points }}</td>
+          <td>{{ user.points.toFixed(2) }}</td>
           <td>{{ user.role }}</td>
           <td>{{ user.type }}</td>
           <td>
-            <button @click="toggleUserStatus(user)" class="btn btn-sm" :class="{'btn-success': user.status === 'ACTIVATED', 'btn-danger': user.status === 'DEACTIVATED'}">
+            <button @click="toggleUserStatus(user)" class="btn btn-sm" :class="{'btn-danger': user.status === 'ACTIVATED', 'btn-success': user.status === 'DEACTIVATED'}">
               {{ user.status === 'ACTIVATED' ? 'Deactivate' : 'Activate' }}
             </button>
           </td>
